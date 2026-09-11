@@ -1,0 +1,56 @@
+name: bede_bestan
+publish_to: none
+
+# BedeBestan (بده‌بستان) — a local-only personal money + calendar + notes app.
+# Melos + Dart pub workspace. A single `dart pub get` at the root resolves
+# every member below (no per-package `pub get`).
+
+environment:
+  sdk: ^3.9.0
+
+dev_dependencies:
+  melos: ^8.2.2
+
+workspace:
+  - apps/bedeh_bestan
+  - packages/core
+  - packages/ui_kit
+  - packages/translations
+  - features/home
+  - features/money
+  - features/calendar
+  - features/notes
+
+melos:
+  scripts:
+    # Do not add a script named `bootstrap`. Melos lets scripts override
+    # builtins, so `run: melos bootstrap` recurses forever.
+    # Use the builtin: `melos bootstrap` (or `dart pub get` with this workspace).
+
+    get:
+      run: dart pub get
+
+    clean:
+      run: melos exec --concurrency=1 -- "flutter clean"
+
+    analyze:
+      run: melos exec --concurrency=1 --fail-fast -- "flutter analyze"
+
+    test:
+      run: melos exec --concurrency=1 --fail-fast --dir-exists=test -- "flutter test"
+
+    translations:
+      run: melos exec --scope="translations" -- "dart run slang"
+
+    translations:watch:
+      run: melos exec --scope="translations" -- "dart run slang watch"
+
+    # Interactive run on Linux desktop (stdio inherit keeps hot-reload keys).
+    dev:
+      run: cd apps/bedeh_bestan && flutter run -d linux
+      stdio: inherit
+
+    # Run in Chrome (local CanvasKit, no CDN, quiet logs).
+    dev:web:
+      run: cd apps/bedeh_bestan && flutter run -d chrome --no-web-resources-cdn --web-browser-flag=--disable-logging
+      stdio: inherit

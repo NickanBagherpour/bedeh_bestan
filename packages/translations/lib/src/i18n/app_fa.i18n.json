@@ -1,0 +1,36 @@
+{
+  "appName": "بده‌بستان",
+  "subtitle": "قسط، طلب، یادآوری",
+  "latinName": "BedeBestan",
+  "currency": "تومان",
+  "comingSoon": "به‌زودی",
+  "emptyTitle": "موردی وجود ندارد",
+  "nav": {
+    "home": "خانه",
+    "money": "حساب",
+    "calendar": "تقویم",
+    "notes": "یادداشت"
+  },
+  "language": {
+    "label": "زبان",
+    "en": "انگلیسی",
+    "fa": "فارسی"
+  },
+  "theme": {
+    "label": "پوسته",
+    "light": "روشن",
+    "dark": "تاریک",
+    "system": "سیستم"
+  },
+  "errors": {
+    "unknown": "خطای غیرمنتظره‌ای رخ داد"
+  },
+  "actions": {
+    "retry": "تلاش مجدد",
+    "cancel": "انصراف",
+    "confirm": "تأیید",
+    "close": "بستن",
+    "save": "ذخیره",
+    "add": "افزودن"
+  }
+}

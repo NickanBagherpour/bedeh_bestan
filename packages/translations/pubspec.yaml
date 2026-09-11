@@ -1,0 +1,23 @@
+name: translations
+description: Type-safe i18n (slang) for BedeBestan.
+resolution: workspace
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  slang: ^4.15.0
+  slang_flutter: ^4.15.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:

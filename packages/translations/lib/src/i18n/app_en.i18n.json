@@ -1,0 +1,36 @@
+{
+  "appName": "BedeBestan",
+  "subtitle": "Installments, receivables, reminders",
+  "latinName": "BedeBestan",
+  "currency": "Toman",
+  "comingSoon": "Coming soon",
+  "emptyTitle": "Nothing here yet",
+  "nav": {
+    "home": "Home",
+    "money": "Accounts",
+    "calendar": "Calendar",
+    "notes": "Notes"
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "fa": "Persian"
+  },
+  "theme": {
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "errors": {
+    "unknown": "An unexpected error occurred"
+  },
+  "actions": {
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "save": "Save",
+    "add": "Add"
+  }
+}

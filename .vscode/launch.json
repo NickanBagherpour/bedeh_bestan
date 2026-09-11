@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "bedeh_bestan (linux)",
+      "request": "launch",
+      "type": "dart",
+      "program": "apps/bedeh_bestan/lib/main.dart",
+      "cwd": "apps/bedeh_bestan",
+      "args": ["-d", "linux"]
+    },
+    {
+      "name": "bedeh_bestan (web)",
+      "request": "launch",
+      "type": "dart",
+      "program": "apps/bedeh_bestan/lib/main.dart",
+      "cwd": "apps/bedeh_bestan",
+      "args": ["-d", "chrome", "--no-web-resources-cdn"]
+    }
+  ]
+}

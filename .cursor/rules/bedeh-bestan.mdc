@@ -1,0 +1,8 @@
+---
+description: BedeBestan monorepo — read AGENTS.md first; features live under features/
+alwaysApply: true
+---
+
+Before coding, read `AGENTS.md` then only the one doc `docs/AGENTS.md` maps for the task.
+
+Rules: feature packages under `features/` (never `apps/bedeh_bestan/lib/src/features/`); slang for all UI strings (`melos run translations`); paths only in `AppRoutes`; no backend.

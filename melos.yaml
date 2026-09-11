@@ -1,0 +1,6 @@
+name: bede_bestan
+
+packages:
+  - apps/**
+  - packages/**
+  - features/**

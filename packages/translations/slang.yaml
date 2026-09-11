@@ -1,0 +1,8 @@
+base_locale: en
+fallback_strategy: base_locale
+input_directory: ../../
+input_file_pattern: .i18n.json
+output_directory: lib/src/generated
+flutter_integration: true
+namespaces: true
+lazy: false
