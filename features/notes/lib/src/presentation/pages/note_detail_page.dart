@@ -5,7 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:local_db/local_db.dart' show Note;
 import 'package:translations/translations.dart'
     show Translations, TranslationsLookup;
-import 'package:ui_kit/ui_kit.dart' show AppColors, AppSpacing, KitCard, KitEmpty;
+import 'package:ui_kit/ui_kit.dart'
+    show AppColors, AppHaptics, AppSpacing, KitCard, KitError, KitLoading;
 
 import '../../application/controllers/notes_controller.dart';
 import '../../application/state/notes_state.dart';
@@ -47,22 +48,22 @@ class NoteDetailPage extends ConsumerWidget {
     Note? note,
   ) {
     if (state.status == NotesStatus.error && note == null) {
-      return KitEmpty(
-        icon: Icons.error_outline_rounded,
-        title: t.message(
+      return KitError(
+        message: t.message(
           state.errorKey ?? 'notes.loadError',
           shouldTranslate: true,
         ),
+        retryLabel: t.app.actions.retry,
+        onRetry: () => ref.read(notesControllerProvider.notifier).retry(),
       );
     }
     if (note == null) {
       if (state.status == NotesStatus.loaded) {
-        return KitEmpty(
-          icon: Icons.sticky_note_2_outlined,
-          title: t.notes.missingItem,
+        return KitError(
+          message: t.notes.missingItem,
         );
       }
-      return const Center(child: CircularProgressIndicator());
+      return const KitLoading();
     }
 
     final party = state.partyFor(note.partyId);
@@ -73,7 +74,7 @@ class NoteDetailPage extends ConsumerWidget {
       padding: const EdgeInsets.all(AppSpacing.md),
       children: [
         KitCard(
-          color: isDark ? null : AppColors.note.withValues(alpha: 0.55),
+          color: isDark ? null : AppColors.note.withValues(alpha: 0.82),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -127,6 +128,7 @@ class NoteDetailPage extends ConsumerWidget {
         const SizedBox(height: AppSpacing.lg),
         OutlinedButton(
           onPressed: () async {
+            AppHaptics.warn();
             await ref.read(notesControllerProvider.notifier).deleteNote(noteId);
             if (!context.mounted) return;
             context.pop();

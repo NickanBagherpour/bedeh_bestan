@@ -36,8 +36,8 @@ abstract final class AppColors {
   static const Color lightSurface = Color(0xFFFFFFFF);
   static const Color lightSurfaceAlt = Color(0xFFF4EDE4);
   static const Color lightOnSurface = Color(0xFF14302E);
-  static const Color lightOnSurfaceVariant = Color(0xFF5A6B66);
-  static const Color lightOutline = Color(0xFFD9CEBE);
+  static const Color lightOnSurfaceVariant = Color(0xFF3E534F);
+  static const Color lightOutline = Color(0xFFC9B9A4);
   static const Color lightError = Color(0xFFB42318);
 
   // --- Dark theme ---
@@ -45,8 +45,8 @@ abstract final class AppColors {
   static const Color darkSurface = Color(0xFF0F3D3E);
   static const Color darkSurfaceAlt = Color(0xFF14484A);
   static const Color darkOnSurface = Color(0xFFE6F0EC);
-  static const Color darkOnSurfaceVariant = Color(0xFFA6C0BA);
-  static const Color darkOutline = Color(0xFF2C5556);
+  static const Color darkOnSurfaceVariant = Color(0xFFC5D8D3);
+  static const Color darkOutline = Color(0xFF3D6A6B);
   static const Color darkError = Color(0xFFF2896F);
 
   static ColorScheme lightScheme() {
@@ -93,5 +93,11 @@ abstract final class AppColors {
       onErrorContainer: darkError,
       outline: darkOutline,
     );
+  }
+
+  /// Darken a light accent so labels stay readable on cream tints.
+  static Color onTint(Color color) {
+    if (color.computeLuminance() <= 0.45) return color;
+    return Color.lerp(color, lightOnSurface, 0.42)!;
   }
 }

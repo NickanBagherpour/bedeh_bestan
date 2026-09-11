@@ -17,7 +17,7 @@ import 'package:go_router/go_router.dart';
 import 'package:local_db/local_db.dart'
     show MoneyDirection, MoneyItem, MoneySchedule, Party, PartyKind;
 import 'package:translations/translations.dart' show Translations;
-import 'package:ui_kit/ui_kit.dart' show AppColors, AppSpacing, KitCard;
+import 'package:ui_kit/ui_kit.dart' show AppColors, AppHaptics, AppSpacing, KitCard;
 
 import '../../application/controllers/money_list_controller.dart';
 import '../../application/state/money_list_state.dart';
@@ -154,7 +154,10 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
                   selected: _direction == MoneyDirection.pay,
                   label: t.money.fabPay,
                   color: AppColors.pay,
-                  onTap: () => setState(() => _direction = MoneyDirection.pay),
+                  onTap: () {
+                    AppHaptics.selection();
+                    setState(() => _direction = MoneyDirection.pay);
+                  },
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
@@ -163,8 +166,10 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
                   selected: _direction == MoneyDirection.receive,
                   label: t.money.fabReceive,
                   color: AppColors.receive,
-                  onTap: () =>
-                      setState(() => _direction = MoneyDirection.receive),
+                  onTap: () {
+                    AppHaptics.selection();
+                    setState(() => _direction = MoneyDirection.receive);
+                  },
                 ),
               ),
             ],
@@ -197,7 +202,10 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
                   ChoiceChip(
                     label: Text(_kindLabel(t, kind)),
                     selected: _partyKind == kind,
-                    onSelected: (_) => setState(() => _partyKind = kind),
+                    onSelected: (_) {
+                      AppHaptics.selection();
+                      setState(() => _partyKind = kind);
+                    },
                   ),
               ],
             ),
@@ -210,7 +218,10 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
                   ChoiceChip(
                     label: Text(party.name),
                     selected: _partyId == party.id,
-                    onSelected: (_) => setState(() => _partyId = party.id),
+                    onSelected: (_) {
+                      AppHaptics.selection();
+                      setState(() => _partyId = party.id);
+                    },
                   ),
               ],
             ),
@@ -235,6 +246,7 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
             ],
             selected: {_schedule},
             onSelectionChanged: (value) {
+              AppHaptics.selection();
               setState(() => _schedule = value.first);
             },
           ),
@@ -424,6 +436,7 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
             ),
           );
       if (!mounted) return;
+      AppHaptics.confirm();
       context.go(AppRoutes.moneyItemPath(id));
     } catch (_) {
       if (!mounted) return;
@@ -459,7 +472,7 @@ class _DirectionCard extends StatelessWidget {
         label,
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: color,
+              color: AppColors.onTint(color),
               fontWeight: FontWeight.w800,
             ),
       ),

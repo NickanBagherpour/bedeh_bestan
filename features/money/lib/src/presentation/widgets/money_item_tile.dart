@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ui_kit/ui_kit.dart' show AppSpacing, KitCard;
+import 'package:ui_kit/ui_kit.dart' show AppColors, AppSpacing, KitCard;
 
 import 'money_status_chip.dart';
 
@@ -82,7 +82,7 @@ class MoneyItemTile extends StatelessWidget {
                         child: Text(
                           amountLabel,
                           style: theme.textTheme.titleSmall?.copyWith(
-                            color: accent,
+                            color: AppColors.onTint(accent),
                             fontWeight: FontWeight.w700,
                           ),
                         ),

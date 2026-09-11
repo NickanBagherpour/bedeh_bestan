@@ -31,6 +31,8 @@ final class CalendarController extends Notifier<CalendarState> {
     return const CalendarState(status: CalendarStatus.loading);
   }
 
+  void retry() => ref.invalidateSelf();
+
   Future<String> saveDraft(ReminderDraft draft) async {
     final repo = ref.read(calendarRepositoryProvider);
     final now = DateTime.now();

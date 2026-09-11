@@ -79,6 +79,8 @@ final class MoneyDetailController extends Notifier<MoneyDetailState> {
     return const MoneyDetailState(status: MoneyDetailStatus.loading);
   }
 
+  void retry() => ref.invalidateSelf();
+
   Future<String?> recordPayment(int amount) async {
     state = state.copyWith(busy: true, clearError: true);
     try {

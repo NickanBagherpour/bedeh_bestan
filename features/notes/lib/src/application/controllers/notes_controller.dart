@@ -62,6 +62,8 @@ final class NotesController extends Notifier<NotesState> {
     return const NotesState(status: NotesStatus.loading);
   }
 
+  void retry() => ref.invalidateSelf();
+
   void setQuery(String query) {
     state = state.copyWith(query: query);
   }

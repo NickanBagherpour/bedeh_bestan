@@ -67,4 +67,6 @@ final class HomeController extends Notifier<HomeState> {
     });
     return const HomeState(status: HomeStatus.loading);
   }
+
+  void retry() => ref.invalidateSelf();
 }

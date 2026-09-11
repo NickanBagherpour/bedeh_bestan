@@ -27,7 +27,7 @@ class NoteTile extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
     return KitCard(
       onTap: onTap,
-      color: isDark ? null : AppColors.note.withValues(alpha: 0.55),
+      color: isDark ? null : AppColors.note.withValues(alpha: 0.82),
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.md,
         AppSpacing.sm,

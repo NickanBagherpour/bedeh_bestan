@@ -79,7 +79,7 @@ abstract final class AppTheme {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         height: 68,
-        indicatorColor: scheme.primary.withValues(alpha: isDark ? 0.28 : 0.14),
+        indicatorColor: scheme.primary.withValues(alpha: isDark ? 0.32 : 0.16),
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         iconTheme: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
@@ -129,7 +129,9 @@ abstract final class AppTheme {
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
         backgroundColor: isDark ? surfaceAlt : AppColors.brand,
-        contentTextStyle: textTheme.bodyMedium?.copyWith(color: Colors.white),
+        contentTextStyle: textTheme.bodyMedium?.copyWith(
+          color: isDark ? AppColors.darkOnSurface : Colors.white,
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
         ),

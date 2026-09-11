@@ -14,9 +14,11 @@ Do not start the next phase until the user says `next phase`.
 | **6** Calendar | **done** | Jalali-primary agenda + month view. Repeats. FAB یادآوری |
 | **7** Notes | **done** | Title, body, tags, pin, optional link to party/money, search |
 | **8** Notifications + icon | **done** | Local notifications. App icon + splash. Launcher **بده‌بستان** |
-| **9** Polish | queued | Motion, haptics, empty/error, contrast. Seed stays |
+| **9** Polish | **done** | Motion, haptics, empty/error, contrast. Seed stays |
 
 Out of scope v1: auth, ads, SMS, bank APIs, cloud backup, multi-user.
+
+This is the last product phase.
 
 ---
 
@@ -75,7 +77,6 @@ Local notifications for reminders that have «اعلان سر ساعت» / «ا�
 
 ---
 
-## Phase 9 notes (polish)
+## Phase 9 — Polish (done)
 
-- Motion, haptics, empty/error, contrast.
-- Seed stays.
+Motion (`KitFadeIn`, `AnimatedSwitcher`, existing route fade), haptics (`AppHaptics`), loading/error/empty (`KitLoading`, `KitError` + retry, empty CTAs), and stronger contrast on cream tints. Seed data stays.

@@ -39,7 +39,7 @@ void main() {
       ),
     );
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 400));
 
     expect(find.text('خانه'), findsWidgets);
     expect(find.text('حساب'), findsOneWidget);
@@ -50,22 +50,22 @@ void main() {
 
     await tester.tap(find.byIcon(Icons.calendar_month_outlined));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 400));
     expect(find.textContaining('شهریور'), findsWidgets);
     expect(find.text('یادآوری'), findsOneWidget);
 
     await tester.tap(find.byIcon(Icons.sticky_note_2_outlined));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 400));
     expect(find.text('شبا بانک ملی'), findsOneWidget);
 
     await tester.tap(find.text('خانه'));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 400));
 
     await tester.tap(find.byTooltip('تنظیمات'));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 400));
     expect(find.text('گاه‌شماری'), findsWidgets);
 
     await database.close();

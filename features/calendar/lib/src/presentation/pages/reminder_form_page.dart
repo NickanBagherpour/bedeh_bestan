@@ -9,8 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:local_db/local_db.dart' show RepeatRule;
-import 'package:translations/translations.dart' show Translations;
-import 'package:ui_kit/ui_kit.dart' show AppSpacing;
+import 'package:translations/translations.dart'
+    show Translations, TranslationsLookup;
+import 'package:ui_kit/ui_kit.dart' show AppHaptics, AppSpacing, KitError, KitLoading;
 
 import '../../application/controllers/calendar_controller.dart';
 import '../../application/state/calendar_state.dart';
@@ -86,6 +87,27 @@ class _ReminderFormPageState extends ConsumerState<ReminderFormPage> {
             _notifyDayBefore = reminder.notifyDayBefore;
           });
         });
+      } else if (list.status == CalendarStatus.loaded ||
+          list.status == CalendarStatus.error) {
+        return Scaffold(
+          appBar: AppBar(title: Text(t.calendar.editTitle)),
+          body: list.status == CalendarStatus.error
+              ? KitError(
+                  message: t.message(
+                    list.errorKey ?? 'calendar.missingItem',
+                    shouldTranslate: true,
+                  ),
+                  retryLabel: t.app.actions.retry,
+                  onRetry: () =>
+                      ref.read(calendarControllerProvider.notifier).retry(),
+                )
+              : KitError(message: t.calendar.missingItem),
+        );
+      } else {
+        return Scaffold(
+          appBar: AppBar(title: Text(t.calendar.editTitle)),
+          body: const KitLoading(),
+        );
       }
     }
 
@@ -141,7 +163,10 @@ class _ReminderFormPageState extends ConsumerState<ReminderFormPage> {
                 ChoiceChip(
                   label: Text(_repeatLabel(t, rule)),
                   selected: _repeat == rule,
-                  onSelected: (_) => setState(() => _repeat = rule),
+                  onSelected: (_) {
+                    AppHaptics.selection();
+                    setState(() => _repeat = rule);
+                  },
                 ),
             ],
           ),
@@ -237,6 +262,7 @@ class _ReminderFormPageState extends ConsumerState<ReminderFormPage> {
             ),
           );
       if (!mounted) return;
+      AppHaptics.confirm();
       context.pop();
     } catch (_) {
       if (!mounted) return;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ui_kit/ui_kit.dart' show AppSpacing, KitCard;
+import 'package:ui_kit/ui_kit.dart' show AppColors, AppHaptics, AppSpacing, KitCard;
 
 import '../../application/home_dashboard.dart';
 
@@ -49,7 +49,10 @@ class HomeDueList extends StatelessWidget {
           else
             for (final row in rows)
               InkWell(
-                onTap: () => onTap(row),
+                onTap: () {
+                  AppHaptics.selection();
+                  onTap(row);
+                },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
                   child: Row(
@@ -75,7 +78,7 @@ class HomeDueList extends StatelessWidget {
                           Text(
                             amountOf(row),
                             style: theme.textTheme.titleSmall?.copyWith(
-                              color: accentOf(row),
+                              color: AppColors.onTint(accentOf(row)),
                               fontWeight: FontWeight.w800,
                             ),
                           ),

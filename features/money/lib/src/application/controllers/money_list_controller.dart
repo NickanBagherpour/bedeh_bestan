@@ -58,6 +58,8 @@ final class MoneyListController extends Notifier<MoneyListState> {
     return const MoneyListState(status: MoneyListStatus.loading);
   }
 
+  void retry() => ref.invalidateSelf();
+
   void setFilter(MoneyListFilter filter) {
     state = state.copyWith(filter: filter);
   }

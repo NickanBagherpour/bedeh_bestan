@@ -14,7 +14,7 @@ class CalendarTodayBanner extends StatelessWidget {
       child: Text(
         label,
         style: theme.textTheme.titleMedium?.copyWith(
-          color: AppColors.reminder,
+          color: AppColors.onTint(AppColors.reminder),
           fontWeight: FontWeight.w800,
         ),
       ),

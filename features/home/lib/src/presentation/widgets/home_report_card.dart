@@ -34,14 +34,14 @@ class HomeReportCard extends StatelessWidget {
           Text(
             paidOutLabel,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: AppColors.pay,
+              color: AppColors.onTint(AppColors.pay),
               fontWeight: FontWeight.w600,
             ),
           ),
           Text(
             paidInLabel,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: AppColors.receive,
+              color: AppColors.onTint(AppColors.receive),
               fontWeight: FontWeight.w600,
             ),
           ),

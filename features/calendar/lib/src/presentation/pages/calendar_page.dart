@@ -19,7 +19,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:translations/translations.dart'
     show Translations, TranslationsLookup;
-import 'package:ui_kit/ui_kit.dart' show AppSpacing, KitEmpty;
+import 'package:ui_kit/ui_kit.dart' show AppHaptics, AppSpacing, KitError, KitLoading;
 
 import '../../application/controllers/calendar_controller.dart';
 import '../../application/occurrences.dart';
@@ -119,9 +119,16 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
           CalendarMonthHeader(
             title: _monthTitle(month.start, calendar, persian),
             todayLabel: t.calendar.today,
-            onPrev: () => _shift(-1, calendar),
-            onNext: () => _shift(1, calendar),
+            onPrev: () {
+              AppHaptics.selection();
+              _shift(-1, calendar);
+            },
+            onNext: () {
+              AppHaptics.selection();
+              _shift(1, calendar);
+            },
             onToday: () {
+              AppHaptics.selection();
               setState(() {
                 _focus = today;
                 _selected = today;
@@ -140,6 +147,7 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
               return persian ? toPersianDigits(raw) : raw;
             },
             onSelect: (day) {
+              AppHaptics.selection();
               setState(() {
                 _selected = dateOnly(day);
                 if (!month.containsDate(day)) _focus = dateOnly(day);
@@ -148,13 +156,19 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
           ),
           const SizedBox(height: AppSpacing.md),
           if (state.status == CalendarStatus.error)
-            KitEmpty(
-              icon: Icons.error_outline_rounded,
-              title: t.message(
+            KitError(
+              message: t.message(
                 state.errorKey ?? 'calendar.loadError',
                 shouldTranslate: true,
               ),
-              body: t.calendar.emptyBody,
+              retryLabel: t.app.actions.retry,
+              onRetry: () =>
+                  ref.read(calendarControllerProvider.notifier).retry(),
+            )
+          else if (state.status == CalendarStatus.loading)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: AppSpacing.xxl),
+              child: KitLoading(),
             )
           else ...[
             CalendarAgendaList(
@@ -187,6 +201,7 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
   }
 
   void _openNew(BuildContext context) {
+    AppHaptics.light();
     context.push(AppRoutes.reminderNewPath(day: _selected));
   }
 

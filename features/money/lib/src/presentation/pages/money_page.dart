@@ -12,7 +12,8 @@ import 'package:go_router/go_router.dart';
 import 'package:local_db/local_db.dart' show MoneyDirection, MoneyItem, MoneyStatus;
 import 'package:translations/translations.dart'
     show Translations, TranslationsLookup;
-import 'package:ui_kit/ui_kit.dart' show AppSpacing, KitEmpty;
+import 'package:ui_kit/ui_kit.dart'
+    show AppHaptics, AppMotion, AppSpacing, KitEmpty, KitError, KitLoading;
 
 import '../../application/controllers/money_list_controller.dart';
 import '../../application/money_query.dart';
@@ -39,7 +40,10 @@ class MoneyPage extends ConsumerWidget {
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(title: Text(t.money.title)),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _pickDirection(context, t),
+        onPressed: () {
+          AppHaptics.light();
+          _pickDirection(context, t);
+        },
         icon: const Icon(Icons.add_rounded),
         label: Text(t.money.add),
       ),
@@ -72,6 +76,7 @@ class MoneyPage extends ConsumerWidget {
                   ],
                   selected: {state.filter},
                   onSelectionChanged: (value) {
+                    AppHaptics.selection();
                     ref
                         .read(moneyListControllerProvider.notifier)
                         .setFilter(value.first);
@@ -96,14 +101,19 @@ class MoneyPage extends ConsumerWidget {
             ),
           ),
           Expanded(
-            child: _body(
-              context,
-              t,
-              state,
-              visible,
-              calendar,
-              persian,
-              currency,
+            child: AnimatedSwitcher(
+              duration: AppMotion.normal,
+              switchInCurve: AppMotion.easeOut,
+              child: _body(
+                context,
+                ref,
+                t,
+                state,
+                visible,
+                calendar,
+                persian,
+                currency,
+              ),
             ),
           ),
         ],
@@ -113,6 +123,7 @@ class MoneyPage extends ConsumerWidget {
 
   Widget _body(
     BuildContext context,
+    WidgetRef ref,
     Translations t,
     MoneyListState state,
     List<MoneyItem> visible,
@@ -121,24 +132,37 @@ class MoneyPage extends ConsumerWidget {
     AppCurrency currency,
   ) {
     if (state.status == MoneyListStatus.error) {
-      return KitEmpty(
-        icon: Icons.error_outline_rounded,
-        title: t.message(state.errorKey ?? 'money.loadError', shouldTranslate: true),
-        body: t.money.emptyBody,
+      return KitError(
+        key: const ValueKey('error'),
+        message: t.message(
+          state.errorKey ?? 'money.loadError',
+          shouldTranslate: true,
+        ),
+        retryLabel: t.app.actions.retry,
+        onRetry: () => ref.read(moneyListControllerProvider.notifier).retry(),
       );
     }
     if (state.status == MoneyListStatus.loading) {
-      return const Center(child: CircularProgressIndicator());
+      return const KitLoading(key: ValueKey('loading'));
     }
     if (state.items.isEmpty) {
       return KitEmpty(
+        key: const ValueKey('empty'),
         icon: Icons.account_balance_wallet_rounded,
         title: t.money.emptyTitle,
         body: t.money.emptyBody,
+        action: FilledButton.tonal(
+          onPressed: () {
+            AppHaptics.light();
+            _pickDirection(context, t);
+          },
+          child: Text(t.money.add),
+        ),
       );
     }
     if (visible.isEmpty) {
       return KitEmpty(
+        key: const ValueKey('filter'),
         icon: Icons.filter_alt_outlined,
         title: t.money.emptyFilter,
         body: t.money.emptyBody,
@@ -146,6 +170,7 @@ class MoneyPage extends ConsumerWidget {
     }
 
     return ListView.separated(
+      key: const ValueKey('list'),
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.md,
         0,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../haptics/app_haptics.dart';
 import '../theme/app_spacing.dart';
 
 /// Surface card for interactive or content groupings.
@@ -23,35 +24,42 @@ class KitCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final content = DecoratedBox(
+    final radius = BorderRadius.circular(AppSpacing.radiusLg);
+    final bg = color ?? theme.cardTheme.color ?? theme.colorScheme.surface;
+
+    final card = DecoratedBox(
       decoration: BoxDecoration(
-        color: color ?? theme.cardTheme.color ?? theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-        border: Border.all(color: theme.dividerColor),
+        borderRadius: radius,
         boxShadow: [
           BoxShadow(
             color: isDark
-                ? Colors.black.withValues(alpha: 0.30)
-                : const Color(0x0F0B2E2F),
+                ? Colors.black.withValues(alpha: 0.34)
+                : const Color(0x140B2E2F),
             blurRadius: 22,
             offset: const Offset(0, 8),
           ),
         ],
       ),
-      child: Padding(padding: padding, child: child),
-    );
-
-    final wrapped =
-        margin == null ? content : Padding(padding: margin!, child: content);
-
-    if (onTap == null) return wrapped;
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-        child: wrapped,
+      child: Material(
+        color: bg,
+        shape: RoundedRectangleBorder(
+          borderRadius: radius,
+          side: BorderSide(color: theme.dividerColor),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap == null
+              ? null
+              : () {
+                  AppHaptics.selection();
+                  onTap!();
+                },
+          child: Padding(padding: padding, child: child),
+        ),
       ),
     );
+
+    if (margin == null) return card;
+    return Padding(padding: margin!, child: card);
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ui_kit/ui_kit.dart' show AppSpacing;
+import 'package:ui_kit/ui_kit.dart' show AppHaptics, AppSpacing;
 
 class SettingsChoiceRow<T> extends StatelessWidget {
   const SettingsChoiceRow({
@@ -34,7 +34,10 @@ class SettingsChoiceRow<T> extends StatelessWidget {
                 ChoiceChip(
                   label: Text(labelFor(option)),
                   selected: option == value,
-                  onSelected: (_) => onChanged(option),
+                  onSelected: (_) {
+                    AppHaptics.selection();
+                    onChanged(option);
+                  },
                 ),
             ],
           ),

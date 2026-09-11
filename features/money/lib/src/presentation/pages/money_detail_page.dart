@@ -14,7 +14,8 @@ import 'package:go_router/go_router.dart';
 import 'package:local_db/local_db.dart' show MoneyDirection, MoneySchedule, MoneyStatus;
 import 'package:translations/translations.dart'
     show Translations, TranslationsLookup;
-import 'package:ui_kit/ui_kit.dart' show AppSpacing, KitCard, KitEmpty;
+import 'package:ui_kit/ui_kit.dart'
+    show AppColors, AppHaptics, AppSpacing, KitCard, KitError, KitLoading;
 
 import '../../application/controllers/money_detail_controller.dart';
 import '../../application/state/money_detail_state.dart';
@@ -75,17 +76,19 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
     AppCurrency currency,
   ) {
     if (state.status == MoneyDetailStatus.error && state.item == null) {
-      return KitEmpty(
-        icon: Icons.error_outline_rounded,
-        title: t.message(
+      return KitError(
+        message: t.message(
           state.errorKey ?? 'money.missingItem',
           shouldTranslate: true,
         ),
+        retryLabel: t.app.actions.retry,
+        onRetry: () =>
+            ref.read(moneyDetailControllerProvider(widget.itemId).notifier).retry(),
       );
     }
     final item = state.item;
     if (item == null) {
-      return const Center(child: CircularProgressIndicator());
+      return const KitLoading();
     }
 
     final status = item.statusOn(DateTime.now());
@@ -145,7 +148,7 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
               Text(
                 remaining,
                 style: theme.textTheme.headlineSmall?.copyWith(
-                  color: accent,
+                  color: AppColors.onTint(accent),
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -288,6 +291,7 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
       );
       return;
     }
+    AppHaptics.confirm();
     _amount.clear();
   }
 }

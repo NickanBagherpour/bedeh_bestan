@@ -2,6 +2,7 @@ import 'package:core/core.dart' show AppRoute, AppRoutes;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:translations/translations.dart' show Translations;
+import 'package:ui_kit/ui_kit.dart' show AppHaptics;
 
 /// A single primary destination in the bottom navigation bar.
 class _Destination {
@@ -67,7 +68,10 @@ class AppShell extends StatelessWidget {
   void _onDestinationSelected(BuildContext context, int index) {
     final route = _destinations[index].route;
     final current = GoRouterState.of(context).uri.path;
-    if (route.path != current) context.go(route.path);
+    if (route.path != current) {
+      AppHaptics.selection();
+      context.go(route.path);
+    }
   }
 
   @override
@@ -77,18 +81,25 @@ class AppShell extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(child: child),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: selectedIndex,
-        onDestinationSelected: (index) =>
-            _onDestinationSelected(context, index),
-        destinations: [
-          for (final destination in _destinations)
-            NavigationDestination(
-              icon: Icon(destination.icon),
-              selectedIcon: Icon(destination.selectedIcon),
-              label: destination.labelOf(t),
-            ),
-        ],
+      bottomNavigationBar: DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(color: Theme.of(context).dividerColor),
+          ),
+        ),
+        child: NavigationBar(
+          selectedIndex: selectedIndex,
+          onDestinationSelected: (index) =>
+              _onDestinationSelected(context, index),
+          destinations: [
+            for (final destination in _destinations)
+              NavigationDestination(
+                icon: Icon(destination.icon),
+                selectedIcon: Icon(destination.selectedIcon),
+                label: destination.labelOf(t),
+              ),
+          ],
+        ),
       ),
     );
   }

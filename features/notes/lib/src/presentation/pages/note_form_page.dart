@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:translations/translations.dart' show Translations;
-import 'package:ui_kit/ui_kit.dart' show AppSpacing;
+import 'package:ui_kit/ui_kit.dart' show AppHaptics, AppSpacing, KitError, KitLoading;
 
 import '../../application/controllers/notes_controller.dart';
 import '../../application/note_query.dart';
@@ -63,8 +63,8 @@ class _NoteFormPageState extends ConsumerState<NoteFormPage> {
       return Scaffold(
         appBar: AppBar(title: Text(t.notes.editTitle)),
         body: note == null && state.status == NotesStatus.loaded
-            ? Center(child: Text(t.notes.missingItem))
-            : const Center(child: CircularProgressIndicator()),
+            ? KitError(message: t.notes.missingItem)
+            : const KitLoading(),
       );
     }
 
@@ -192,6 +192,7 @@ class _NoteFormPageState extends ConsumerState<NoteFormPage> {
             ),
           );
       if (!mounted) return;
+      AppHaptics.confirm();
       context.pop();
     } catch (_) {
       if (!mounted) return;

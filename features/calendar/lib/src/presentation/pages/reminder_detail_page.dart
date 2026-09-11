@@ -12,7 +12,8 @@ import 'package:go_router/go_router.dart';
 import 'package:local_db/local_db.dart' show Reminder, RepeatRule;
 import 'package:translations/translations.dart'
     show Translations, TranslationsLookup;
-import 'package:ui_kit/ui_kit.dart' show AppColors, AppSpacing, KitCard, KitEmpty;
+import 'package:ui_kit/ui_kit.dart'
+    show AppColors, AppHaptics, AppSpacing, KitCard, KitError, KitLoading;
 
 import '../../application/controllers/calendar_controller.dart';
 import '../../application/state/calendar_state.dart';
@@ -59,22 +60,20 @@ class ReminderDetailPage extends ConsumerWidget {
     bool persian,
   ) {
     if (state.status == CalendarStatus.error && reminder == null) {
-      return KitEmpty(
-        icon: Icons.error_outline_rounded,
-        title: t.message(
+      return KitError(
+        message: t.message(
           state.errorKey ?? 'calendar.missingItem',
           shouldTranslate: true,
         ),
+        retryLabel: t.app.actions.retry,
+        onRetry: () => ref.read(calendarControllerProvider.notifier).retry(),
       );
     }
     if (reminder == null) {
       if (state.status == CalendarStatus.loaded) {
-        return KitEmpty(
-          icon: Icons.event_busy_rounded,
-          title: t.calendar.missingItem,
-        );
+        return KitError(message: t.calendar.missingItem);
       }
-      return const Center(child: CircularProgressIndicator());
+      return const KitLoading();
     }
 
     final when = formatLongDate(reminder.startAt, calendar);
@@ -112,6 +111,7 @@ class ReminderDetailPage extends ConsumerWidget {
         const SizedBox(height: AppSpacing.lg),
         OutlinedButton(
           onPressed: () async {
+            AppHaptics.warn();
             await ref
                 .read(calendarControllerProvider.notifier)
                 .deleteReminder(reminderId);

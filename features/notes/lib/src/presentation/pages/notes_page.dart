@@ -5,7 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:local_db/local_db.dart' show Note;
 import 'package:translations/translations.dart'
     show Translations, TranslationsLookup;
-import 'package:ui_kit/ui_kit.dart' show AppSpacing, KitEmpty;
+import 'package:ui_kit/ui_kit.dart'
+    show AppHaptics, AppMotion, AppSpacing, KitEmpty, KitError, KitLoading;
 
 import '../../application/controllers/notes_controller.dart';
 import '../../application/state/notes_state.dart';
@@ -23,7 +24,10 @@ class NotesPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(t.notes.title)),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.push(AppRoutes.notesNew.path),
+        onPressed: () {
+          AppHaptics.light();
+          context.push(AppRoutes.notesNew.path);
+        },
         icon: const Icon(Icons.note_add_outlined),
         label: Text(t.notes.fab),
       ),
@@ -59,6 +63,7 @@ class NotesPage extends ConsumerWidget {
                           label: Text(t.notes.allTags),
                           selected: state.tag == null,
                           onSelected: (_) {
+                            AppHaptics.selection();
                             ref.read(notesControllerProvider.notifier).setTag(null);
                           },
                         ),
@@ -67,6 +72,7 @@ class NotesPage extends ConsumerWidget {
                             label: Text(tag),
                             selected: state.tag == tag,
                             onSelected: (selected) {
+                              AppHaptics.selection();
                               ref
                                   .read(notesControllerProvider.notifier)
                                   .setTag(selected ? tag : null);
@@ -79,7 +85,13 @@ class NotesPage extends ConsumerWidget {
               ],
             ),
           ),
-          Expanded(child: _body(context, ref, t, state, visible)),
+          Expanded(
+            child: AnimatedSwitcher(
+              duration: AppMotion.normal,
+              switchInCurve: AppMotion.easeOut,
+              child: _body(context, ref, t, state, visible),
+            ),
+          ),
         ],
       ),
     );
@@ -93,27 +105,37 @@ class NotesPage extends ConsumerWidget {
     List<Note> visible,
   ) {
     if (state.status == NotesStatus.error) {
-      return KitEmpty(
-        icon: Icons.error_outline_rounded,
-        title: t.message(
+      return KitError(
+        key: const ValueKey('error'),
+        message: t.message(
           state.errorKey ?? 'notes.loadError',
           shouldTranslate: true,
         ),
-        body: t.notes.emptyBody,
+        retryLabel: t.app.actions.retry,
+        onRetry: () => ref.read(notesControllerProvider.notifier).retry(),
       );
     }
     if (state.status == NotesStatus.loading) {
-      return const Center(child: CircularProgressIndicator());
+      return const KitLoading(key: ValueKey('loading'));
     }
     if (state.notes.isEmpty) {
       return KitEmpty(
+        key: const ValueKey('empty'),
         icon: Icons.sticky_note_2_rounded,
         title: t.notes.emptyTitle,
         body: t.notes.emptyBody,
+        action: FilledButton.tonal(
+          onPressed: () {
+            AppHaptics.light();
+            context.push(AppRoutes.notesNew.path);
+          },
+          child: Text(t.notes.fab),
+        ),
       );
     }
     if (visible.isEmpty) {
       return KitEmpty(
+        key: const ValueKey('filter'),
         icon: Icons.filter_alt_outlined,
         title: t.notes.emptyFilter,
         body: t.notes.emptyBody,
@@ -121,6 +143,7 @@ class NotesPage extends ConsumerWidget {
     }
 
     return ListView.separated(
+      key: const ValueKey('list'),
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.md,
         0,
@@ -145,6 +168,7 @@ class NotesPage extends ConsumerWidget {
           meta: meta.isEmpty ? null : meta,
           onTap: () => context.push(AppRoutes.notePath(note.id)),
           onPin: () {
+            AppHaptics.selection();
             ref.read(notesControllerProvider.notifier).togglePin(note.id);
           },
         );

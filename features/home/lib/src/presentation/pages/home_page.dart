@@ -13,7 +13,15 @@ import 'package:go_router/go_router.dart';
 import 'package:local_db/local_db.dart' show MoneyDirection, MoneyStatus;
 import 'package:translations/translations.dart'
     show Translations, TranslationsLookup;
-import 'package:ui_kit/ui_kit.dart' show AppColors, AppSpacing, KitCard, KitEmpty;
+import 'package:ui_kit/ui_kit.dart'
+    show
+        AppColors,
+        AppHaptics,
+        AppSpacing,
+        KitCard,
+        KitError,
+        KitFadeIn,
+        KitLoading;
 
 import '../../application/controllers/home_controller.dart';
 import '../../application/home_dashboard.dart';
@@ -37,7 +45,10 @@ class HomePage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _pickDirection(context, t),
+        onPressed: () {
+          AppHaptics.light();
+          _pickDirection(context, t);
+        },
         icon: const Icon(Icons.add_rounded),
         label: Text(t.app.actions.add),
       ),
@@ -71,7 +82,10 @@ class HomePage extends ConsumerWidget {
               ),
               IconButton(
                 tooltip: t.home.settings,
-                onPressed: () => context.push(AppRoutes.settings.path),
+                onPressed: () {
+                  AppHaptics.selection();
+                  context.push(AppRoutes.settings.path);
+                },
                 icon: const Icon(Icons.settings_outlined),
               ),
             ],
@@ -118,15 +132,20 @@ class HomePage extends ConsumerWidget {
           ),
           const SizedBox(height: AppSpacing.lg),
           if (state.status == HomeStatus.error)
-            KitEmpty(
-              icon: Icons.error_outline_rounded,
-              title: t.message(
+            KitError(
+              message: t.message(
                 state.errorKey ?? 'home.loadError',
                 shouldTranslate: true,
               ),
-              body: t.home.emptyBody,
+              retryLabel: t.app.actions.retry,
+              onRetry: () => ref.read(homeControllerProvider.notifier).retry(),
             )
-          else if (state.dashboard != null)
+          else if (state.status == HomeStatus.loading || state.dashboard == null)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: AppSpacing.xxl),
+              child: KitLoading(),
+            )
+          else
             ..._dashboard(
               context,
               t,
@@ -134,12 +153,6 @@ class HomePage extends ConsumerWidget {
               calendar: calendar,
               currency: currency,
               persian: persian,
-            )
-          else
-            KitEmpty(
-              icon: Icons.auto_awesome_rounded,
-              title: t.home.emptyTitle,
-              body: t.home.emptyBody,
             ),
           const SizedBox(height: 72),
         ],
@@ -186,47 +199,58 @@ class HomePage extends ConsumerWidget {
     }
 
     return [
-      HomeReportCard(
-        title: t.home.reportTitle,
-        paidOutLabel: t.home.paidOut(amount: money(dashboard.report.paidOut)),
-        paidInLabel: t.home.paidIn(amount: money(dashboard.report.paidIn)),
-        stillOweLabel:
-            t.home.stillOwe(amount: money(dashboard.report.remainingPay)),
-        dueByEndLabel:
-            t.home.dueByEnd(amount: money(dashboard.report.dueByPeriodEnd)),
+      KitFadeIn(
+        child: HomeReportCard(
+          title: t.home.reportTitle,
+          paidOutLabel: t.home.paidOut(amount: money(dashboard.report.paidOut)),
+          paidInLabel: t.home.paidIn(amount: money(dashboard.report.paidIn)),
+          stillOweLabel:
+              t.home.stillOwe(amount: money(dashboard.report.remainingPay)),
+          dueByEndLabel:
+              t.home.dueByEnd(amount: money(dashboard.report.dueByPeriodEnd)),
+        ),
       ),
       const SizedBox(height: AppSpacing.md),
       if (dashboard.overdue.isNotEmpty) ...[
-        HomeDueList(
-          title: t.home.overdue,
+        KitFadeIn(
+          delay: const Duration(milliseconds: 40),
+          child: HomeDueList(
+            title: t.home.overdue,
+            emptyLabel: t.home.emptyBody,
+            rows: dashboard.overdue,
+            amountOf: (row) => money(row.remainingAmount),
+            dueOf: due,
+            statusOf: status,
+            accentOf: accent,
+            onTap: (row) => context.push(AppRoutes.moneyItemPath(row.id)),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+      ],
+      KitFadeIn(
+        delay: const Duration(milliseconds: 80),
+        child: HomeDueList(
+          title: t.home.dueThisWeek,
           emptyLabel: t.home.emptyBody,
-          rows: dashboard.overdue,
+          rows: dashboard.dueThisWeek,
           amountOf: (row) => money(row.remainingAmount),
           dueOf: due,
           statusOf: status,
           accentOf: accent,
           onTap: (row) => context.push(AppRoutes.moneyItemPath(row.id)),
         ),
-        const SizedBox(height: AppSpacing.md),
-      ],
-      HomeDueList(
-        title: t.home.dueThisWeek,
-        emptyLabel: t.home.emptyBody,
-        rows: dashboard.dueThisWeek,
-        amountOf: (row) => money(row.remainingAmount),
-        dueOf: due,
-        statusOf: status,
-        accentOf: accent,
-        onTap: (row) => context.push(AppRoutes.moneyItemPath(row.id)),
       ),
       const SizedBox(height: AppSpacing.md),
-      HomeBalancesCard(
-        title: t.home.whoOwes,
-        emptyLabel: t.home.emptyBalances,
-        balances: dashboard.balances,
-        payLabelOf: (row) => t.home.iOwe(amount: money(row.payRemaining)),
-        receiveLabelOf: (row) =>
-            t.home.theyOwe(amount: money(row.receiveRemaining)),
+      KitFadeIn(
+        delay: const Duration(milliseconds: 120),
+        child: HomeBalancesCard(
+          title: t.home.whoOwes,
+          emptyLabel: t.home.emptyBalances,
+          balances: dashboard.balances,
+          payLabelOf: (row) => t.home.iOwe(amount: money(row.payRemaining)),
+          receiveLabelOf: (row) =>
+              t.home.theyOwe(amount: money(row.receiveRemaining)),
+        ),
       ),
     ];
   }

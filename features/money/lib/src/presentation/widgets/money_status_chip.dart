@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ui_kit/ui_kit.dart' show AppSpacing;
+import 'package:ui_kit/ui_kit.dart' show AppColors, AppSpacing;
 
 class MoneyStatusChip extends StatelessWidget {
   const MoneyStatusChip({
@@ -25,7 +25,7 @@ class MoneyStatusChip extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: color,
+              color: AppColors.onTint(color),
               fontWeight: FontWeight.w700,
             ),
       ),
