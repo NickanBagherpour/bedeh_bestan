@@ -5,8 +5,12 @@ void main() {
   test('nested money paths stay on the accounts tab', () {
     expect(AppRoutes.fromPath('/money/item/abc'), AppRoutes.money);
     expect(AppRoutes.fromPath('/money/new'), AppRoutes.money);
+    expect(AppRoutes.fromPath('/money/parties'), AppRoutes.money);
+    expect(AppRoutes.fromPath('/money/parties/abc/edit'), AppRoutes.money);
     expect(AppRoutes.indexOfPath('/money/item/abc/edit'), 1);
     expect(AppRoutes.moneyItemPath('x'), '/money/item/x');
+    expect(AppRoutes.partyItemPath('x'), '/money/parties/x');
+    expect(AppRoutes.partyEditPath('x'), '/money/parties/x/edit');
     expect(AppRoutes.moneyNewPath(direction: 'pay'), '/money/new?direction=pay');
     expect(AppRoutes.fromPath('/calendar/item/abc'), AppRoutes.calendar);
     expect(AppRoutes.indexOfPath('/calendar/new'), 2);

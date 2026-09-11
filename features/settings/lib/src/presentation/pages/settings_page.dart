@@ -1,6 +1,7 @@
 import 'package:core/core.dart' show AppCurrency, CalendarPreference;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:translations/translations.dart' show Translations;
 import 'package:ui_kit/ui_kit.dart' show AppHaptics, AppSpacing;
 
@@ -108,6 +109,11 @@ class SettingsPage extends ConsumerWidget {
               ],
             ),
           ),
+          SettingsSection(
+            title: t.settings.about,
+            footer: t.settings.privacyBody,
+            child: const _AppVersionTile(),
+          ),
           Text(
             t.app.latinName,
             style: theme.textTheme.bodySmall?.copyWith(
@@ -139,4 +145,40 @@ Future<void> _runBackup(
     AppHaptics.confirm();
   }
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+}
+
+class _AppVersionTile extends StatelessWidget {
+  const _AppVersionTile();
+
+  @override
+  Widget build(BuildContext context) {
+    final t = Translations.of(context);
+    return FutureBuilder<PackageInfo?>(
+      future: _packageInfo(),
+      builder: (context, snapshot) {
+        final version = snapshot.data?.version;
+        if (version == null || version.isEmpty) {
+          return ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.info_outline_rounded),
+            title: Text(t.settings.privacy),
+          );
+        }
+        return ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.info_outline_rounded),
+          title: Text(t.settings.version(version: version)),
+          subtitle: Text(t.settings.privacy),
+        );
+      },
+    );
+  }
+}
+
+Future<PackageInfo?> _packageInfo() async {
+  try {
+    return await PackageInfo.fromPlatform();
+  } catch (_) {
+    return null;
+  }
 }

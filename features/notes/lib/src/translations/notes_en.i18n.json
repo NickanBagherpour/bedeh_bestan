@@ -23,5 +23,7 @@
   "loadError": "Could not read notes.",
   "saveError": "Could not save the note.",
   "missingItem": "This note is gone.",
-  "allTags": "All tags"
+  "allTags": "All tags",
+  "searchParty": "Search people",
+  "searchMoney": "Search accounts"
 }

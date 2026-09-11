@@ -25,6 +25,7 @@ dependencies:
     path: ../../packages/local_db
 
   file_picker: ^8.3.7
+  package_info_plus: ^9.0.0
 
 dev_dependencies:
   flutter_test:

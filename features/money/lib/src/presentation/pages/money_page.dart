@@ -38,7 +38,19 @@ class MoneyPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(title: Text(t.money.title)),
+      appBar: AppBar(
+        title: Text(t.money.title),
+        actions: [
+          IconButton(
+            tooltip: t.money.parties,
+            onPressed: () {
+              AppHaptics.selection();
+              context.push(AppRoutes.parties.path);
+            },
+            icon: const Icon(Icons.people_alt_outlined),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           AppHaptics.light();

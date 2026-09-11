@@ -16,5 +16,9 @@
   "backupRestored": "Backup restored.",
   "backupCancelled": "Cancelled.",
   "backupFailed": "Could not complete the backup.",
-  "backupFileName": "bedeh-bestan-backup.json"
+  "backupFileName": "bedeh-bestan-backup.json",
+  "about": "About",
+  "version": "Version $version",
+  "privacy": "Privacy",
+  "privacyBody": "Everything stays on this phone. No account, no cloud, no tracking."
 }

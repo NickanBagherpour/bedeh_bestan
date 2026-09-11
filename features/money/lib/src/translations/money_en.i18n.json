@@ -66,5 +66,17 @@
     "bank": "Bank",
     "shop": "Shop",
     "custom": "Custom"
-  }
+  },
+  "parties": "Parties",
+  "searchParty": "Search parties",
+  "emptyParties": "No parties yet",
+  "emptyPartiesBody": "Add a person, shop, or bank you deal with.",
+  "emptyPartyFilter": "No party matches.",
+  "partyInUse": "This party still has accounts or notes. Remove those first.",
+  "missingPartyItem": "This party was not found.",
+  "deleteParty": "Delete party",
+  "newPartyTitle": "New party",
+  "editPartyTitle": "Edit party",
+  "linkedAccounts": "Accounts",
+  "noLinkedAccounts": "No accounts with this party yet."
 }

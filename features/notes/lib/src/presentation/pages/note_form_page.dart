@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:local_db/local_db.dart' show MoneyItem, Party;
 import 'package:translations/translations.dart' show Translations;
-import 'package:ui_kit/ui_kit.dart' show AppHaptics, AppSpacing, KitError, KitLoading;
+import 'package:ui_kit/ui_kit.dart'
+    show AppHaptics, AppSpacing, KitError, KitLoading, KitSearchSelect;
 
 import '../../application/controllers/notes_controller.dart';
 import '../../application/note_query.dart';
@@ -26,8 +28,6 @@ class _NoteFormPageState extends ConsumerState<NoteFormPage> {
   String? _moneyItemId;
   bool _loaded = false;
   bool _saving = false;
-  int _partyFieldGen = 0;
-  int _moneyFieldGen = 0;
 
   bool get _isEdit => widget.noteId != null;
 
@@ -74,10 +74,20 @@ class _NoteFormPageState extends ConsumerState<NoteFormPage> {
       for (final item in state.moneyItems.values)
         if (_partyId == null || item.partyId == _partyId) item,
     ]..sort((a, b) => a.title.compareTo(b.title));
-    final partyValue =
-        parties.any((party) => party.id == _partyId) ? _partyId! : '';
-    final moneyValue =
-        moneyItems.any((item) => item.id == _moneyItemId) ? _moneyItemId! : '';
+    Party? selectedParty;
+    for (final party in parties) {
+      if (party.id == _partyId) {
+        selectedParty = party;
+        break;
+      }
+    }
+    MoneyItem? selectedMoney;
+    for (final item in moneyItems) {
+      if (item.id == _moneyItemId) {
+        selectedMoney = item;
+        break;
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -113,48 +123,42 @@ class _NoteFormPageState extends ConsumerState<NoteFormPage> {
             onChanged: (value) => setState(() => _pinned = value),
           ),
           const SizedBox(height: AppSpacing.sm),
-          DropdownButtonFormField<String>(
-            key: ValueKey('party-$_partyFieldGen-$partyValue'),
-            initialValue: partyValue,
-            isExpanded: true,
-            decoration: InputDecoration(labelText: t.notes.party),
-            items: [
-              DropdownMenuItem(value: '', child: Text(t.notes.none)),
-              for (final party in parties)
-                DropdownMenuItem(value: party.id, child: Text(party.name)),
-            ],
-            onChanged: (value) {
+          KitSearchSelect<Party>(
+            label: t.notes.party,
+            searchHint: t.notes.searchParty,
+            noneLabel: t.notes.none,
+            emptyLabel: t.notes.emptyFilter,
+            items: parties,
+            value: selectedParty,
+            labelOf: (party) => party.name,
+            onSelected: (party) {
               setState(() {
-                _partyId = (value == null || value.isEmpty) ? null : value;
+                _partyId = party?.id;
                 final money = state.moneyFor(_moneyItemId);
                 if (money != null &&
                     _partyId != null &&
                     money.partyId != _partyId) {
                   _moneyItemId = null;
-                  _moneyFieldGen++;
                 }
               });
             },
           ),
           const SizedBox(height: AppSpacing.md),
-          DropdownButtonFormField<String>(
-            key: ValueKey('money-$_moneyFieldGen-$moneyValue'),
-            initialValue: moneyValue,
-            isExpanded: true,
-            decoration: InputDecoration(labelText: t.notes.money),
-            items: [
-              DropdownMenuItem(value: '', child: Text(t.notes.none)),
-              for (final item in moneyItems)
-                DropdownMenuItem(value: item.id, child: Text(item.title)),
-            ],
-            onChanged: (value) {
+          KitSearchSelect<MoneyItem>(
+            label: t.notes.money,
+            searchHint: t.notes.searchMoney,
+            noneLabel: t.notes.none,
+            emptyLabel: t.notes.emptyFilter,
+            items: moneyItems,
+            value: selectedMoney,
+            labelOf: (item) => item.title,
+            onSelected: (item) {
               setState(() {
-                _moneyItemId = (value == null || value.isEmpty) ? null : value;
+                _moneyItemId = item?.id;
                 if (_moneyItemId != null) {
                   final partyId = state.moneyFor(_moneyItemId)?.partyId;
                   if (partyId != null && partyId != _partyId) {
                     _partyId = partyId;
-                    _partyFieldGen++;
                   }
                 }
               });

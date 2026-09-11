@@ -13,3 +13,4 @@ export 'src/widgets/kit_empty.dart';
 export 'src/widgets/kit_error.dart';
 export 'src/widgets/kit_fade_in.dart';
 export 'src/widgets/kit_loading.dart';
+export 'src/widgets/kit_search_select.dart';

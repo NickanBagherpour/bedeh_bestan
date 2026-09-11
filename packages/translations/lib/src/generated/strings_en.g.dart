@@ -416,6 +416,42 @@ class Translations$money$en {
 	late final Translations$money$status$en status = Translations$money$status$en.internal(_root);
 	late final Translations$money$direction$en direction = Translations$money$direction$en.internal(_root);
 	late final Translations$money$partyKind$en partyKind = Translations$money$partyKind$en.internal(_root);
+
+	/// en: 'Parties'
+	String get parties => 'Parties';
+
+	/// en: 'Search parties'
+	String get searchParty => 'Search parties';
+
+	/// en: 'No parties yet'
+	String get emptyParties => 'No parties yet';
+
+	/// en: 'Add a person, shop, or bank you deal with.'
+	String get emptyPartiesBody => 'Add a person, shop, or bank you deal with.';
+
+	/// en: 'No party matches.'
+	String get emptyPartyFilter => 'No party matches.';
+
+	/// en: 'This party still has accounts or notes. Remove those first.'
+	String get partyInUse => 'This party still has accounts or notes. Remove those first.';
+
+	/// en: 'This party was not found.'
+	String get missingPartyItem => 'This party was not found.';
+
+	/// en: 'Delete party'
+	String get deleteParty => 'Delete party';
+
+	/// en: 'New party'
+	String get newPartyTitle => 'New party';
+
+	/// en: 'Edit party'
+	String get editPartyTitle => 'Edit party';
+
+	/// en: 'Accounts'
+	String get linkedAccounts => 'Accounts';
+
+	/// en: 'No accounts with this party yet.'
+	String get noLinkedAccounts => 'No accounts with this party yet.';
 }
 
 // Path: notes
@@ -500,6 +536,12 @@ class Translations$notes$en {
 
 	/// en: 'All tags'
 	String get allTags => 'All tags';
+
+	/// en: 'Search people'
+	String get searchParty => 'Search people';
+
+	/// en: 'Search accounts'
+	String get searchMoney => 'Search accounts';
 }
 
 // Path: settings
@@ -563,6 +605,18 @@ class Translations$settings$en {
 
 	/// en: 'bedeh-bestan-backup.json'
 	String get backupFileName => 'bedeh-bestan-backup.json';
+
+	/// en: 'About'
+	String get about => 'About';
+
+	/// en: 'Version $version'
+	String version({required Object version}) => 'Version ${version}';
+
+	/// en: 'Privacy'
+	String get privacy => 'Privacy';
+
+	/// en: 'Everything stays on this phone. No account, no cloud, no tracking.'
+	String get privacyBody => 'Everything stays on this phone. No account, no cloud, no tracking.';
 }
 
 // Path: app.currency
@@ -680,6 +734,9 @@ class Translations$app$actions$en {
 
 	/// en: 'Add'
 	String get add => 'Add';
+
+	/// en: 'Search'
+	String get search => 'Search';
 }
 
 // Path: calendar.repeatRule
@@ -830,6 +887,7 @@ extension on Translations {
 			'app.actions.close' => 'Close',
 			'app.actions.save' => 'Save',
 			'app.actions.add' => 'Add',
+			'app.actions.search' => 'Search',
 			'calendar.title' => 'Calendar',
 			'calendar.fab' => 'Reminder',
 			'calendar.emptyTitle' => 'No reminders this month',
@@ -954,6 +1012,18 @@ extension on Translations {
 			'money.partyKind.bank' => 'Bank',
 			'money.partyKind.shop' => 'Shop',
 			'money.partyKind.custom' => 'Custom',
+			'money.parties' => 'Parties',
+			'money.searchParty' => 'Search parties',
+			'money.emptyParties' => 'No parties yet',
+			'money.emptyPartiesBody' => 'Add a person, shop, or bank you deal with.',
+			'money.emptyPartyFilter' => 'No party matches.',
+			'money.partyInUse' => 'This party still has accounts or notes. Remove those first.',
+			'money.missingPartyItem' => 'This party was not found.',
+			'money.deleteParty' => 'Delete party',
+			'money.newPartyTitle' => 'New party',
+			'money.editPartyTitle' => 'Edit party',
+			'money.linkedAccounts' => 'Accounts',
+			'money.noLinkedAccounts' => 'No accounts with this party yet.',
 			'notes.title' => 'Notes',
 			'notes.fab' => 'Note',
 			'notes.emptyTitle' => 'No notes yet',
@@ -979,6 +1049,8 @@ extension on Translations {
 			'notes.saveError' => 'Could not save the note.',
 			'notes.missingItem' => 'This note is gone.',
 			'notes.allTags' => 'All tags',
+			'notes.searchParty' => 'Search people',
+			'notes.searchMoney' => 'Search accounts',
 			'settings.title' => 'Settings',
 			'settings.theme' => 'Theme',
 			'settings.language' => 'Language',
@@ -997,6 +1069,10 @@ extension on Translations {
 			'settings.backupCancelled' => 'Cancelled.',
 			'settings.backupFailed' => 'Could not complete the backup.',
 			'settings.backupFileName' => 'bedeh-bestan-backup.json',
+			'settings.about' => 'About',
+			'settings.version' => ({required Object version}) => 'Version ${version}',
+			'settings.privacy' => 'Privacy',
+			'settings.privacyBody' => 'Everything stays on this phone. No account, no cloud, no tracking.',
 			_ => null,
 		};
 	}

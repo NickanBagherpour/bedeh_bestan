@@ -1,5 +1,5 @@
 import 'package:local_db/local_db.dart'
-    show AppDatabase, MoneyItem, MoneyPayment, Party, newEntityId;
+    show AppDatabase, MoneyItem, MoneyPayment, Party, PartyUsage, newEntityId;
 
 final class MoneyRepository {
   MoneyRepository({required AppDatabase database}) : _database = database;
@@ -19,6 +19,10 @@ final class MoneyRepository {
   Future<Party?> getParty(String id) => _database.getParty(id);
 
   Future<void> upsertParty(Party party) => _database.upsertParty(party);
+
+  Future<PartyUsage> partyUsage(String id) => _database.partyUsage(id);
+
+  Future<void> deleteParty(String id) => _database.deleteParty(id);
 
   Future<void> upsertItem(MoneyItem item) => _database.upsertMoneyItem(item);
 

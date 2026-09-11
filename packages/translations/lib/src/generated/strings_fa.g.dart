@@ -198,6 +198,18 @@ class _Translations$money$fa extends Translations$money$en {
 	@override late final _Translations$money$status$fa status = _Translations$money$status$fa._(_root);
 	@override late final _Translations$money$direction$fa direction = _Translations$money$direction$fa._(_root);
 	@override late final _Translations$money$partyKind$fa partyKind = _Translations$money$partyKind$fa._(_root);
+	@override String get parties => 'طرف‌حساب‌ها';
+	@override String get searchParty => 'جستجوی طرف‌حساب';
+	@override String get emptyParties => 'هنوز طرف‌حسابی نیست';
+	@override String get emptyPartiesBody => 'شخص، فروشگاه یا بانکی که باهاش حساب داری را اضافه کن.';
+	@override String get emptyPartyFilter => 'طرف‌حسابی با این جستجو پیدا نشد.';
+	@override String get partyInUse => 'این طرف‌حساب هنوز حساب یا یادداشت دارد. اول آنها را بردار.';
+	@override String get missingPartyItem => 'این طرف‌حساب پیدا نشد.';
+	@override String get deleteParty => 'حذف طرف‌حساب';
+	@override String get newPartyTitle => 'طرف‌حساب تازه';
+	@override String get editPartyTitle => 'ویرایش طرف‌حساب';
+	@override String get linkedAccounts => 'حساب‌ها';
+	@override String get noLinkedAccounts => 'هنوز حسابی با این طرف‌حساب نیست.';
 }
 
 // Path: notes
@@ -232,6 +244,8 @@ class _Translations$notes$fa extends Translations$notes$en {
 	@override String get saveError => 'ذخیرهٔ یادداشت ممکن نشد.';
 	@override String get missingItem => 'این یادداشت دیگر نیست.';
 	@override String get allTags => 'همهٔ برچسب‌ها';
+	@override String get searchParty => 'جستجوی طرف حساب';
+	@override String get searchMoney => 'جستجوی حساب';
 }
 
 // Path: settings
@@ -259,6 +273,10 @@ class _Translations$settings$fa extends Translations$settings$en {
 	@override String get backupCancelled => 'لغو شد.';
 	@override String get backupFailed => 'پشتیبان کامل نشد.';
 	@override String get backupFileName => 'bedeh-bestan-backup.json';
+	@override String get about => 'درباره';
+	@override String version({required Object version}) => 'نسخه ${version}';
+	@override String get privacy => 'حریم خصوصی';
+	@override String get privacyBody => 'همه‌چیز روی همین گوشی می‌ماند. حساب کاربری، ابر و ردیابی نداریم.';
 }
 
 // Path: app.currency
@@ -334,6 +352,7 @@ class _Translations$app$actions$fa extends Translations$app$actions$en {
 	@override String get close => 'بستن';
 	@override String get save => 'ذخیره';
 	@override String get add => 'افزودن';
+	@override String get search => 'جستجو';
 }
 
 // Path: calendar.repeatRule
@@ -438,6 +457,7 @@ extension on TranslationsFa {
 			'app.actions.close' => 'بستن',
 			'app.actions.save' => 'ذخیره',
 			'app.actions.add' => 'افزودن',
+			'app.actions.search' => 'جستجو',
 			'calendar.title' => 'تقویم',
 			'calendar.fab' => 'یادآوری',
 			'calendar.emptyTitle' => 'این ماه یادآوری نیست',
@@ -562,6 +582,18 @@ extension on TranslationsFa {
 			'money.partyKind.bank' => 'بانک',
 			'money.partyKind.shop' => 'فروشگاه',
 			'money.partyKind.custom' => 'سایر',
+			'money.parties' => 'طرف‌حساب‌ها',
+			'money.searchParty' => 'جستجوی طرف‌حساب',
+			'money.emptyParties' => 'هنوز طرف‌حسابی نیست',
+			'money.emptyPartiesBody' => 'شخص، فروشگاه یا بانکی که باهاش حساب داری را اضافه کن.',
+			'money.emptyPartyFilter' => 'طرف‌حسابی با این جستجو پیدا نشد.',
+			'money.partyInUse' => 'این طرف‌حساب هنوز حساب یا یادداشت دارد. اول آنها را بردار.',
+			'money.missingPartyItem' => 'این طرف‌حساب پیدا نشد.',
+			'money.deleteParty' => 'حذف طرف‌حساب',
+			'money.newPartyTitle' => 'طرف‌حساب تازه',
+			'money.editPartyTitle' => 'ویرایش طرف‌حساب',
+			'money.linkedAccounts' => 'حساب‌ها',
+			'money.noLinkedAccounts' => 'هنوز حسابی با این طرف‌حساب نیست.',
 			'notes.title' => 'یادداشت',
 			'notes.fab' => 'یادداشت',
 			'notes.emptyTitle' => 'هنوز یادداشتی نیست',
@@ -587,6 +619,8 @@ extension on TranslationsFa {
 			'notes.saveError' => 'ذخیرهٔ یادداشت ممکن نشد.',
 			'notes.missingItem' => 'این یادداشت دیگر نیست.',
 			'notes.allTags' => 'همهٔ برچسب‌ها',
+			'notes.searchParty' => 'جستجوی طرف حساب',
+			'notes.searchMoney' => 'جستجوی حساب',
 			'settings.title' => 'تنظیمات',
 			'settings.theme' => 'پوسته',
 			'settings.language' => 'زبان',
@@ -605,6 +639,10 @@ extension on TranslationsFa {
 			'settings.backupCancelled' => 'لغو شد.',
 			'settings.backupFailed' => 'پشتیبان کامل نشد.',
 			'settings.backupFileName' => 'bedeh-bestan-backup.json',
+			'settings.about' => 'درباره',
+			'settings.version' => ({required Object version}) => 'نسخه ${version}',
+			'settings.privacy' => 'حریم خصوصی',
+			'settings.privacyBody' => 'همه‌چیز روی همین گوشی می‌ماند. حساب کاربری، ابر و ردیابی نداریم.',
 			_ => null,
 		};
 	}

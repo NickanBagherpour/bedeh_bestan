@@ -19,6 +19,16 @@ abstract final class AppRoutes {
     name: 'moneyEdit',
     path: '/money/item/:id/edit',
   );
+  static const parties = AppRoute(name: 'parties', path: '/money/parties');
+  static const partyNew = AppRoute(name: 'partyNew', path: '/money/parties/new');
+  static const partyItem = AppRoute(
+    name: 'partyItem',
+    path: '/money/parties/:id',
+  );
+  static const partyEdit = AppRoute(
+    name: 'partyEdit',
+    path: '/money/parties/:id/edit',
+  );
   static const calendar = AppRoute(name: 'calendar', path: '/calendar');
   static const calendarNew = AppRoute(name: 'calendarNew', path: '/calendar/new');
   static const calendarItem = AppRoute(
@@ -47,6 +57,10 @@ abstract final class AppRoutes {
     moneyNew,
     moneyItem,
     moneyEdit,
+    parties,
+    partyNew,
+    partyItem,
+    partyEdit,
     calendar,
     calendarNew,
     calendarItem,
@@ -61,6 +75,10 @@ abstract final class AppRoutes {
   static String moneyItemPath(String id) => '/money/item/$id';
 
   static String moneyEditPath(String id) => '/money/item/$id/edit';
+
+  static String partyItemPath(String id) => '/money/parties/$id';
+
+  static String partyEditPath(String id) => '/money/parties/$id/edit';
 
   static String moneyNewPath({String? direction}) {
     if (direction == null || direction.isEmpty) return moneyNew.path;

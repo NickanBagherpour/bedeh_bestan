@@ -17,7 +17,8 @@ import 'package:go_router/go_router.dart';
 import 'package:local_db/local_db.dart'
     show MoneyDirection, MoneyItem, MoneySchedule, Party, PartyKind;
 import 'package:translations/translations.dart' show Translations;
-import 'package:ui_kit/ui_kit.dart' show AppColors, AppHaptics, AppSpacing, KitCard;
+import 'package:ui_kit/ui_kit.dart'
+    show AppColors, AppHaptics, AppSpacing, KitCard, KitSearchSelect;
 
 import '../../application/controllers/money_list_controller.dart';
 import '../../application/state/money_list_state.dart';
@@ -200,7 +201,7 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
               children: [
                 for (final kind in PartyKind.values)
                   ChoiceChip(
-                    label: Text(_kindLabel(t, kind)),
+                    label: Text(partyKindLabel(t, kind)),
                     selected: _partyKind == kind,
                     onSelected: (_) {
                       AppHaptics.selection();
@@ -210,20 +211,17 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
               ],
             ),
           ] else
-            Wrap(
-              spacing: AppSpacing.xs,
-              runSpacing: AppSpacing.xs,
-              children: [
-                for (final party in parties)
-                  ChoiceChip(
-                    label: Text(party.name),
-                    selected: _partyId == party.id,
-                    onSelected: (_) {
-                      AppHaptics.selection();
-                      setState(() => _partyId = party.id);
-                    },
-                  ),
-              ],
+            KitSearchSelect<Party>(
+              label: t.money.party,
+              searchHint: t.money.searchParty,
+              emptyLabel: t.money.emptyPartyFilter,
+              items: parties,
+              value: _selectedParty(parties),
+              labelOf: (party) => party.name,
+              onSelected: (party) {
+                if (party == null) return;
+                setState(() => _partyId = party.id);
+              },
             ),
           const SizedBox(height: AppSpacing.md),
           TextField(
@@ -342,6 +340,15 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
     if (id == null) return null;
     for (final item in list.items) {
       if (item.id == id) return item;
+    }
+    return null;
+  }
+
+  Party? _selectedParty(List<Party> parties) {
+    final id = _partyId;
+    if (id == null) return null;
+    for (final party in parties) {
+      if (party.id == id) return party;
     }
     return null;
   }
@@ -506,13 +513,4 @@ class _DateField extends StatelessWidget {
       onTap: onPick,
     );
   }
-}
-
-String _kindLabel(Translations t, PartyKind kind) {
-  return switch (kind) {
-    PartyKind.person => t.money.partyKind.person,
-    PartyKind.bank => t.money.partyKind.bank,
-    PartyKind.shop => t.money.partyKind.shop,
-    PartyKind.custom => t.money.partyKind.custom,
-  };
 }

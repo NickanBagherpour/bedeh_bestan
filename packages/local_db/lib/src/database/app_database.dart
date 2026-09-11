@@ -12,6 +12,7 @@ import '../models/party.dart';
 import '../models/reminder.dart';
 import 'backup.dart';
 import 'ids.dart';
+import 'party_exception.dart';
 import 'payment_exception.dart';
 import 'tables.dart';
 import 'tags.dart';
@@ -164,6 +165,31 @@ class AppDatabase extends _$AppDatabase {
         updatedAt: Value(party.updatedAt),
       ),
     );
+  }
+
+  Future<PartyUsage> partyUsage(String id) async {
+    final moneyRows = await (select(moneyItems)
+          ..where((row) => row.partyId.equals(id)))
+        .get();
+    final noteRows = await (select(notes)
+          ..where((row) => row.partyId.equals(id)))
+        .get();
+    return PartyUsage(
+      moneyCount: moneyRows.length,
+      noteCount: noteRows.length,
+    );
+  }
+
+  Future<void> deleteParty(String id) async {
+    final usage = await partyUsage(id);
+    if (!usage.isEmpty) {
+      throw const PartyException(PartyFailure.inUse);
+    }
+    final existing = await getParty(id);
+    if (existing == null) {
+      throw const PartyException(PartyFailure.missing);
+    }
+    await (delete(parties)..where((row) => row.id.equals(id))).go();
   }
 
   Future<void> upsertMoneyItem(MoneyItem item) {

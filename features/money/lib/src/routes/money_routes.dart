@@ -6,6 +6,9 @@ import 'package:local_db/local_db.dart' show MoneyDirection;
 import '../presentation/pages/money_detail_page.dart';
 import '../presentation/pages/money_form_page.dart';
 import '../presentation/pages/money_page.dart';
+import '../presentation/pages/party_detail_page.dart';
+import '../presentation/pages/party_form_page.dart';
+import '../presentation/pages/party_list_page.dart';
 
 List<RouteBase> buildMoneyRoutes(Ref ref) {
   return [
@@ -56,6 +59,42 @@ List<RouteBase> buildMoneyOverlayRoutes(Ref ref) {
             return buildRoutePage(
               state: state,
               child: MoneyFormPage(itemId: id),
+            );
+          },
+        ),
+      ],
+    ),
+    GoRoute(
+      path: AppRoutes.parties.path,
+      name: AppRoutes.parties.name,
+      pageBuilder: (context, state) =>
+          buildRoutePage(state: state, child: const PartyListPage()),
+    ),
+    GoRoute(
+      path: AppRoutes.partyNew.path,
+      name: AppRoutes.partyNew.name,
+      pageBuilder: (context, state) =>
+          buildRoutePage(state: state, child: const PartyFormPage()),
+    ),
+    GoRoute(
+      path: AppRoutes.partyItem.path,
+      name: AppRoutes.partyItem.name,
+      pageBuilder: (context, state) {
+        final id = state.pathParameters['id'] ?? '';
+        return buildRoutePage(
+          state: state,
+          child: PartyDetailPage(partyId: id),
+        );
+      },
+      routes: [
+        GoRoute(
+          path: 'edit',
+          name: AppRoutes.partyEdit.name,
+          pageBuilder: (context, state) {
+            final id = state.pathParameters['id'] ?? '';
+            return buildRoutePage(
+              state: state,
+              child: PartyFormPage(partyId: id),
             );
           },
         ),

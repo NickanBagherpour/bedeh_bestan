@@ -16,5 +16,9 @@
   "backupRestored": "پشتیبان بازگردانی شد.",
   "backupCancelled": "لغو شد.",
   "backupFailed": "پشتیبان کامل نشد.",
-  "backupFileName": "bedeh-bestan-backup.json"
+  "backupFileName": "bedeh-bestan-backup.json",
+  "about": "درباره",
+  "version": "نسخه $version",
+  "privacy": "حریم خصوصی",
+  "privacyBody": "همه‌چیز روی همین گوشی می‌ماند. حساب کاربری، ابر و ردیابی نداریم."
 }

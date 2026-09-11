@@ -1,6 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_db/local_db.dart'
-    show MoneyItem, Party, PartyKind, PaymentException, PaymentFailure;
+    show
+        MoneyItem,
+        Party,
+        PartyException,
+        PartyFailure,
+        PartyKind,
+        PaymentException,
+        PaymentFailure;
 
 import '../../data/repositories/money_repository_provider.dart';
 import '../money_query.dart';
@@ -72,20 +79,42 @@ final class MoneyListController extends Notifier<MoneyListState> {
     required String name,
     required PartyKind kind,
     String? id,
+    String? note,
   }) async {
     final repo = ref.read(moneyRepositoryProvider);
     final now = DateTime.now();
     final existing = id == null ? null : await repo.getParty(id);
+    final String? resolvedNote;
+    if (note == null) {
+      resolvedNote = existing?.note;
+    } else {
+      final trimmed = note.trim();
+      resolvedNote = trimmed.isEmpty ? null : trimmed;
+    }
     final party = Party(
       id: id ?? repo.nextId('party'),
       name: name.trim(),
       kind: kind,
       createdAt: existing?.createdAt ?? now,
       updatedAt: now,
-      note: existing?.note,
+      note: resolvedNote,
     );
     await repo.upsertParty(party);
     return party;
+  }
+
+  Future<String?> deleteParty(String id) async {
+    try {
+      await ref.read(moneyRepositoryProvider).deleteParty(id);
+      return null;
+    } on PartyException catch (error) {
+      return switch (error.failure) {
+        PartyFailure.inUse => 'money.partyInUse',
+        PartyFailure.missing => 'money.missingPartyItem',
+      };
+    } catch (_) {
+      return 'money.saveError';
+    }
   }
 
   Future<String> saveDraft(MoneyDraft draft) async {

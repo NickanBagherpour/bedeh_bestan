@@ -66,5 +66,17 @@
     "bank": "بانک",
     "shop": "فروشگاه",
     "custom": "سایر"
-  }
+  },
+  "parties": "طرف‌حساب‌ها",
+  "searchParty": "جستجوی طرف‌حساب",
+  "emptyParties": "هنوز طرف‌حسابی نیست",
+  "emptyPartiesBody": "شخص، فروشگاه یا بانکی که باهاش حساب داری را اضافه کن.",
+  "emptyPartyFilter": "طرف‌حسابی با این جستجو پیدا نشد.",
+  "partyInUse": "این طرف‌حساب هنوز حساب یا یادداشت دارد. اول آنها را بردار.",
+  "missingPartyItem": "این طرف‌حساب پیدا نشد.",
+  "deleteParty": "حذف طرف‌حساب",
+  "newPartyTitle": "طرف‌حساب تازه",
+  "editPartyTitle": "ویرایش طرف‌حساب",
+  "linkedAccounts": "حساب‌ها",
+  "noLinkedAccounts": "هنوز حسابی با این طرف‌حساب نیست."
 }
