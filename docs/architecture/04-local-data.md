@@ -19,6 +19,7 @@ packages/local_db/
 - Seed is idempotent (`meta.seed.version`). Persian demo rows; keep them through Phase 7.
 - Money **status** is derived (`MoneyItem.statusOn`) from due date + remaining, not a stored column.
 - Feature repositories wrap `AppDatabase`; pages never touch Drift.
+- Money writes: `upsertParty`, `upsertMoneyItem`, `recordPayment` (partial pay + installment period advance).
 
 Tests: `packages/local_db/test/seed_test.dart`. After schema edits:  
 `cd packages/local_db && dart run build_runner build --delete-conflicting-outputs`

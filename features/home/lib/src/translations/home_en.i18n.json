@@ -1,13 +1,15 @@
 {
   "payAndReceive": "Give and take",
   "offlineBlurb": "Installments, receivables, and reminders — all on this device.",
-  "emptyTitle": "Home will come alive soon",
-  "emptyBody": "This week and who-owes-what show up here in the money phase.",
+  "emptyTitle": "Quiet week",
+  "emptyBody": "Nothing is due in the next seven days.",
   "loadError": "Could not read local data.",
-  "seedTitle": "Demo data is on this device",
-  "seedHint": "Lists and “this week” arrive in the next phase.",
-  "seedParties": "$count parties",
-  "seedOpenMoney": "$count open accounts",
-  "seedReminders": "$count reminders",
-  "seedNotes": "$count notes"
+  "dueThisWeek": "This week",
+  "overdue": "Overdue",
+  "whoOwes": "Who owes what",
+  "emptyBalances": "No open balances.",
+  "iOwe": "I owe $amount",
+  "theyOwe": "Owed to me $amount",
+  "fabPay": "I owe",
+  "fabReceive": "Owed to me"
 }

@@ -53,6 +53,49 @@ final class MoneyItem {
 
   bool get isSettled => remainingAmount <= 0;
 
+  MoneyItem copyWith({
+    String? id,
+    String? partyId,
+    MoneyDirection? direction,
+    String? title,
+    int? totalAmount,
+    int? paidAmount,
+    MoneySchedule? schedule,
+    int? installmentCount,
+    int? installmentAmount,
+    int? periodsPaid,
+    DateTime? startDate,
+    DateTime? nextDueDate,
+    String? note,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    bool clearNote = false,
+    bool clearInstallmentCount = false,
+    bool clearInstallmentAmount = false,
+  }) {
+    return MoneyItem(
+      id: id ?? this.id,
+      partyId: partyId ?? this.partyId,
+      direction: direction ?? this.direction,
+      title: title ?? this.title,
+      totalAmount: totalAmount ?? this.totalAmount,
+      paidAmount: paidAmount ?? this.paidAmount,
+      schedule: schedule ?? this.schedule,
+      installmentCount: clearInstallmentCount
+          ? null
+          : (installmentCount ?? this.installmentCount),
+      installmentAmount: clearInstallmentAmount
+          ? null
+          : (installmentAmount ?? this.installmentAmount),
+      periodsPaid: periodsPaid ?? this.periodsPaid,
+      startDate: startDate ?? this.startDate,
+      nextDueDate: nextDueDate ?? this.nextDueDate,
+      note: clearNote ? null : (note ?? this.note),
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
   MoneyStatus statusOn(DateTime now) {
     if (isSettled) return MoneyStatus.settled;
     final due = DateTime(nextDueDate.year, nextDueDate.month, nextDueDate.day);

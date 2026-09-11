@@ -29,7 +29,7 @@ On-device DB / SharedPreferences
   → Dumb widgets
 ```
 
-Phase 2 added Drift (`packages/local_db`) and a Persian seed. Home shows counts only.
+Phase 3 added money list / form / detail. Home shows due-this-week and who-owes-what.
 
 ## Dependency rules
 

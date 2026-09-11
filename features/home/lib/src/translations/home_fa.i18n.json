@@ -1,13 +1,15 @@
 {
   "payAndReceive": "بده و بستان",
   "offlineBlurb": "قسط‌ها، طلب‌ها و یادآوری‌ها — همه روی همین دستگاه.",
-  "emptyTitle": "خانه به‌زودی زنده می‌شود",
-  "emptyBody": "این هفته و «چه‌کسی چقدر» در فاز حساب می‌آید.",
+  "emptyTitle": "هفته‌ای آرام",
+  "emptyBody": "تا هفت روز آینده سررسیدی نیست.",
   "loadError": "خواندن دادهٔ محلی ممکن نشد.",
-  "seedTitle": "دادهٔ نمونه روی دستگاه است",
-  "seedHint": "فهرست حساب و «این هفته» در فاز بعد می‌آید.",
-  "seedParties": "$count طرف‌حساب",
-  "seedOpenMoney": "$count بده‌بستان باز",
-  "seedReminders": "$count یادآوری",
-  "seedNotes": "$count یادداشت"
+  "dueThisWeek": "این هفته",
+  "overdue": "معوق",
+  "whoOwes": "چه‌کسی چقدر",
+  "emptyBalances": "ماندهٔ بازی نیست.",
+  "iOwe": "بدهی $amount",
+  "theyOwe": "طلب $amount",
+  "fabPay": "بدهی",
+  "fabReceive": "طلب"
 }

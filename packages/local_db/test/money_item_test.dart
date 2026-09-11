@@ -36,4 +36,8 @@ void main() {
       MoneyStatus.upcoming,
     );
   });
+
+  test('addCalendarMonths clamps the day', () {
+    expect(addCalendarMonths(DateTime(2026, 1, 31), 1), DateTime(2026, 2, 28));
+  });
 }

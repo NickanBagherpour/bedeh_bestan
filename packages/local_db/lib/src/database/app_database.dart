@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 
@@ -8,6 +10,8 @@ import '../models/money_payment.dart';
 import '../models/note.dart';
 import '../models/party.dart';
 import '../models/reminder.dart';
+import 'ids.dart';
+import 'payment_exception.dart';
 import 'tables.dart';
 import 'tags.dart';
 
@@ -69,9 +73,36 @@ class AppDatabase extends _$AppDatabase {
     );
   }
 
+  Stream<List<Party>> watchParties() {
+    return select(parties).watch().map(
+      (rows) => [for (final row in rows) partyFromRow(row)],
+    );
+  }
+
+  Stream<List<MoneyItem>> watchMoneyItems() {
+    return select(moneyItems).watch().map(
+      (rows) => [for (final row in rows) moneyFromRow(row)],
+    );
+  }
+
+  Stream<List<MoneyPayment>> watchPaymentsFor(String moneyItemId) {
+    final query = select(moneyPayments)
+      ..where((row) => row.moneyItemId.equals(moneyItemId))
+      ..orderBy([(row) => OrderingTerm.desc(row.paidAt)]);
+    return query.watch().map(
+      (rows) => [for (final row in rows) paymentFromRow(row)],
+    );
+  }
+
   Future<List<Party>> listParties() async {
     final rows = await select(parties).get();
     return [for (final row in rows) partyFromRow(row)];
+  }
+
+  Future<Party?> getParty(String id) async {
+    final row = await (select(parties)..where((table) => table.id.equals(id)))
+        .getSingleOrNull();
+    return row == null ? null : partyFromRow(row);
   }
 
   Future<List<MoneyItem>> listMoneyItems() async {
@@ -79,11 +110,111 @@ class AppDatabase extends _$AppDatabase {
     return [for (final row in rows) moneyFromRow(row)];
   }
 
+  Future<MoneyItem?> getMoneyItem(String id) async {
+    final row = await (select(moneyItems)..where((table) => table.id.equals(id)))
+        .getSingleOrNull();
+    return row == null ? null : moneyFromRow(row);
+  }
+
   Future<List<MoneyPayment>> listPaymentsFor(String moneyItemId) async {
     final rows = await (select(moneyPayments)
           ..where((row) => row.moneyItemId.equals(moneyItemId)))
         .get();
     return [for (final row in rows) paymentFromRow(row)];
+  }
+
+  Future<void> upsertParty(Party party) {
+    return into(parties).insertOnConflictUpdate(
+      PartiesCompanion(
+        id: Value(party.id),
+        name: Value(party.name),
+        kind: Value(party.kind.name),
+        note: Value(party.note),
+        createdAt: Value(party.createdAt),
+        updatedAt: Value(party.updatedAt),
+      ),
+    );
+  }
+
+  Future<void> upsertMoneyItem(MoneyItem item) {
+    return into(moneyItems).insertOnConflictUpdate(
+      MoneyItemsCompanion(
+        id: Value(item.id),
+        partyId: Value(item.partyId),
+        direction: Value(item.direction.name),
+        title: Value(item.title),
+        totalAmount: Value(item.totalAmount),
+        paidAmount: Value(item.paidAmount),
+        schedule: Value(item.schedule.name),
+        installmentCount: Value(item.installmentCount),
+        installmentAmount: Value(item.installmentAmount),
+        periodsPaid: Value(item.periodsPaid),
+        startDate: Value(item.startDate),
+        nextDueDate: Value(item.nextDueDate),
+        note: Value(item.note),
+        createdAt: Value(item.createdAt),
+        updatedAt: Value(item.updatedAt),
+      ),
+    );
+  }
+
+  /// Records a (possibly partial) payment and updates remaining / installments.
+  Future<MoneyItem> recordPayment({
+    required String moneyItemId,
+    required int amount,
+    DateTime? paidAt,
+    String? note,
+    DateTime? now,
+  }) {
+    return transaction(() async {
+      final item = await getMoneyItem(moneyItemId);
+      if (item == null) {
+        throw const PaymentException(PaymentFailure.missingItem);
+      }
+      if (item.isSettled) {
+        throw const PaymentException(PaymentFailure.settled);
+      }
+      if (amount <= 0) {
+        throw const PaymentException(PaymentFailure.nonPositive);
+      }
+      if (amount > item.remainingAmount) {
+        throw const PaymentException(PaymentFailure.exceedsRemaining);
+      }
+
+      final clock = now ?? DateTime.now();
+      final at = paidAt ?? clock;
+      await into(moneyPayments).insert(
+        MoneyPaymentsCompanion.insert(
+          id: newEntityId('pay'),
+          moneyItemId: moneyItemId,
+          amount: amount,
+          paidAt: at,
+          note: Value(note),
+        ),
+      );
+
+      var periodsPaid = item.periodsPaid;
+      var nextDue = item.nextDueDate;
+      if (item.schedule == MoneySchedule.installment &&
+          item.installmentAmount != null &&
+          item.installmentAmount! > 0) {
+        final extra = amount ~/ item.installmentAmount!;
+        if (extra > 0) {
+          final cap = item.installmentCount ?? (periodsPaid + extra);
+          periodsPaid = math.min(cap, periodsPaid + extra);
+          nextDue = addCalendarMonths(item.nextDueDate, extra);
+        }
+      }
+
+      final updated = item.copyWith(
+        paidAmount: item.paidAmount + amount,
+        periodsPaid: periodsPaid,
+        nextDueDate: nextDue,
+        updatedAt: clock,
+      );
+      await upsertMoneyItem(updated);
+      return updated;
+    });
   }
 
   Future<List<Reminder>> listReminders() async {
@@ -174,5 +305,27 @@ Note noteFromRow(NoteRow row) {
     moneyItemId: row.moneyItemId,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
+  );
+}
+
+/// Gregorian month add that clamps the day (e.g. 31 Jan + 1 month → 28/29 Feb).
+DateTime addCalendarMonths(DateTime date, int months) {
+  final shifted = date.month - 1 + months;
+  final year = date.year + (shifted / 12).floor();
+  var month = (shifted % 12) + 1;
+  if (month <= 0) {
+    month += 12;
+  }
+  final lastDay = DateTime(year, month + 1, 0).day;
+  final day = date.day < lastDay ? date.day : lastDay;
+  return DateTime(
+    year,
+    month,
+    day,
+    date.hour,
+    date.minute,
+    date.second,
+    date.millisecond,
+    date.microsecond,
   );
 }

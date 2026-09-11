@@ -1,9 +1,11 @@
-import 'package:local_db/local_db.dart' show AppDatabase, LibrarySnapshot;
+import 'package:local_db/local_db.dart' show AppDatabase, MoneyItem, Party;
 
 final class HomeRepository {
   HomeRepository({required AppDatabase database}) : _database = database;
 
   final AppDatabase _database;
 
-  Future<LibrarySnapshot> snapshot() => _database.snapshot();
+  Stream<List<MoneyItem>> watchItems() => _database.watchMoneyItems();
+
+  Stream<List<Party>> watchParties() => _database.watchParties();
 }

@@ -5,6 +5,7 @@ import 'package:core/core.dart'
         initialAppSettingsProvider,
         loadAppSettings,
         sharedPreferencesProvider;
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:local_db/local_db.dart'
@@ -24,7 +25,6 @@ void main() {
     final database = openMemoryDatabase();
     await seedDemoData(database);
     await useAppDefaultLocale();
-    addTearDown(database.close);
 
     await tester.pumpWidget(
       ProviderScope(
@@ -45,6 +45,11 @@ void main() {
     expect(find.text('حساب'), findsOneWidget);
     expect(find.text('تقویم'), findsOneWidget);
     expect(find.text('یادداشت'), findsOneWidget);
-    expect(find.textContaining('طرف‌حساب'), findsOneWidget);
+    expect(find.text('این هفته'), findsOneWidget);
+
+    await database.close();
+    await tester.pump(const Duration(milliseconds: 50));
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(milliseconds: 50));
   });
 }

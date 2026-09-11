@@ -113,32 +113,38 @@ class Translations$home$en {
 	/// en: 'Installments, receivables, and reminders — all on this device.'
 	String get offlineBlurb => 'Installments, receivables, and reminders — all on this device.';
 
-	/// en: 'Home will come alive soon'
-	String get emptyTitle => 'Home will come alive soon';
+	/// en: 'Quiet week'
+	String get emptyTitle => 'Quiet week';
 
-	/// en: 'This week and who-owes-what show up here in the money phase.'
-	String get emptyBody => 'This week and who-owes-what show up here in the money phase.';
+	/// en: 'Nothing is due in the next seven days.'
+	String get emptyBody => 'Nothing is due in the next seven days.';
 
 	/// en: 'Could not read local data.'
 	String get loadError => 'Could not read local data.';
 
-	/// en: 'Demo data is on this device'
-	String get seedTitle => 'Demo data is on this device';
+	/// en: 'This week'
+	String get dueThisWeek => 'This week';
 
-	/// en: 'Lists and “this week” arrive in the next phase.'
-	String get seedHint => 'Lists and “this week” arrive in the next phase.';
+	/// en: 'Overdue'
+	String get overdue => 'Overdue';
 
-	/// en: '$count parties'
-	String seedParties({required Object count}) => '${count} parties';
+	/// en: 'Who owes what'
+	String get whoOwes => 'Who owes what';
 
-	/// en: '$count open accounts'
-	String seedOpenMoney({required Object count}) => '${count} open accounts';
+	/// en: 'No open balances.'
+	String get emptyBalances => 'No open balances.';
 
-	/// en: '$count reminders'
-	String seedReminders({required Object count}) => '${count} reminders';
+	/// en: 'I owe $amount'
+	String iOwe({required Object amount}) => 'I owe ${amount}';
 
-	/// en: '$count notes'
-	String seedNotes({required Object count}) => '${count} notes';
+	/// en: 'Owed to me $amount'
+	String theyOwe({required Object amount}) => 'Owed to me ${amount}';
+
+	/// en: 'I owe'
+	String get fabPay => 'I owe';
+
+	/// en: 'Owed to me'
+	String get fabReceive => 'Owed to me';
 }
 
 // Path: money
@@ -152,11 +158,162 @@ class Translations$money$en {
 	/// en: 'Accounts'
 	String get title => 'Accounts';
 
-	/// en: 'Your give-and-take will live here'
-	String get emptyTitle => 'Your give-and-take will live here';
+	/// en: 'No give-and-take yet'
+	String get emptyTitle => 'No give-and-take yet';
 
-	/// en: 'Debts, receivables, installments, and payments arrive in the money phase.'
-	String get emptyBody => 'Debts, receivables, installments, and payments arrive in the money phase.';
+	/// en: 'Add a debt or receivable in a couple of taps.'
+	String get emptyBody => 'Add a debt or receivable in a couple of taps.';
+
+	/// en: 'Nothing matches this filter.'
+	String get emptyFilter => 'Nothing matches this filter.';
+
+	/// en: 'Add'
+	String get add => 'Add';
+
+	/// en: 'I owe'
+	String get fabPay => 'I owe';
+
+	/// en: 'Owed to me'
+	String get fabReceive => 'Owed to me';
+
+	/// en: 'All'
+	String get filterAll => 'All';
+
+	/// en: 'I owe'
+	String get filterPay => 'I owe';
+
+	/// en: 'Owed to me'
+	String get filterReceive => 'Owed to me';
+
+	/// en: 'Hide settled'
+	String get hideSettled => 'Hide settled';
+
+	/// en: 'Show settled'
+	String get showSettled => 'Show settled';
+
+	/// en: 'Remaining'
+	String get remaining => 'Remaining';
+
+	/// en: 'Total'
+	String get total => 'Total';
+
+	/// en: 'Paid'
+	String get paid => 'Paid';
+
+	/// en: 'Due'
+	String get due => 'Due';
+
+	/// en: 'Party'
+	String get party => 'Party';
+
+	/// en: 'Title'
+	String get titleField => 'Title';
+
+	/// en: 'Amount'
+	String get amount => 'Amount';
+
+	/// en: 'Note'
+	String get note => 'Note';
+
+	/// en: 'Optional'
+	String get optional => 'Optional';
+
+	/// en: 'Schedule'
+	String get schedule => 'Schedule';
+
+	/// en: 'One-time'
+	String get oneTime => 'One-time';
+
+	/// en: 'Installment'
+	String get installment => 'Installment';
+
+	/// en: 'Periods'
+	String get periods => 'Periods';
+
+	/// en: 'Each installment'
+	String get installmentAmount => 'Each installment';
+
+	/// en: 'Total $amount'
+	String computedTotal({required Object amount}) => 'Total ${amount}';
+
+	/// en: 'Start'
+	String get startDate => 'Start';
+
+	/// en: 'Due date'
+	String get dueDate => 'Due date';
+
+	/// en: 'First due'
+	String get firstDue => 'First due';
+
+	/// en: 'New party'
+	String get newParty => 'New party';
+
+	/// en: 'Existing party'
+	String get existingParty => 'Existing party';
+
+	/// en: 'Name'
+	String get partyName => 'Name';
+
+	/// en: 'Save'
+	String get save => 'Save';
+
+	/// en: 'Edit'
+	String get edit => 'Edit';
+
+	/// en: 'Record payment'
+	String get recordPayment => 'Record payment';
+
+	/// en: 'Payment amount'
+	String get paymentAmount => 'Payment amount';
+
+	/// en: 'Payments'
+	String get payments => 'Payments';
+
+	/// en: 'No payments yet.'
+	String get noPayments => 'No payments yet.';
+
+	/// en: 'Record pay'
+	String get payCta => 'Record pay';
+
+	/// en: 'Record receive'
+	String get receiveCta => 'Record receive';
+
+	/// en: 'Enter a valid amount.'
+	String get invalidAmount => 'Enter a valid amount.';
+
+	/// en: 'Amount is more than remaining.'
+	String get payTooLarge => 'Amount is more than remaining.';
+
+	/// en: 'Add a title.'
+	String get missingTitle => 'Add a title.';
+
+	/// en: 'Pick or add a party.'
+	String get missingParty => 'Pick or add a party.';
+
+	/// en: 'This account was not found.'
+	String get missingItem => 'This account was not found.';
+
+	/// en: 'This account is already settled.'
+	String get alreadySettled => 'This account is already settled.';
+
+	/// en: 'Could not read local data.'
+	String get loadError => 'Could not read local data.';
+
+	/// en: 'Could not save.'
+	String get saveError => 'Could not save.';
+
+	/// en: 'New account'
+	String get newTitle => 'New account';
+
+	/// en: 'Edit account'
+	String get editTitle => 'Edit account';
+
+	/// en: '$paid of $total'
+	String periodsProgress({required Object paid, required Object total}) => '${paid} of ${total}';
+
+	late final Translations$money$status$en status = Translations$money$status$en.internal(_root);
+	late final Translations$money$direction$en direction = Translations$money$direction$en.internal(_root);
+	late final Translations$money$partyKind$en partyKind = Translations$money$partyKind$en.internal(_root);
 }
 
 // Path: notes
@@ -276,6 +433,63 @@ class Translations$app$actions$en {
 	String get add => 'Add';
 }
 
+// Path: money.status
+class Translations$money$status$en {
+	Translations$money$status$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Upcoming'
+	String get upcoming => 'Upcoming';
+
+	/// en: 'Due today'
+	String get dueToday => 'Due today';
+
+	/// en: 'Overdue'
+	String get overdue => 'Overdue';
+
+	/// en: 'Settled'
+	String get settled => 'Settled';
+}
+
+// Path: money.direction
+class Translations$money$direction$en {
+	Translations$money$direction$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'I owe'
+	String get pay => 'I owe';
+
+	/// en: 'Owed to me'
+	String get receive => 'Owed to me';
+}
+
+// Path: money.partyKind
+class Translations$money$partyKind$en {
+	Translations$money$partyKind$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Person'
+	String get person => 'Person';
+
+	/// en: 'Bank'
+	String get bank => 'Bank';
+
+	/// en: 'Shop'
+	String get shop => 'Shop';
+
+	/// en: 'Custom'
+	String get custom => 'Custom';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -313,18 +527,79 @@ extension on Translations {
 			'calendar.emptyBody' => 'A Jalali month view and event agenda land in the calendar phase.',
 			'home.payAndReceive' => 'Give and take',
 			'home.offlineBlurb' => 'Installments, receivables, and reminders — all on this device.',
-			'home.emptyTitle' => 'Home will come alive soon',
-			'home.emptyBody' => 'This week and who-owes-what show up here in the money phase.',
+			'home.emptyTitle' => 'Quiet week',
+			'home.emptyBody' => 'Nothing is due in the next seven days.',
 			'home.loadError' => 'Could not read local data.',
-			'home.seedTitle' => 'Demo data is on this device',
-			'home.seedHint' => 'Lists and “this week” arrive in the next phase.',
-			'home.seedParties' => ({required Object count}) => '${count} parties',
-			'home.seedOpenMoney' => ({required Object count}) => '${count} open accounts',
-			'home.seedReminders' => ({required Object count}) => '${count} reminders',
-			'home.seedNotes' => ({required Object count}) => '${count} notes',
+			'home.dueThisWeek' => 'This week',
+			'home.overdue' => 'Overdue',
+			'home.whoOwes' => 'Who owes what',
+			'home.emptyBalances' => 'No open balances.',
+			'home.iOwe' => ({required Object amount}) => 'I owe ${amount}',
+			'home.theyOwe' => ({required Object amount}) => 'Owed to me ${amount}',
+			'home.fabPay' => 'I owe',
+			'home.fabReceive' => 'Owed to me',
 			'money.title' => 'Accounts',
-			'money.emptyTitle' => 'Your give-and-take will live here',
-			'money.emptyBody' => 'Debts, receivables, installments, and payments arrive in the money phase.',
+			'money.emptyTitle' => 'No give-and-take yet',
+			'money.emptyBody' => 'Add a debt or receivable in a couple of taps.',
+			'money.emptyFilter' => 'Nothing matches this filter.',
+			'money.add' => 'Add',
+			'money.fabPay' => 'I owe',
+			'money.fabReceive' => 'Owed to me',
+			'money.filterAll' => 'All',
+			'money.filterPay' => 'I owe',
+			'money.filterReceive' => 'Owed to me',
+			'money.hideSettled' => 'Hide settled',
+			'money.showSettled' => 'Show settled',
+			'money.remaining' => 'Remaining',
+			'money.total' => 'Total',
+			'money.paid' => 'Paid',
+			'money.due' => 'Due',
+			'money.party' => 'Party',
+			'money.titleField' => 'Title',
+			'money.amount' => 'Amount',
+			'money.note' => 'Note',
+			'money.optional' => 'Optional',
+			'money.schedule' => 'Schedule',
+			'money.oneTime' => 'One-time',
+			'money.installment' => 'Installment',
+			'money.periods' => 'Periods',
+			'money.installmentAmount' => 'Each installment',
+			'money.computedTotal' => ({required Object amount}) => 'Total ${amount}',
+			'money.startDate' => 'Start',
+			'money.dueDate' => 'Due date',
+			'money.firstDue' => 'First due',
+			'money.newParty' => 'New party',
+			'money.existingParty' => 'Existing party',
+			'money.partyName' => 'Name',
+			'money.save' => 'Save',
+			'money.edit' => 'Edit',
+			'money.recordPayment' => 'Record payment',
+			'money.paymentAmount' => 'Payment amount',
+			'money.payments' => 'Payments',
+			'money.noPayments' => 'No payments yet.',
+			'money.payCta' => 'Record pay',
+			'money.receiveCta' => 'Record receive',
+			'money.invalidAmount' => 'Enter a valid amount.',
+			'money.payTooLarge' => 'Amount is more than remaining.',
+			'money.missingTitle' => 'Add a title.',
+			'money.missingParty' => 'Pick or add a party.',
+			'money.missingItem' => 'This account was not found.',
+			'money.alreadySettled' => 'This account is already settled.',
+			'money.loadError' => 'Could not read local data.',
+			'money.saveError' => 'Could not save.',
+			'money.newTitle' => 'New account',
+			'money.editTitle' => 'Edit account',
+			'money.periodsProgress' => ({required Object paid, required Object total}) => '${paid} of ${total}',
+			'money.status.upcoming' => 'Upcoming',
+			'money.status.dueToday' => 'Due today',
+			'money.status.overdue' => 'Overdue',
+			'money.status.settled' => 'Settled',
+			'money.direction.pay' => 'I owe',
+			'money.direction.receive' => 'Owed to me',
+			'money.partyKind.person' => 'Person',
+			'money.partyKind.bank' => 'Bank',
+			'money.partyKind.shop' => 'Shop',
+			'money.partyKind.custom' => 'Custom',
 			'notes.title' => 'Notes',
 			'notes.emptyTitle' => 'Notes',
 			'notes.emptyBody' => 'Title, body, tags, and pinning arrive in the notes phase.',

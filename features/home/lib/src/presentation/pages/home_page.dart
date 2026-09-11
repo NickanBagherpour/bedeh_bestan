@@ -1,12 +1,24 @@
-import 'package:core/core.dart' show toPersianDigits;
+import 'package:core/core.dart'
+    show
+        AppRoutes,
+        CalendarType,
+        appSettingsProvider,
+        formatLongDate,
+        formatToman,
+        toPersianDigits;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:translations/translations.dart' show Translations, TranslationsLookup;
+import 'package:go_router/go_router.dart';
+import 'package:local_db/local_db.dart' show MoneyDirection, MoneyStatus;
+import 'package:translations/translations.dart'
+    show Translations, TranslationsLookup;
 import 'package:ui_kit/ui_kit.dart' show AppColors, AppSpacing, KitCard, KitEmpty;
 
 import '../../application/controllers/home_controller.dart';
+import '../../application/home_dashboard.dart';
 import '../../application/state/home_state.dart';
-import '../widgets/seed_snapshot_card.dart';
+import '../widgets/home_balances_card.dart';
+import '../widgets/home_due_list.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -16,10 +28,16 @@ class HomePage extends ConsumerWidget {
     final theme = Theme.of(context);
     final t = Translations.of(context);
     final state = ref.watch(homeControllerProvider);
+    final calendar = ref.watch(appSettingsProvider).resolvedCalendar;
     final persian = Localizations.localeOf(context).languageCode == 'fa';
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _pickDirection(context, t),
+        icon: const Icon(Icons.add_rounded),
+        label: Text(t.app.actions.add),
+      ),
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),
         children: [
@@ -88,22 +106,13 @@ class HomePage extends ConsumerWidget {
               ),
               body: t.home.emptyBody,
             )
-          else if (state.snapshot != null)
-            SeedSnapshotCard(
-              title: t.home.seedTitle,
-              body: t.home.seedHint,
-              partiesLabel: t.home.seedParties(
-                count: _count(state.snapshot!.partyCount, persian),
-              ),
-              openMoneyLabel: t.home.seedOpenMoney(
-                count: _count(state.snapshot!.openMoneyCount, persian),
-              ),
-              remindersLabel: t.home.seedReminders(
-                count: _count(state.snapshot!.reminderCount, persian),
-              ),
-              notesLabel: t.home.seedNotes(
-                count: _count(state.snapshot!.noteCount, persian),
-              ),
+          else if (state.dashboard != null)
+            ..._dashboard(
+              context,
+              t,
+              state.dashboard!,
+              calendar: calendar,
+              persian: persian,
             )
           else
             KitEmpty(
@@ -111,13 +120,156 @@ class HomePage extends ConsumerWidget {
               title: t.home.emptyTitle,
               body: t.home.emptyBody,
             ),
+          const SizedBox(height: 72),
         ],
       ),
     );
   }
-}
 
-String _count(int value, bool persian) {
-  final raw = value.toString();
-  return persian ? toPersianDigits(raw) : raw;
+  List<Widget> _dashboard(
+    BuildContext context,
+    Translations t,
+    HomeDashboard dashboard, {
+    required CalendarType calendar,
+    required bool persian,
+  }) {
+    String money(int amount) => formatToman(
+          amount,
+          currencyLabel: t.app.currency,
+          persianDigits: persian,
+        );
+    String due(HomeDueRow row) {
+      final formatted = formatLongDate(row.dueDate, calendar);
+      return persian ? toPersianDigits(formatted) : formatted;
+    }
+
+    String status(HomeDueRow row) {
+      return switch (row.status) {
+        MoneyStatus.upcoming => t.money.status.upcoming,
+        MoneyStatus.dueToday => t.money.status.dueToday,
+        MoneyStatus.overdue => t.money.status.overdue,
+        MoneyStatus.settled => t.money.status.settled,
+      };
+    }
+
+    Color accent(HomeDueRow row) {
+      return row.direction == MoneyDirection.pay
+          ? AppColors.pay
+          : AppColors.receive;
+    }
+
+    return [
+      if (dashboard.overdue.isNotEmpty) ...[
+        HomeDueList(
+          title: t.home.overdue,
+          emptyLabel: t.home.emptyBody,
+          rows: dashboard.overdue,
+          amountOf: (row) => money(row.remainingAmount),
+          dueOf: due,
+          statusOf: status,
+          accentOf: accent,
+          onTap: (row) => context.push(AppRoutes.moneyItemPath(row.id)),
+        ),
+        const SizedBox(height: AppSpacing.md),
+      ],
+      HomeDueList(
+        title: t.home.dueThisWeek,
+        emptyLabel: t.home.emptyBody,
+        rows: dashboard.dueThisWeek,
+        amountOf: (row) => money(row.remainingAmount),
+        dueOf: due,
+        statusOf: status,
+        accentOf: accent,
+        onTap: (row) => context.push(AppRoutes.moneyItemPath(row.id)),
+      ),
+      const SizedBox(height: AppSpacing.md),
+      HomeBalancesCard(
+        title: t.home.whoOwes,
+        emptyLabel: t.home.emptyBalances,
+        balances: dashboard.balances,
+        payLabelOf: (row) => t.home.iOwe(amount: money(row.payRemaining)),
+        receiveLabelOf: (row) =>
+            t.home.theyOwe(amount: money(row.receiveRemaining)),
+      ),
+    ];
+  }
+
+  Future<void> _pickDirection(BuildContext context, Translations t) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      builder: (sheetContext) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.md,
+            AppSpacing.xs,
+            AppSpacing.md,
+            AppSpacing.lg,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                t.app.actions.add,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              KitCard(
+                color: AppColors.pay.withValues(alpha: 0.10),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  context.push(
+                    AppRoutes.moneyNewPath(direction: MoneyDirection.pay.name),
+                  );
+                },
+                child: Row(
+                  children: [
+                    const Icon(Icons.south_west_rounded, color: AppColors.pay),
+                    const SizedBox(width: AppSpacing.sm),
+                    Text(
+                      t.home.fabPay,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: AppColors.pay,
+                            fontWeight: FontWeight.w800,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              KitCard(
+                color: AppColors.receive.withValues(alpha: 0.10),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  context.push(
+                    AppRoutes.moneyNewPath(
+                      direction: MoneyDirection.receive.name,
+                    ),
+                  );
+                },
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.north_east_rounded,
+                      color: AppColors.receive,
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Text(
+                      t.home.fabReceive,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: AppColors.receive,
+                            fontWeight: FontWeight.w800,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
