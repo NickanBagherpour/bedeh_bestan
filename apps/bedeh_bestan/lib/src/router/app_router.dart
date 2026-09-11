@@ -11,13 +11,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../navigation/app_shell.dart';
+import '../notifications/pending_reminder.dart';
 
 /// Single composition point for the app's routes.
 ///
 /// Each feature owns `build<Name>Routes`. The four primary destinations live
 /// inside one [ShellRoute] so they share [AppShell] chrome.
 final appRouterProvider = Provider<GoRouter>((ref) {
-  return GoRouter(
+  final router = GoRouter(
     initialLocation: AppRoutes.home.path,
     routes: [
       ShellRoute(
@@ -35,4 +36,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ...buildSettingsRoutes(ref),
     ],
   );
+  ref.listen(
+    pendingReminderIdProvider,
+    (previous, next) {
+      if (next == null || next.isEmpty) return;
+      router.push(AppRoutes.reminderPath(next));
+      ref.read(pendingReminderIdProvider.notifier).set(null);
+    },
+    fireImmediately: true,
+  );
+  return router;
 });

@@ -95,6 +95,7 @@ class _Translations$calendar$fa extends Translations$calendar$en {
 	@override String get everyN => 'هر N روز';
 	@override String get notifyOnTime => 'اعلان سر ساعت';
 	@override String get notifyDayBefore => 'اعلان یک روز قبل';
+	@override String notificationDayBefore({required Object title}) => 'فردا: ${title}';
 	@override String get save => 'ذخیره';
 	@override String get edit => 'ویرایش';
 	@override String get delete => 'حذف';
@@ -449,6 +450,7 @@ extension on TranslationsFa {
 			'calendar.everyN' => 'هر N روز',
 			'calendar.notifyOnTime' => 'اعلان سر ساعت',
 			'calendar.notifyDayBefore' => 'اعلان یک روز قبل',
+			'calendar.notificationDayBefore' => ({required Object title}) => 'فردا: ${title}',
 			'calendar.save' => 'ذخیره',
 			'calendar.edit' => 'ویرایش',
 			'calendar.delete' => 'حذف',

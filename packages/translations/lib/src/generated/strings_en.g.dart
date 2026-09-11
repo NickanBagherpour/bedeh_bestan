@@ -152,6 +152,9 @@ class Translations$calendar$en {
 	/// en: 'Notify a day before'
 	String get notifyDayBefore => 'Notify a day before';
 
+	/// en: 'Tomorrow: $title'
+	String notificationDayBefore({required Object title}) => 'Tomorrow: ${title}';
+
 	/// en: 'Save'
 	String get save => 'Save';
 
@@ -821,6 +824,7 @@ extension on Translations {
 			'calendar.everyN' => 'Every N days',
 			'calendar.notifyOnTime' => 'Notify at the time',
 			'calendar.notifyDayBefore' => 'Notify a day before',
+			'calendar.notificationDayBefore' => ({required Object title}) => 'Tomorrow: ${title}',
 			'calendar.save' => 'Save',
 			'calendar.edit' => 'Edit',
 			'calendar.delete' => 'Delete',

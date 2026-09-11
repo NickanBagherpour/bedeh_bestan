@@ -13,7 +13,7 @@ Do not start the next phase until the user says `next phase`.
 | **5** Money report | **done** | Home card: paid so far, remaining بدهی, still to pay until month end |
 | **6** Calendar | **done** | Jalali-primary agenda + month view. Repeats. FAB یادآوری |
 | **7** Notes | **done** | Title, body, tags, pin, optional link to party/money, search |
-| **8** Notifications + icon | queued | Local notifications. App icon + splash. Launcher **بده‌بستان** |
+| **8** Notifications + icon | **done** | Local notifications. App icon + splash. Launcher **بده‌بستان** |
 | **9** Polish | queued | Motion, haptics, empty/error, contrast. Seed stays |
 
 Out of scope v1: auth, ads, SMS, bank APIs, cloud backup, multi-user.
@@ -69,7 +69,13 @@ No charts in v1. Seed stays. No calendar/notes product UI.
 
 ---
 
-## Phase 8 notes (notifications + icon)
+## Phase 8 — Notifications + icon (done)
 
-- Local notifications for reminders.
-- App icon + splash. Launcher **بده‌بستان**.
+Local notifications for reminders that have «اعلان سر ساعت» / «اعلان یک روز قبل». Upcoming occurrences in the next 90 days are scheduled on Android / iOS / Linux; web is a no-op. Tap opens the reminder overlay. Brand teal icon + splash. Launcher name **بده‌بستان**.
+
+---
+
+## Phase 9 notes (polish)
+
+- Motion, haptics, empty/error, contrast.
+- Seed stays.

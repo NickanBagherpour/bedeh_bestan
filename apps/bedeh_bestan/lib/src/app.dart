@@ -1,4 +1,6 @@
 import 'package:core/core.dart' show appSettingsProvider;
+import 'package:feature_calendar/calendar.dart'
+    show reminderNotificationSyncProvider;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,6 +18,7 @@ class BedeBestanApp extends ConsumerWidget {
     final settings = ref.watch(appSettingsProvider);
     final router = ref.watch(appRouterProvider);
     final languageCode = settings.locale.languageCode;
+    ref.watch(reminderNotificationSyncProvider);
 
     return MaterialApp.router(
       title: t.app.appName,

@@ -20,6 +20,7 @@
   "everyN": "Every N days",
   "notifyOnTime": "Notify at the time",
   "notifyDayBefore": "Notify a day before",
+  "notificationDayBefore": "Tomorrow: $title",
   "save": "Save",
   "edit": "Edit",
   "delete": "Delete",

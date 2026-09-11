@@ -20,6 +20,7 @@
   "everyN": "هر N روز",
   "notifyOnTime": "اعلان سر ساعت",
   "notifyDayBefore": "اعلان یک روز قبل",
+  "notificationDayBefore": "فردا: $title",
   "save": "ذخیره",
   "edit": "ویرایش",
   "delete": "حذف",
