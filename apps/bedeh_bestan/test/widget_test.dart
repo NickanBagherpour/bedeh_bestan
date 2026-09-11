@@ -51,7 +51,7 @@ void main() {
     await tester.tap(find.byIcon(Icons.calendar_month_outlined));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.textContaining('شهریور'), findsOneWidget);
+    expect(find.textContaining('شهریور'), findsWidgets);
     expect(find.text('یادآوری'), findsOneWidget);
 
     await tester.tap(find.text('خانه'));

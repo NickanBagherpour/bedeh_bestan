@@ -3,8 +3,11 @@ import 'package:core/core.dart'
         AppCurrency,
         CalendarType,
         GroupedAmountFormatter,
+        calendarDayOfMonth,
         formatStoredMoney,
+        formatWeekday,
         groupAmount,
+        isSameDate,
         monthBounds,
         monthGridCells,
         parseStoredAmount,
@@ -73,6 +76,18 @@ void main() {
     final gregorian = weekBounds(friday, CalendarType.gregorian);
     expect(gregorian.start.weekday, DateTime.monday);
     expect(gregorian.endInclusive.weekday, DateTime.sunday);
+  });
+
+  test('calendarDayOfMonth uses Jalali day, not Gregorian DateTime.day', () {
+    final date = DateTime(2026, 9, 11);
+    expect(calendarDayOfMonth(date, CalendarType.gregorian), 11);
+    expect(
+      calendarDayOfMonth(date, CalendarType.jalali),
+      Jalali.fromDateTime(date).day,
+    );
+    expect(calendarDayOfMonth(date, CalendarType.jalali), isNot(11));
+    expect(formatWeekday(date, persian: true), 'جمعه');
+    expect(isSameDate(date, DateTime(2026, 9, 11, 18, 40)), isTrue);
   });
 
   test('monthGridCells pad to full weeks in the active calendar', () {

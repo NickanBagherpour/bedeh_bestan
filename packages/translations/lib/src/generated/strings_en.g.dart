@@ -104,11 +104,20 @@ class Translations$calendar$en {
 	/// en: 'Nothing on this day.'
 	String get emptyDay => 'Nothing on this day.';
 
-	/// en: 'Agenda'
-	String get agenda => 'Agenda';
+	/// en: 'This day'
+	String get agenda => 'This day';
+
+	/// en: 'This month'
+	String get monthAgenda => 'This month';
 
 	/// en: 'Today'
 	String get today => 'Today';
+
+	/// en: '$weekday, $date'
+	String todayHeading({required Object weekday, required Object date}) => '${weekday}, ${date}';
+
+	/// en: 'Add for this day'
+	String get addForDay => 'Add for this day';
 
 	/// en: 'New reminder'
 	String get newTitle => 'New reminder';
@@ -730,8 +739,11 @@ extension on Translations {
 			'calendar.emptyTitle' => 'No reminders this month',
 			'calendar.emptyBody' => 'Add a reminder to see it on the month and in the agenda.',
 			'calendar.emptyDay' => 'Nothing on this day.',
-			'calendar.agenda' => 'Agenda',
+			'calendar.agenda' => 'This day',
+			'calendar.monthAgenda' => 'This month',
 			'calendar.today' => 'Today',
+			'calendar.todayHeading' => ({required Object weekday, required Object date}) => '${weekday}, ${date}',
+			'calendar.addForDay' => 'Add for this day',
 			'calendar.newTitle' => 'New reminder',
 			'calendar.editTitle' => 'Edit reminder',
 			'calendar.titleField' => 'Title',

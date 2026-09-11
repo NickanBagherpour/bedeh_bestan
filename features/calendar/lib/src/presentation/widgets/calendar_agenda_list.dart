@@ -10,6 +10,9 @@ class CalendarAgendaList extends StatelessWidget {
     required this.timeOf,
     required this.repeatOf,
     required this.onTap,
+    this.dateOf,
+    this.addLabel,
+    this.onAdd,
   });
 
   final String title;
@@ -17,7 +20,10 @@ class CalendarAgendaList extends StatelessWidget {
   final List<CalendarAgendaRow> rows;
   final String Function(CalendarAgendaRow row) timeOf;
   final String Function(CalendarAgendaRow row) repeatOf;
+  final String Function(CalendarAgendaRow row)? dateOf;
   final ValueChanged<CalendarAgendaRow> onTap;
+  final String? addLabel;
+  final VoidCallback? onAdd;
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +31,23 @@ class CalendarAgendaList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          title,
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w800,
-          ),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+            if (addLabel != null && onAdd != null)
+              TextButton.icon(
+                onPressed: onAdd,
+                icon: const Icon(Icons.add_rounded, size: 18),
+                label: Text(addLabel!),
+              ),
+          ],
         ),
         const SizedBox(height: AppSpacing.sm),
         if (rows.isEmpty)
@@ -71,7 +89,10 @@ class CalendarAgendaList extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '${timeOf(row)} · ${repeatOf(row)}',
+                            [
+                              if (dateOf != null) dateOf!(row),
+                              '${timeOf(row)} · ${repeatOf(row)}',
+                            ].join(' · '),
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurfaceVariant,
                             ),

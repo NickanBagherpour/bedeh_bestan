@@ -3,9 +3,13 @@ import 'package:core/core.dart'
         AppRoutes,
         CalendarType,
         appSettingsProvider,
+        calendarDayOfMonth,
         dateOnly,
+        formatHeadingDate,
         formatMonthYear,
         formatTime,
+        formatWeekday,
+        isSameDate,
         monthBounds,
         monthGridCells,
         shiftCalendarMonths,
@@ -37,9 +41,9 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
   @override
   void initState() {
     super.initState();
-    final now = DateTime.now();
-    _focus = dateOnly(now);
-    _selected = _focus;
+    final today = dateOnly(DateTime.now());
+    _focus = today;
+    _selected = today;
   }
 
   @override
@@ -48,33 +52,56 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
     final state = ref.watch(calendarControllerProvider);
     final calendar = ref.watch(appSettingsProvider).resolvedCalendar;
     final persian = Localizations.localeOf(context).languageCode == 'fa';
+    final today = dateOnly(DateTime.now());
     final month = monthBounds(_focus, calendar);
     final cells = monthGridCells(_focus, calendar);
-    final occurrences = expandOccurrences(
+    final gridOccurrences = expandOccurrences(
       reminders: state.reminders,
       rangeStart: cells.first,
       rangeEnd: cells.last,
       calendar: calendar,
     );
     final eventDays = {
-      for (final row in occurrences) dateOnly(row.at),
+      for (final row in gridOccurrences) dateOnly(row.at),
     };
+    CalendarAgendaRow agendaRowOf(CalendarOccurrence row) {
+      return CalendarAgendaRow(
+        id: row.reminder.id,
+        title: row.reminder.title,
+        at: row.at,
+        allDay: row.reminder.allDay,
+        repeatKey: 'calendar.repeatRule.${row.reminder.repeatRule.name}',
+      );
+    }
+
     final dayRows = [
-      for (final row in occurrences)
-        if (dateOnly(row.at) == _selected)
-          CalendarAgendaRow(
-            id: row.reminder.id,
-            title: row.reminder.title,
-            at: row.at,
-            allDay: row.reminder.allDay,
-            repeatKey: 'calendar.repeatRule.${row.reminder.repeatRule.name}',
-          ),
+      for (final row in gridOccurrences)
+        if (isSameDate(row.at, _selected)) agendaRowOf(row),
     ];
+    final monthRows = [
+      for (final row in gridOccurrences)
+        if (month.containsDate(row.at)) agendaRowOf(row),
+    ];
+
+    String timeLabel(CalendarAgendaRow row) {
+      if (row.allDay) return t.calendar.allDay;
+      final time = formatTime(row.at);
+      return persian ? toPersianDigits(time) : time;
+    }
+
+    String repeatLabel(CalendarAgendaRow row) {
+      return t.message(row.repeatKey, shouldTranslate: true);
+    }
+
+    String dateLabel(CalendarAgendaRow row) {
+      final formatted = formatHeadingDate(row.at, calendar, persian: persian);
+      return persian ? toPersianDigits(formatted) : formatted;
+    }
 
     return Scaffold(
       appBar: AppBar(title: Text(t.calendar.title)),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.push(AppRoutes.reminderNewPath(day: _selected)),
+        onPressed: () => _openNew(context),
         icon: const Icon(Icons.notification_add_outlined),
         label: Text(t.calendar.fab),
       ),
@@ -86,13 +113,15 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
           88,
         ),
         children: [
+          CalendarTodayBanner(
+            label: _todayHeading(t, today, calendar, persian),
+          ),
           CalendarMonthHeader(
             title: _monthTitle(month.start, calendar, persian),
             todayLabel: t.calendar.today,
             onPrev: () => _shift(-1, calendar),
             onNext: () => _shift(1, calendar),
             onToday: () {
-              final today = dateOnly(DateTime.now());
               setState(() {
                 _focus = today;
                 _selected = today;
@@ -103,17 +132,17 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
           CalendarMonthGrid(
             cells: cells,
             inMonth: month.containsDate,
-            isToday: (day) => day == dateOnly(DateTime.now()),
-            isSelected: (day) => day == _selected,
+            isToday: (day) => isSameDate(day, today),
+            isSelected: (day) => isSameDate(day, _selected),
             hasEvents: eventDays.contains,
             labelOf: (day) {
-              final raw = '${day.day}';
+              final raw = '${calendarDayOfMonth(day, calendar)}';
               return persian ? toPersianDigits(raw) : raw;
             },
             onSelect: (day) {
               setState(() {
-                _selected = day;
-                if (!month.containsDate(day)) _focus = day;
+                _selected = dateOnly(day);
+                if (!month.containsDate(day)) _focus = dateOnly(day);
               });
             },
           ),
@@ -127,22 +156,38 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
               ),
               body: t.calendar.emptyBody,
             )
-          else
+          else ...[
             CalendarAgendaList(
               title: t.calendar.agenda,
               emptyLabel: t.calendar.emptyDay,
               rows: dayRows,
-              timeOf: (row) {
-                if (row.allDay) return t.calendar.allDay;
-                final time = formatTime(row.at);
-                return persian ? toPersianDigits(time) : time;
-              },
-              repeatOf: (row) => t.message(row.repeatKey, shouldTranslate: true),
+              addLabel: t.calendar.addForDay,
+              onAdd: () => _openNew(context),
+              timeOf: timeLabel,
+              repeatOf: repeatLabel,
               onTap: (row) => context.push(AppRoutes.reminderPath(row.id)),
             ),
+            const SizedBox(height: AppSpacing.lg),
+            CalendarAgendaList(
+              title: t.calendar.monthAgenda,
+              emptyLabel: t.calendar.emptyTitle,
+              rows: monthRows,
+              dateOf: dateLabel,
+              timeOf: timeLabel,
+              repeatOf: repeatLabel,
+              onTap: (row) {
+                setState(() => _selected = dateOnly(row.at));
+                context.push(AppRoutes.reminderPath(row.id));
+              },
+            ),
+          ],
         ],
       ),
     );
+  }
+
+  void _openNew(BuildContext context) {
+    context.push(AppRoutes.reminderNewPath(day: _selected));
   }
 
   void _shift(int months, CalendarType calendar) {
@@ -153,6 +198,21 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
         _selected = next;
       }
     });
+  }
+
+  String _todayHeading(
+    Translations t,
+    DateTime today,
+    CalendarType calendar,
+    bool persian,
+  ) {
+    final weekday = formatWeekday(today, persian: persian);
+    final date = formatHeadingDate(today, calendar, persian: persian);
+    final heading = t.calendar.todayHeading(
+      weekday: weekday,
+      date: persian ? toPersianDigits(date) : date,
+    );
+    return heading;
   }
 
   String _monthTitle(DateTime day, CalendarType calendar, bool persian) {

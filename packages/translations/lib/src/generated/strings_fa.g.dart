@@ -79,8 +79,11 @@ class _Translations$calendar$fa extends Translations$calendar$en {
 	@override String get emptyTitle => 'این ماه یادآوری نیست';
 	@override String get emptyBody => 'یک یادآوری بگذار تا روی ماه و در فهرست روز دیده شود.';
 	@override String get emptyDay => 'این روز خالی است.';
-	@override String get agenda => 'رویدادها';
+	@override String get agenda => 'این روز';
+	@override String get monthAgenda => 'این ماه';
 	@override String get today => 'امروز';
+	@override String todayHeading({required Object weekday, required Object date}) => '${weekday}، ${date}';
+	@override String get addForDay => 'برای این روز';
 	@override String get newTitle => 'یادآوری تازه';
 	@override String get editTitle => 'ویرایش یادآوری';
 	@override String get titleField => 'عنوان';
@@ -408,8 +411,11 @@ extension on TranslationsFa {
 			'calendar.emptyTitle' => 'این ماه یادآوری نیست',
 			'calendar.emptyBody' => 'یک یادآوری بگذار تا روی ماه و در فهرست روز دیده شود.',
 			'calendar.emptyDay' => 'این روز خالی است.',
-			'calendar.agenda' => 'رویدادها',
+			'calendar.agenda' => 'این روز',
+			'calendar.monthAgenda' => 'این ماه',
 			'calendar.today' => 'امروز',
+			'calendar.todayHeading' => ({required Object weekday, required Object date}) => '${weekday}، ${date}',
+			'calendar.addForDay' => 'برای این روز',
 			'calendar.newTitle' => 'یادآوری تازه',
 			'calendar.editTitle' => 'ویرایش یادآوری',
 			'calendar.titleField' => 'عنوان',

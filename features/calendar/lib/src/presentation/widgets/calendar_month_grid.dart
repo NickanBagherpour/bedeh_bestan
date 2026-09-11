@@ -1,6 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:ui_kit/ui_kit.dart' show AppColors, AppSpacing;
 
+class CalendarTodayBanner extends StatelessWidget {
+  const CalendarTodayBanner({super.key, required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: Text(
+        label,
+        style: theme.textTheme.titleMedium?.copyWith(
+          color: AppColors.reminder,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
+  }
+}
+
 class CalendarMonthHeader extends StatelessWidget {
   const CalendarMonthHeader({
     super.key,
@@ -119,20 +140,20 @@ class CalendarMonthGrid extends StatelessWidget {
       onTap: () => onSelect(day),
       borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
       child: SizedBox(
-        height: 44,
+        height: 48,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 32,
-              height: 32,
+              width: 34,
+              height: 34,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: selected
                     ? AppColors.reminder.withValues(alpha: 0.22)
                     : null,
-                border: today && !selected
-                    ? Border.all(color: AppColors.reminder)
+                border: today
+                    ? Border.all(color: AppColors.reminder, width: 1.5)
                     : null,
                 shape: BoxShape.circle,
               ),

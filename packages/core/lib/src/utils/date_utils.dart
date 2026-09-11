@@ -76,6 +76,43 @@ String formatTime(DateTime dateTime) {
 DateTime dateOnly(DateTime value) =>
     DateTime(value.year, value.month, value.day);
 
+/// True when [a] and [b] fall on the same local calendar day.
+bool isSameDate(DateTime a, DateTime b) {
+  final left = dateOnly(a);
+  final right = dateOnly(b);
+  return left.year == right.year &&
+      left.month == right.month &&
+      left.day == right.day;
+}
+
+/// Day-of-month in the active calendar (Jalali 1–31, not Gregorian `DateTime.day`).
+int calendarDayOfMonth(DateTime date, CalendarType calendar) {
+  switch (calendar) {
+    case CalendarType.jalali:
+      return toJalali(date).day;
+    case CalendarType.gregorian:
+      return date.day;
+  }
+}
+
+/// Weekday name for [date]. Language chooses the words; the instant chooses the day.
+String formatWeekday(DateTime date, {required bool persian}) {
+  final index = (date.weekday + 1) % 7; // Saturday = 0
+  if (persian) return jalaliWeekdayNames[index];
+  return gregorianWeekdayNamesEnSatFirst[index];
+}
+
+/// Saturday-first English weekday names.
+const List<String> gregorianWeekdayNamesEnSatFirst = [
+  'Saturday',
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+];
+
 /// Inclusive start/end dates (no time).
 final class DateRange {
   const DateRange({required this.start, required this.endInclusive});
@@ -160,6 +197,21 @@ const List<String> gregorianMonthNamesFa = [
   'نوامبر',
   'دسامبر',
 ];
+
+/// Human date for a heading, e.g. «۲۰ شهریور ۱۴۰۵» or «11 September 2026».
+String formatHeadingDate(
+  DateTime date,
+  CalendarType calendar, {
+  required bool persian,
+}) {
+  switch (calendar) {
+    case CalendarType.jalali:
+      return formatLongDate(date, calendar);
+    case CalendarType.gregorian:
+      final names = persian ? gregorianMonthNamesFa : gregorianMonthNamesEn;
+      return '${date.day} ${names[date.month - 1]} ${date.year}';
+  }
+}
 
 /// Month + year for a calendar header, e.g. «شهریور ۱۴۰۵» or «September 2026».
 String formatMonthYear(
