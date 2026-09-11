@@ -5,5 +5,7 @@
   "calendar": "Calendar",
   "calendarHint": "First and last day of the month and week follow this calendar — not the language.",
   "jalali": "Jalali",
-  "gregorian": "Gregorian"
+  "gregorian": "Gregorian",
+  "currency": "Currency",
+  "currencyHint": "Rial is shown ×10 (10 rial = 1 toman). Dollar is a label only."
 }

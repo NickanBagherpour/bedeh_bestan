@@ -1,9 +1,33 @@
+import 'package:core/core.dart' show CalendarType;
 import 'package:feature_home/src/application/home_dashboard.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:local_db/local_db.dart';
 
 void main() {
   final now = DateTime(2026, 9, 11);
+
+  MoneyItem money({
+    required String id,
+    required String partyId,
+    required MoneyDirection direction,
+    required DateTime due,
+    int total = 1000,
+    int paid = 0,
+  }) {
+    return MoneyItem(
+      id: id,
+      partyId: partyId,
+      direction: direction,
+      title: id,
+      totalAmount: total,
+      paidAmount: paid,
+      schedule: MoneySchedule.oneTime,
+      startDate: due,
+      nextDueDate: due,
+      createdAt: now,
+      updatedAt: now,
+    );
+  }
 
   test('splits overdue, this week, and party balances', () {
     final ali = Party(
@@ -20,29 +44,6 @@ void main() {
       createdAt: now,
       updatedAt: now,
     );
-
-    MoneyItem money({
-      required String id,
-      required String partyId,
-      required MoneyDirection direction,
-      required DateTime due,
-      int total = 1000,
-      int paid = 0,
-    }) {
-      return MoneyItem(
-        id: id,
-        partyId: partyId,
-        direction: direction,
-        title: id,
-        totalAmount: total,
-        paidAmount: paid,
-        schedule: MoneySchedule.oneTime,
-        startDate: due,
-        nextDueDate: due,
-        createdAt: now,
-        updatedAt: now,
-      );
-    }
 
     final dashboard = buildHomeDashboard(
       items: [
@@ -77,7 +78,9 @@ void main() {
         ),
       ],
       parties: [ali, shop],
+      payments: const [],
       now: now,
+      calendar: CalendarType.gregorian,
     );
 
     expect(dashboard.overdue.map((row) => row.id), ['overdue']);
@@ -89,5 +92,72 @@ void main() {
     final shopBalance =
         dashboard.balances.firstWhere((row) => row.partyId == shop.id);
     expect(shopBalance.payRemaining, 800);
+  });
+
+  test('period report uses calendar month and payment dates', () {
+    final shop = Party(
+      id: 'shop',
+      name: 'فروشگاه',
+      kind: PartyKind.shop,
+      createdAt: now,
+      updatedAt: now,
+    );
+
+    final openPay = money(
+      id: 'open-pay',
+      partyId: shop.id,
+      direction: MoneyDirection.pay,
+      due: DateTime(2026, 9, 20),
+      total: 5000,
+      paid: 1000,
+    );
+    final laterPay = money(
+      id: 'later-pay',
+      partyId: shop.id,
+      direction: MoneyDirection.pay,
+      due: DateTime(2026, 10, 5),
+      total: 2000,
+    );
+    final receive = money(
+      id: 'receive',
+      partyId: shop.id,
+      direction: MoneyDirection.receive,
+      due: DateTime(2026, 9, 15),
+      total: 800,
+    );
+
+    final dashboard = buildHomeDashboard(
+      items: [openPay, laterPay, receive],
+      parties: [shop],
+      payments: [
+        MoneyPayment(
+          id: 'p1',
+          moneyItemId: openPay.id,
+          amount: 1000,
+          paidAt: DateTime(2026, 9, 2),
+        ),
+        MoneyPayment(
+          id: 'p2',
+          moneyItemId: receive.id,
+          amount: 300,
+          paidAt: DateTime(2026, 9, 8),
+        ),
+        MoneyPayment(
+          id: 'p3',
+          moneyItemId: openPay.id,
+          amount: 50,
+          paidAt: DateTime(2026, 8, 30),
+        ),
+      ],
+      now: now,
+      calendar: CalendarType.gregorian,
+    );
+
+    expect(dashboard.report.paidOut, 1000);
+    expect(dashboard.report.paidIn, 300);
+    expect(dashboard.report.remainingPay, 6000);
+    expect(dashboard.report.dueByPeriodEnd, 4000);
+    expect(dashboard.report.periodStart, DateTime(2026, 9, 1));
+    expect(dashboard.report.periodEnd, DateTime(2026, 9, 30));
   });
 }

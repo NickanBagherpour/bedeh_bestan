@@ -1,10 +1,14 @@
 import 'package:core/core.dart'
     show
+        AppCurrency,
         AppRoutes,
         CalendarType,
+        GroupedAmountFormatter,
         appSettingsProvider,
         formatLongDate,
-        formatToman,
+        formatMoney,
+        groupAmount,
+        parseStoredAmount,
         parseTomanInput,
         toPersianDigits;
 import 'package:flutter/material.dart';
@@ -73,20 +77,31 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
     super.dispose();
   }
 
-  void _hydrate(MoneyItem item, Party? party) {
+  void _hydrate(
+    MoneyItem item,
+    Party? party, {
+    required AppCurrency currency,
+    required bool persian,
+  }) {
     if (_loaded) return;
     _loaded = true;
     _direction = item.direction;
     _schedule = item.schedule;
     _partyId = item.partyId;
     _title.text = item.title;
-    _amount.text = item.totalAmount.toString();
+    _amount.text = groupAmount(
+      currency.toDisplay(item.totalAmount),
+      persianDigits: persian,
+    );
     _note.text = item.note ?? '';
     _start = item.startDate;
     _due = item.nextDueDate;
     if (item.schedule == MoneySchedule.installment) {
       _periods.text = '${item.installmentCount ?? ''}';
-      _installmentAmount.text = '${item.installmentAmount ?? ''}';
+      final each = item.installmentAmount;
+      _installmentAmount.text = each == null
+          ? ''
+          : groupAmount(currency.toDisplay(each), persianDigits: persian);
     }
     if (party != null) _partyKind = party.kind;
   }
@@ -97,7 +112,9 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
     final theme = Theme.of(context);
     final list = ref.watch(moneyListControllerProvider);
     final calendar = ref.watch(appSettingsProvider).resolvedCalendar;
+    final currency = ref.watch(appSettingsProvider).currency;
     final persian = Localizations.localeOf(context).languageCode == 'fa';
+    final currencyLabel = currencyLabelOf(t, currency);
     final parties = list.parties.values.toList()
       ..sort((a, b) => a.name.compareTo(b.name));
 
@@ -106,7 +123,14 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
       if (item != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (!mounted || _loaded) return;
-          setState(() => _hydrate(item, list.partyFor(item.partyId)));
+          setState(
+            () => _hydrate(
+              item,
+              list.partyFor(item.partyId),
+              currency: currency,
+              persian: persian,
+            ),
+          );
         });
       }
     } else if (!_newParty && _partyId == null && parties.isNotEmpty) {
@@ -219,9 +243,12 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
             TextField(
               controller: _amount,
               keyboardType: TextInputType.number,
+              inputFormatters: [
+                GroupedAmountFormatter(persianDigits: persian),
+              ],
               decoration: InputDecoration(
                 labelText: t.money.amount,
-                suffixText: t.app.currency,
+                suffixText: currencyLabel,
               ),
             )
           else ...[
@@ -235,9 +262,12 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
             TextField(
               controller: _installmentAmount,
               keyboardType: TextInputType.number,
+              inputFormatters: [
+                GroupedAmountFormatter(persianDigits: persian),
+              ],
               decoration: InputDecoration(
                 labelText: t.money.installmentAmount,
-                suffixText: t.app.currency,
+                suffixText: currencyLabel,
               ),
               onChanged: (_) => setState(() {}),
             ),
@@ -245,9 +275,9 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
               const SizedBox(height: AppSpacing.sm),
               Text(
                 t.money.computedTotal(
-                  amount: formatToman(
+                  amount: formatMoney(
                     _computedTotal()!,
-                    currencyLabel: t.app.currency,
+                    currencyLabel: currencyLabel,
                     persianDigits: persian,
                   ),
                 ),
@@ -287,7 +317,7 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
           ),
           const SizedBox(height: AppSpacing.lg),
           FilledButton(
-            onPressed: _saving ? null : () => _save(t),
+            onPressed: _saving ? null : () => _save(t, currency),
             child: Text(t.money.save),
           ),
         ],
@@ -329,7 +359,7 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
     });
   }
 
-  Future<void> _save(Translations t) async {
+  Future<void> _save(Translations t, AppCurrency currency) async {
     final title = _title.text.trim();
     if (title.isEmpty) {
       _snack(t.money.missingTitle);
@@ -355,10 +385,10 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
     int? installmentCount;
     int? installmentAmount;
     if (_schedule == MoneySchedule.oneTime) {
-      total = parseTomanInput(_amount.text);
+      total = parseStoredAmount(_amount.text, currency);
     } else {
       installmentCount = parseTomanInput(_periods.text);
-      installmentAmount = parseTomanInput(_installmentAmount.text);
+      installmentAmount = parseStoredAmount(_installmentAmount.text, currency);
       if (installmentCount != null && installmentAmount != null) {
         total = installmentCount * installmentAmount;
       }

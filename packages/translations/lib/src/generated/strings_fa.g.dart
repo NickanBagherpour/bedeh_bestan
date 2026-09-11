@@ -57,7 +57,7 @@ class _Translations$app$fa extends Translations$app$en {
 	@override String get appName => 'بده‌بستان';
 	@override String get subtitle => 'قسط، طلب، یادآوری';
 	@override String get latinName => 'BedeBestan';
-	@override String get currency => 'تومان';
+	@override late final _Translations$app$currency$fa currency = _Translations$app$currency$fa._(_root);
 	@override String get comingSoon => 'به‌زودی';
 	@override String get emptyTitle => 'موردی وجود ندارد';
 	@override late final _Translations$app$nav$fa nav = _Translations$app$nav$fa._(_root);
@@ -100,6 +100,11 @@ class _Translations$home$fa extends Translations$home$en {
 	@override String get fabPay => 'بدهی';
 	@override String get fabReceive => 'طلب';
 	@override String get settings => 'تنظیمات';
+	@override String get reportTitle => 'این ماه';
+	@override String paidOut({required Object amount}) => 'پرداخت‌شده ${amount}';
+	@override String paidIn({required Object amount}) => 'دریافت‌شده ${amount}';
+	@override String stillOwe({required Object amount}) => 'ماندهٔ بدهی ${amount}';
+	@override String dueByEnd({required Object amount}) => 'سررسید تا آخر ماه ${amount}';
 }
 
 // Path: money
@@ -192,6 +197,20 @@ class _Translations$settings$fa extends Translations$settings$en {
 	@override String get calendarHint => 'اول و آخر ماه و هفته با این گاه‌شماری حساب می‌شود — نه با زبان برنامه.';
 	@override String get jalali => 'هجری شمسی';
 	@override String get gregorian => 'میلادی';
+	@override String get currency => 'واحد پول';
+	@override String get currencyHint => 'ریال ده برابر تومان نشان داده می‌شود. دلار فقط برچسب است.';
+}
+
+// Path: app.currency
+class _Translations$app$currency$fa extends Translations$app$currency$en {
+	_Translations$app$currency$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get toman => 'تومان';
+	@override String get rial => 'ریال';
+	@override String get usd => 'دلار';
 }
 
 // Path: app.nav
@@ -305,7 +324,9 @@ extension on TranslationsFa {
 			'app.appName' => 'بده‌بستان',
 			'app.subtitle' => 'قسط، طلب، یادآوری',
 			'app.latinName' => 'BedeBestan',
-			'app.currency' => 'تومان',
+			'app.currency.toman' => 'تومان',
+			'app.currency.rial' => 'ریال',
+			'app.currency.usd' => 'دلار',
 			'app.comingSoon' => 'به‌زودی',
 			'app.emptyTitle' => 'موردی وجود ندارد',
 			'app.nav.home' => 'خانه',
@@ -343,6 +364,11 @@ extension on TranslationsFa {
 			'home.fabPay' => 'بدهی',
 			'home.fabReceive' => 'طلب',
 			'home.settings' => 'تنظیمات',
+			'home.reportTitle' => 'این ماه',
+			'home.paidOut' => ({required Object amount}) => 'پرداخت‌شده ${amount}',
+			'home.paidIn' => ({required Object amount}) => 'دریافت‌شده ${amount}',
+			'home.stillOwe' => ({required Object amount}) => 'ماندهٔ بدهی ${amount}',
+			'home.dueByEnd' => ({required Object amount}) => 'سررسید تا آخر ماه ${amount}',
 			'money.title' => 'حساب',
 			'money.emptyTitle' => 'هنوز بده‌بستانی نیست',
 			'money.emptyBody' => 'با چند ضربه بدهی یا طلب اضافه کن.',
@@ -415,6 +441,8 @@ extension on TranslationsFa {
 			'settings.calendarHint' => 'اول و آخر ماه و هفته با این گاه‌شماری حساب می‌شود — نه با زبان برنامه.',
 			'settings.jalali' => 'هجری شمسی',
 			'settings.gregorian' => 'میلادی',
+			'settings.currency' => 'واحد پول',
+			'settings.currencyHint' => 'ریال ده برابر تومان نشان داده می‌شود. دلار فقط برچسب است.',
 			_ => null,
 		};
 	}

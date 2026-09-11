@@ -66,8 +66,7 @@ class Translations$app$en {
 	/// en: 'BedeBestan'
 	String get latinName => 'BedeBestan';
 
-	/// en: 'Toman'
-	String get currency => 'Toman';
+	late final Translations$app$currency$en currency = Translations$app$currency$en.internal(_root);
 
 	/// en: 'Coming soon'
 	String get comingSoon => 'Coming soon';
@@ -149,6 +148,21 @@ class Translations$home$en {
 
 	/// en: 'Settings'
 	String get settings => 'Settings';
+
+	/// en: 'This month'
+	String get reportTitle => 'This month';
+
+	/// en: 'Paid $amount'
+	String paidOut({required Object amount}) => 'Paid ${amount}';
+
+	/// en: 'Received $amount'
+	String paidIn({required Object amount}) => 'Received ${amount}';
+
+	/// en: 'Still to pay $amount'
+	String stillOwe({required Object amount}) => 'Still to pay ${amount}';
+
+	/// en: 'Due by month end $amount'
+	String dueByEnd({required Object amount}) => 'Due by month end ${amount}';
 }
 
 // Path: money
@@ -366,6 +380,30 @@ class Translations$settings$en {
 
 	/// en: 'Gregorian'
 	String get gregorian => 'Gregorian';
+
+	/// en: 'Currency'
+	String get currency => 'Currency';
+
+	/// en: 'Rial is shown ×10 (10 rial = 1 toman). Dollar is a label only.'
+	String get currencyHint => 'Rial is shown ×10 (10 rial = 1 toman). Dollar is a label only.';
+}
+
+// Path: app.currency
+class Translations$app$currency$en {
+	Translations$app$currency$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Toman'
+	String get toman => 'Toman';
+
+	/// en: 'Rial'
+	String get rial => 'Rial';
+
+	/// en: 'Dollar'
+	String get usd => 'Dollar';
 }
 
 // Path: app.nav
@@ -535,7 +573,9 @@ extension on Translations {
 			'app.appName' => 'BedeBestan',
 			'app.subtitle' => 'Installments, receivables, reminders',
 			'app.latinName' => 'BedeBestan',
-			'app.currency' => 'Toman',
+			'app.currency.toman' => 'Toman',
+			'app.currency.rial' => 'Rial',
+			'app.currency.usd' => 'Dollar',
 			'app.comingSoon' => 'Coming soon',
 			'app.emptyTitle' => 'Nothing here yet',
 			'app.nav.home' => 'Home',
@@ -573,6 +613,11 @@ extension on Translations {
 			'home.fabPay' => 'I owe',
 			'home.fabReceive' => 'Owed to me',
 			'home.settings' => 'Settings',
+			'home.reportTitle' => 'This month',
+			'home.paidOut' => ({required Object amount}) => 'Paid ${amount}',
+			'home.paidIn' => ({required Object amount}) => 'Received ${amount}',
+			'home.stillOwe' => ({required Object amount}) => 'Still to pay ${amount}',
+			'home.dueByEnd' => ({required Object amount}) => 'Due by month end ${amount}',
 			'money.title' => 'Accounts',
 			'money.emptyTitle' => 'No give-and-take yet',
 			'money.emptyBody' => 'Add a debt or receivable in a couple of taps.',
@@ -645,6 +690,8 @@ extension on Translations {
 			'settings.calendarHint' => 'First and last day of the month and week follow this calendar — not the language.',
 			'settings.jalali' => 'Jalali',
 			'settings.gregorian' => 'Gregorian',
+			'settings.currency' => 'Currency',
+			'settings.currencyHint' => 'Rial is shown ×10 (10 rial = 1 toman). Dollar is a label only.',
 			_ => null,
 		};
 	}

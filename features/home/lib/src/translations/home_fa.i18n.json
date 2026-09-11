@@ -12,5 +12,10 @@
   "theyOwe": "طلب $amount",
   "fabPay": "بدهی",
   "fabReceive": "طلب",
-  "settings": "تنظیمات"
+  "settings": "تنظیمات",
+  "reportTitle": "این ماه",
+  "paidOut": "پرداخت‌شده $amount",
+  "paidIn": "دریافت‌شده $amount",
+  "stillOwe": "ماندهٔ بدهی $amount",
+  "dueByEnd": "سررسید تا آخر ماه $amount"
 }

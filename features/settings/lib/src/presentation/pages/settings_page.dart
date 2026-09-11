@@ -1,4 +1,4 @@
-import 'package:core/core.dart' show CalendarPreference;
+import 'package:core/core.dart' show AppCurrency, CalendarPreference;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:translations/translations.dart' show Translations;
@@ -64,6 +64,21 @@ class SettingsPage extends ConsumerWidget {
                 CalendarPreference.gregorian => t.settings.gregorian,
               },
               onChanged: controller.setCalendar,
+            ),
+          ),
+          SettingsSection(
+            title: t.settings.currency,
+            footer: t.settings.currencyHint,
+            child: SettingsChoiceRow<AppCurrency>(
+              label: t.settings.currency,
+              value: settings.currency,
+              options: AppCurrency.values,
+              labelFor: (value) => switch (value) {
+                AppCurrency.toman => t.app.currency.toman,
+                AppCurrency.rial => t.app.currency.rial,
+                AppCurrency.usd => t.app.currency.usd,
+              },
+              onChanged: controller.setCurrency,
             ),
           ),
           Text(

@@ -71,3 +71,60 @@ String formatTime(DateTime dateTime) {
   final m = dateTime.minute.toString().padLeft(2, '0');
   return '$h:$m';
 }
+
+/// Calendar date with time stripped.
+DateTime dateOnly(DateTime value) =>
+    DateTime(value.year, value.month, value.day);
+
+/// Inclusive start/end dates (no time).
+final class DateRange {
+  const DateRange({required this.start, required this.endInclusive});
+
+  final DateTime start;
+  final DateTime endInclusive;
+
+  bool containsDate(DateTime value) {
+    final day = dateOnly(value);
+    return !day.isBefore(start) && !day.isAfter(endInclusive);
+  }
+}
+
+/// First and last day of the month that contains [now], in [calendar].
+DateRange monthBounds(DateTime now, CalendarType calendar) {
+  switch (calendar) {
+    case CalendarType.jalali:
+      final j = toJalali(now);
+      return DateRange(
+        start: dateOnly(Jalali(j.year, j.month, 1).toDateTime()),
+        endInclusive: dateOnly(
+          Jalali(j.year, j.month, j.monthLength).toDateTime(),
+        ),
+      );
+    case CalendarType.gregorian:
+      return DateRange(
+        start: DateTime(now.year, now.month, 1),
+        endInclusive: DateTime(now.year, now.month + 1, 0),
+      );
+  }
+}
+
+/// Week that contains [now]: Saturday–Friday (Jalali) or Monday–Sunday (Gregorian).
+DateRange weekBounds(DateTime now, CalendarType calendar) {
+  final today = dateOnly(now);
+  switch (calendar) {
+    case CalendarType.jalali:
+      final sinceSaturday = (today.weekday + 1) % 7;
+      final start = today.subtract(Duration(days: sinceSaturday));
+      return DateRange(
+        start: start,
+        endInclusive: start.add(const Duration(days: 6)),
+      );
+    case CalendarType.gregorian:
+      final sinceMonday = today.weekday - 1;
+      final start = today.subtract(Duration(days: sinceMonday));
+      return DateRange(
+        start: start,
+        endInclusive: start.add(const Duration(days: 6)),
+      );
+  }
+}

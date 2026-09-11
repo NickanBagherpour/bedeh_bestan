@@ -1,5 +1,6 @@
+import 'package:core/core.dart' show CalendarType, dateOnly, monthBounds;
 import 'package:local_db/local_db.dart'
-    show MoneyDirection, MoneyItem, MoneyStatus, Party;
+    show MoneyDirection, MoneyItem, MoneyPayment, MoneyStatus, Party;
 
 final class HomeDueRow {
   const HomeDueRow({
@@ -35,20 +36,37 @@ final class HomePartyBalance {
   final int receiveRemaining;
 }
 
+final class HomePeriodReport {
+  const HomePeriodReport({
+    required this.paidOut,
+    required this.paidIn,
+    required this.remainingPay,
+    required this.dueByPeriodEnd,
+    required this.periodStart,
+    required this.periodEnd,
+  });
+
+  final int paidOut;
+  final int paidIn;
+  final int remainingPay;
+  final int dueByPeriodEnd;
+  final DateTime periodStart;
+  final DateTime periodEnd;
+}
+
 final class HomeDashboard {
   const HomeDashboard({
     required this.dueThisWeek,
     required this.overdue,
     required this.balances,
+    required this.report,
   });
 
   final List<HomeDueRow> dueThisWeek;
   final List<HomeDueRow> overdue;
   final List<HomePartyBalance> balances;
+  final HomePeriodReport report;
 }
-
-DateTime dateOnly(DateTime value) =>
-    DateTime(value.year, value.month, value.day);
 
 bool isDueThisWeek(DateTime due, DateTime now) {
   final today = dateOnly(now);
@@ -57,10 +75,57 @@ bool isDueThisWeek(DateTime due, DateTime now) {
   return !day.isBefore(today) && !day.isAfter(end);
 }
 
+HomePeriodReport buildHomePeriodReport({
+  required List<MoneyItem> items,
+  required List<MoneyPayment> payments,
+  required DateTime now,
+  required CalendarType calendar,
+}) {
+  final month = monthBounds(now, calendar);
+  final today = dateOnly(now);
+  final byId = {for (final item in items) item.id: item};
+
+  var paidOut = 0;
+  var paidIn = 0;
+  for (final payment in payments) {
+    final paidDay = dateOnly(payment.paidAt);
+    if (paidDay.isBefore(month.start) || paidDay.isAfter(today)) continue;
+    final item = byId[payment.moneyItemId];
+    if (item == null) continue;
+    if (item.direction == MoneyDirection.pay) {
+      paidOut += payment.amount;
+    } else {
+      paidIn += payment.amount;
+    }
+  }
+
+  var remainingPay = 0;
+  var dueByPeriodEnd = 0;
+  for (final item in items) {
+    if (item.isSettled || item.direction != MoneyDirection.pay) continue;
+    remainingPay += item.remainingAmount;
+    final due = dateOnly(item.nextDueDate);
+    if (!due.isBefore(today) && !due.isAfter(month.endInclusive)) {
+      dueByPeriodEnd += item.remainingAmount;
+    }
+  }
+
+  return HomePeriodReport(
+    paidOut: paidOut,
+    paidIn: paidIn,
+    remainingPay: remainingPay,
+    dueByPeriodEnd: dueByPeriodEnd,
+    periodStart: month.start,
+    periodEnd: month.endInclusive,
+  );
+}
+
 HomeDashboard buildHomeDashboard({
   required List<MoneyItem> items,
   required List<Party> parties,
+  required List<MoneyPayment> payments,
   required DateTime now,
+  required CalendarType calendar,
 }) {
   final names = {for (final party in parties) party.id: party.name};
   HomeDueRow rowFor(MoneyItem item) {
@@ -132,5 +197,11 @@ HomeDashboard buildHomeDashboard({
     dueThisWeek: dueThisWeek,
     overdue: overdue,
     balances: balances,
+    report: buildHomePeriodReport(
+      items: items,
+      payments: payments,
+      now: now,
+      calendar: calendar,
+    ),
   );
 }

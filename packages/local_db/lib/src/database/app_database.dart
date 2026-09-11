@@ -85,6 +85,14 @@ class AppDatabase extends _$AppDatabase {
     );
   }
 
+  Stream<List<MoneyPayment>> watchPayments() {
+    final query = select(moneyPayments)
+      ..orderBy([(row) => OrderingTerm.desc(row.paidAt)]);
+    return query.watch().map(
+      (rows) => [for (final row in rows) paymentFromRow(row)],
+    );
+  }
+
   Stream<List<MoneyPayment>> watchPaymentsFor(String moneyItemId) {
     final query = select(moneyPayments)
       ..where((row) => row.moneyItemId.equals(moneyItemId))

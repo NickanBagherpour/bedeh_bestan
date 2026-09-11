@@ -45,7 +45,7 @@ void main() {
     expect(find.text('حساب'), findsOneWidget);
     expect(find.text('تقویم'), findsOneWidget);
     expect(find.text('یادداشت'), findsOneWidget);
-    expect(find.text('این هفته'), findsOneWidget);
+    expect(find.text('این ماه'), findsOneWidget);
     expect(find.byTooltip('تنظیمات'), findsOneWidget);
 
     await tester.tap(find.byTooltip('تنظیمات'));

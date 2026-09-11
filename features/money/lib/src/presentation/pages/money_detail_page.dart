@@ -1,11 +1,12 @@
 import 'package:core/core.dart'
     show
+        AppCurrency,
         AppRoutes,
         CalendarType,
+        GroupedAmountFormatter,
         appSettingsProvider,
         formatLongDate,
-        formatToman,
-        parseTomanInput,
+        parseStoredAmount,
         toPersianDigits;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,6 +45,7 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
     final theme = Theme.of(context);
     final state = ref.watch(moneyDetailControllerProvider(widget.itemId));
     final calendar = ref.watch(appSettingsProvider).resolvedCalendar;
+    final currency = ref.watch(appSettingsProvider).currency;
     final persian = Localizations.localeOf(context).languageCode == 'fa';
 
     return Scaffold(
@@ -59,7 +61,7 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
             ),
         ],
       ),
-      body: _body(context, t, theme, state, calendar, persian),
+      body: _body(context, t, theme, state, calendar, persian, currency),
     );
   }
 
@@ -70,6 +72,7 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
     MoneyDetailState state,
     CalendarType calendar,
     bool persian,
+    AppCurrency currency,
   ) {
     if (state.status == MoneyDetailStatus.error && state.item == null) {
       return KitEmpty(
@@ -87,19 +90,22 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
 
     final status = item.statusOn(DateTime.now());
     final accent = moneyAccentFor(item.direction);
-    final remaining = formatToman(
+    final remaining = formatItemMoney(
       item.remainingAmount,
-      currencyLabel: t.app.currency,
+      t: t,
+      currency: currency,
       persianDigits: persian,
     );
-    final total = formatToman(
+    final total = formatItemMoney(
       item.totalAmount,
-      currencyLabel: t.app.currency,
+      t: t,
+      currency: currency,
       persianDigits: persian,
     );
-    final paid = formatToman(
+    final paid = formatItemMoney(
       item.paidAmount,
-      currencyLabel: t.app.currency,
+      t: t,
+      currency: currency,
       persianDigits: persian,
     );
     final due = formatLongDate(item.nextDueDate, calendar);
@@ -187,14 +193,17 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
           TextField(
             controller: _amount,
             keyboardType: TextInputType.number,
+            inputFormatters: [
+              GroupedAmountFormatter(persianDigits: persian),
+            ],
             decoration: InputDecoration(
               labelText: t.money.paymentAmount,
-              suffixText: t.app.currency,
+              suffixText: currencyLabelOf(t, currency),
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
           FilledButton(
-            onPressed: state.busy ? null : () => _pay(context, t),
+            onPressed: state.busy ? null : () => _pay(context, t, currency),
             child: Text(
               item.direction == MoneyDirection.pay
                   ? t.money.payCta
@@ -230,9 +239,10 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
                   children: [
                     Expanded(
                       child: Text(
-                        formatToman(
+                        formatItemMoney(
                           payment.amount,
-                          currencyLabel: t.app.currency,
+                          t: t,
+                          currency: currency,
                           persianDigits: persian,
                         ),
                         style: theme.textTheme.titleSmall?.copyWith(
@@ -256,8 +266,12 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
     );
   }
 
-  Future<void> _pay(BuildContext context, Translations t) async {
-    final amount = parseTomanInput(_amount.text);
+  Future<void> _pay(
+    BuildContext context,
+    Translations t,
+    AppCurrency currency,
+  ) async {
+    final amount = parseStoredAmount(_amount.text, currency);
     if (amount == null || amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(t.money.invalidAmount)),

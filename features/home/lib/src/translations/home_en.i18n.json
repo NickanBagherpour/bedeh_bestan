@@ -12,5 +12,10 @@
   "theyOwe": "Owed to me $amount",
   "fabPay": "I owe",
   "fabReceive": "Owed to me",
-  "settings": "Settings"
+  "settings": "Settings",
+  "reportTitle": "This month",
+  "paidOut": "Paid $amount",
+  "paidIn": "Received $amount",
+  "stillOwe": "Still to pay $amount",
+  "dueByEnd": "Due by month end $amount"
 }

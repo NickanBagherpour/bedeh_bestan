@@ -1,7 +1,7 @@
 import 'dart:ui' show Locale;
 
 import 'package:core/core.dart'
-    show AppSettings, CalendarPreference, appSettingsProvider;
+    show AppCurrency, AppSettings, CalendarPreference, appSettingsProvider;
 import 'package:flutter/material.dart' show ThemeMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:translations/translations.dart'
@@ -29,5 +29,9 @@ final class SettingsController extends Notifier<AppSettings> {
 
   Future<void> setCalendar(CalendarPreference calendar) {
     return ref.read(appSettingsProvider.notifier).setCalendar(calendar);
+  }
+
+  Future<void> setCurrency(AppCurrency currency) {
+    return ref.read(appSettingsProvider.notifier).setCurrency(currency);
   }
 }

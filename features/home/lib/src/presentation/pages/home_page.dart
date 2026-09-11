@@ -1,10 +1,11 @@
 import 'package:core/core.dart'
     show
+        AppCurrency,
         AppRoutes,
         CalendarType,
         appSettingsProvider,
         formatLongDate,
-        formatToman,
+        formatStoredMoney,
         toPersianDigits;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,6 +20,7 @@ import '../../application/home_dashboard.dart';
 import '../../application/state/home_state.dart';
 import '../widgets/home_balances_card.dart';
 import '../widgets/home_due_list.dart';
+import '../widgets/home_report_card.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -29,6 +31,7 @@ class HomePage extends ConsumerWidget {
     final t = Translations.of(context);
     final state = ref.watch(homeControllerProvider);
     final calendar = ref.watch(appSettingsProvider).resolvedCalendar;
+    final currency = ref.watch(appSettingsProvider).currency;
     final persian = Localizations.localeOf(context).languageCode == 'fa';
 
     return Scaffold(
@@ -129,6 +132,7 @@ class HomePage extends ConsumerWidget {
               t,
               state.dashboard!,
               calendar: calendar,
+              currency: currency,
               persian: persian,
             )
           else
@@ -148,11 +152,17 @@ class HomePage extends ConsumerWidget {
     Translations t,
     HomeDashboard dashboard, {
     required CalendarType calendar,
+    required AppCurrency currency,
     required bool persian,
   }) {
-    String money(int amount) => formatToman(
+    String money(int amount) => formatStoredMoney(
           amount,
-          currencyLabel: t.app.currency,
+          currency: currency,
+          currencyLabel: switch (currency) {
+            AppCurrency.toman => t.app.currency.toman,
+            AppCurrency.rial => t.app.currency.rial,
+            AppCurrency.usd => t.app.currency.usd,
+          },
           persianDigits: persian,
         );
     String due(HomeDueRow row) {
@@ -176,6 +186,16 @@ class HomePage extends ConsumerWidget {
     }
 
     return [
+      HomeReportCard(
+        title: t.home.reportTitle,
+        paidOutLabel: t.home.paidOut(amount: money(dashboard.report.paidOut)),
+        paidInLabel: t.home.paidIn(amount: money(dashboard.report.paidIn)),
+        stillOweLabel:
+            t.home.stillOwe(amount: money(dashboard.report.remainingPay)),
+        dueByEndLabel:
+            t.home.dueByEnd(amount: money(dashboard.report.dueByPeriodEnd)),
+      ),
+      const SizedBox(height: AppSpacing.md),
       if (dashboard.overdue.isNotEmpty) ...[
         HomeDueList(
           title: t.home.overdue,

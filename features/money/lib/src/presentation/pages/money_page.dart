@@ -1,10 +1,10 @@
 import 'package:core/core.dart'
     show
+        AppCurrency,
         AppRoutes,
         CalendarType,
         appSettingsProvider,
         formatLongDate,
-        formatToman,
         toPersianDigits;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,6 +30,7 @@ class MoneyPage extends ConsumerWidget {
     final t = Translations.of(context);
     final state = ref.watch(moneyListControllerProvider);
     final calendar = ref.watch(appSettingsProvider).resolvedCalendar;
+    final currency = ref.watch(appSettingsProvider).currency;
     final persian = Localizations.localeOf(context).languageCode == 'fa';
     final now = DateTime.now();
     final visible = state.visible(now: now);
@@ -94,7 +95,17 @@ class MoneyPage extends ConsumerWidget {
               ],
             ),
           ),
-          Expanded(child: _body(context, t, state, visible, calendar, persian)),
+          Expanded(
+            child: _body(
+              context,
+              t,
+              state,
+              visible,
+              calendar,
+              persian,
+              currency,
+            ),
+          ),
         ],
       ),
     );
@@ -107,6 +118,7 @@ class MoneyPage extends ConsumerWidget {
     List<MoneyItem> visible,
     CalendarType calendar,
     bool persian,
+    AppCurrency currency,
   ) {
     if (state.status == MoneyListStatus.error) {
       return KitEmpty(
@@ -149,9 +161,10 @@ class MoneyPage extends ConsumerWidget {
         return MoneyItemTile(
           title: item.title,
           partyName: party?.name ?? item.partyId,
-          amountLabel: formatToman(
+          amountLabel: formatItemMoney(
             item.remainingAmount,
-            currencyLabel: t.app.currency,
+            t: t,
+            currency: currency,
             persianDigits: persian,
           ),
           dueLabel: _dueLabel(t, item.nextDueDate, calendar, persian),

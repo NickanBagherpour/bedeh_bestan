@@ -1,5 +1,6 @@
+import 'package:core/core.dart' show appSettingsProvider;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:local_db/local_db.dart' show MoneyItem, Party;
+import 'package:local_db/local_db.dart' show MoneyItem, MoneyPayment, Party;
 
 import '../../data/repositories/home_repository_provider.dart';
 import '../home_dashboard.dart';
@@ -13,8 +14,10 @@ final class HomeController extends Notifier<HomeState> {
   @override
   HomeState build() {
     final repo = ref.watch(homeRepositoryProvider);
+    final calendar = ref.watch(appSettingsProvider).resolvedCalendar;
     var items = <MoneyItem>[];
     var parties = <Party>[];
+    var payments = <MoneyPayment>[];
 
     void emit() {
       state = HomeState(
@@ -22,8 +25,17 @@ final class HomeController extends Notifier<HomeState> {
         dashboard: buildHomeDashboard(
           items: items,
           parties: parties,
+          payments: payments,
           now: DateTime.now(),
+          calendar: calendar,
         ),
+      );
+    }
+
+    void onError(_) {
+      state = const HomeState(
+        status: HomeStatus.error,
+        errorKey: 'home.loadError',
       );
     }
 
@@ -32,28 +44,26 @@ final class HomeController extends Notifier<HomeState> {
         items = value;
         emit();
       },
-      onError: (_) {
-        state = const HomeState(
-          status: HomeStatus.error,
-          errorKey: 'home.loadError',
-        );
-      },
+      onError: onError,
     );
     final partiesSub = repo.watchParties().listen(
       (value) {
         parties = value;
         emit();
       },
-      onError: (_) {
-        state = const HomeState(
-          status: HomeStatus.error,
-          errorKey: 'home.loadError',
-        );
+      onError: onError,
+    );
+    final paymentsSub = repo.watchPayments().listen(
+      (value) {
+        payments = value;
+        emit();
       },
+      onError: onError,
     );
     ref.onDispose(() {
       itemsSub.cancel();
       partiesSub.cancel();
+      paymentsSub.cancel();
     });
     return const HomeState(status: HomeStatus.loading);
   }
