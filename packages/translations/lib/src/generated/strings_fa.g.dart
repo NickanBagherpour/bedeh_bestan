@@ -44,6 +44,7 @@ class TranslationsFa extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$home$fa home = _Translations$home$fa._(_root);
 	@override late final _Translations$money$fa money = _Translations$money$fa._(_root);
 	@override late final _Translations$notes$fa notes = _Translations$notes$fa._(_root);
+	@override late final _Translations$settings$fa settings = _Translations$settings$fa._(_root);
 }
 
 // Path: app
@@ -98,6 +99,7 @@ class _Translations$home$fa extends Translations$home$en {
 	@override String theyOwe({required Object amount}) => 'طلب ${amount}';
 	@override String get fabPay => 'بدهی';
 	@override String get fabReceive => 'طلب';
+	@override String get settings => 'تنظیمات';
 }
 
 // Path: money
@@ -174,6 +176,22 @@ class _Translations$notes$fa extends Translations$notes$en {
 	@override String get title => 'یادداشت';
 	@override String get emptyTitle => 'یادداشت‌ها';
 	@override String get emptyBody => 'عنوان، متن، برچسب و سنجاق‌کردن در فاز یادداشت‌ها می‌آید.';
+}
+
+// Path: settings
+class _Translations$settings$fa extends Translations$settings$en {
+	_Translations$settings$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'تنظیمات';
+	@override String get theme => 'پوسته';
+	@override String get language => 'زبان';
+	@override String get calendar => 'گاه‌شماری';
+	@override String get calendarHint => 'اول و آخر ماه و هفته با این گاه‌شماری حساب می‌شود — نه با زبان برنامه.';
+	@override String get jalali => 'هجری شمسی';
+	@override String get gregorian => 'میلادی';
 }
 
 // Path: app.nav
@@ -324,6 +342,7 @@ extension on TranslationsFa {
 			'home.theyOwe' => ({required Object amount}) => 'طلب ${amount}',
 			'home.fabPay' => 'بدهی',
 			'home.fabReceive' => 'طلب',
+			'home.settings' => 'تنظیمات',
 			'money.title' => 'حساب',
 			'money.emptyTitle' => 'هنوز بده‌بستانی نیست',
 			'money.emptyBody' => 'با چند ضربه بدهی یا طلب اضافه کن.',
@@ -389,6 +408,13 @@ extension on TranslationsFa {
 			'notes.title' => 'یادداشت',
 			'notes.emptyTitle' => 'یادداشت‌ها',
 			'notes.emptyBody' => 'عنوان، متن، برچسب و سنجاق‌کردن در فاز یادداشت‌ها می‌آید.',
+			'settings.title' => 'تنظیمات',
+			'settings.theme' => 'پوسته',
+			'settings.language' => 'زبان',
+			'settings.calendar' => 'گاه‌شماری',
+			'settings.calendarHint' => 'اول و آخر ماه و هفته با این گاه‌شماری حساب می‌شود — نه با زبان برنامه.',
+			'settings.jalali' => 'هجری شمسی',
+			'settings.gregorian' => 'میلادی',
 			_ => null,
 		};
 	}

@@ -21,6 +21,7 @@ workspace:
   - features/money
   - features/calendar
   - features/notes
+  - features/settings
 
 melos:
   scripts:

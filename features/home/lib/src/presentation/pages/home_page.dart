@@ -42,19 +42,36 @@ class HomePage extends ConsumerWidget {
         padding: const EdgeInsets.all(AppSpacing.md),
         children: [
           const SizedBox(height: AppSpacing.sm),
-          Text(
-            t.app.appName,
-            style: theme.textTheme.displaySmall?.copyWith(
-              color: theme.colorScheme.primary,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xxs),
-          Text(
-            t.app.subtitle,
-            style: theme.textTheme.titleMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      t.app.appName,
+                      style: theme.textTheme.displaySmall?.copyWith(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xxs),
+                    Text(
+                      t.app.subtitle,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                tooltip: t.home.settings,
+                onPressed: () => context.push(AppRoutes.settings.path),
+                icon: const Icon(Icons.settings_outlined),
+              ),
+            ],
           ),
           const SizedBox(height: AppSpacing.lg),
           KitCard(

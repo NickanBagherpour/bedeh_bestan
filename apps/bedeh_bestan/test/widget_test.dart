@@ -46,6 +46,12 @@ void main() {
     expect(find.text('تقویم'), findsOneWidget);
     expect(find.text('یادداشت'), findsOneWidget);
     expect(find.text('این هفته'), findsOneWidget);
+    expect(find.byTooltip('تنظیمات'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('تنظیمات'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('گاه‌شماری'), findsWidgets);
 
     await database.close();
     await tester.pump(const Duration(milliseconds: 50));

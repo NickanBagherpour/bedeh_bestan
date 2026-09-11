@@ -9,4 +9,9 @@ void main() {
     expect(AppRoutes.moneyItemPath('x'), '/money/item/x');
     expect(AppRoutes.moneyNewPath(direction: 'pay'), '/money/new?direction=pay');
   });
+
+  test('settings is an overlay path, not a tab', () {
+    expect(AppRoutes.settings.path, '/settings');
+    expect(AppRoutes.primary.contains(AppRoutes.settings), isFalse);
+  });
 }

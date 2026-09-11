@@ -11,5 +11,6 @@
   "iOwe": "بدهی $amount",
   "theyOwe": "طلب $amount",
   "fabPay": "بدهی",
-  "fabReceive": "طلب"
+  "fabReceive": "طلب",
+  "settings": "تنظیمات"
 }

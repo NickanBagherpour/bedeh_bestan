@@ -1,0 +1,9 @@
+{
+  "title": "Settings",
+  "theme": "Theme",
+  "language": "Language",
+  "calendar": "Calendar",
+  "calendarHint": "First and last day of the month and week follow this calendar — not the language.",
+  "jalali": "Jalali",
+  "gregorian": "Gregorian"
+}

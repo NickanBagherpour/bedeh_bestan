@@ -35,6 +35,8 @@ dependencies:
     path: ../../features/money
   feature_notes:
     path: ../../features/notes
+  feature_settings:
+    path: ../../features/settings
 
 dev_dependencies:
   flutter_test:

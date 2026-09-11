@@ -26,7 +26,7 @@ If `pub get` hits `pub.flutter-io.cn` hash errors, use `PUB_HOSTED_URL=https://p
 
 ```
 apps/bedeh_bestan/     composition root (router, AppShell)
-features/              home, money, calendar, notes
+features/              home, money, calendar, notes, settings
 packages/              core, ui_kit, translations
 docs/                  architecture, prompts, phases
 ```

@@ -19,7 +19,7 @@ Text(t.translate('money.status.overdue')); // data keys only
 
 Default locale is **fa** (`useAppDefaultLocale()` in `main.dart`). Persist via `appSettingsProvider.setLocale`.
 
-Theme, locale, and calendar **persistence already exists**. The settings **screen** is Phase 4 (`docs/project/bedeh-bestan/PHASES.md`). Calendar (Jalali / Gregorian) is a separate setting from language — it drives date display and month/week bounds.
+Theme, locale, and calendar persist via `appSettingsProvider`. The settings **screen** is `features/settings` (Home gear → `/settings`). Calendar (Jalali / Gregorian) is a separate setting from language — it drives date display and month/week bounds.
 
 ## Theme
 

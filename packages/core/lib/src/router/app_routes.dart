@@ -21,6 +21,7 @@ abstract final class AppRoutes {
   );
   static const calendar = AppRoute(name: 'calendar', path: '/calendar');
   static const notes = AppRoute(name: 'notes', path: '/notes');
+  static const settings = AppRoute(name: 'settings', path: '/settings');
 
   /// Primary destinations in bottom-nav order.
   static const List<AppRoute> primary = [home, money, calendar, notes];
@@ -33,6 +34,7 @@ abstract final class AppRoutes {
     moneyEdit,
     calendar,
     notes,
+    settings,
   ];
 
   static String moneyItemPath(String id) => '/money/item/$id';

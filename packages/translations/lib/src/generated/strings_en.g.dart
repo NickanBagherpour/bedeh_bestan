@@ -46,6 +46,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$home$en home = Translations$home$en.internal(_root);
 	late final Translations$money$en money = Translations$money$en.internal(_root);
 	late final Translations$notes$en notes = Translations$notes$en.internal(_root);
+	late final Translations$settings$en settings = Translations$settings$en.internal(_root);
 }
 
 // Path: app
@@ -145,6 +146,9 @@ class Translations$home$en {
 
 	/// en: 'Owed to me'
 	String get fabReceive => 'Owed to me';
+
+	/// en: 'Settings'
+	String get settings => 'Settings';
 }
 
 // Path: money
@@ -332,6 +336,36 @@ class Translations$notes$en {
 
 	/// en: 'Title, body, tags, and pinning arrive in the notes phase.'
 	String get emptyBody => 'Title, body, tags, and pinning arrive in the notes phase.';
+}
+
+// Path: settings
+class Translations$settings$en {
+	Translations$settings$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Settings'
+	String get title => 'Settings';
+
+	/// en: 'Theme'
+	String get theme => 'Theme';
+
+	/// en: 'Language'
+	String get language => 'Language';
+
+	/// en: 'Calendar'
+	String get calendar => 'Calendar';
+
+	/// en: 'First and last day of the month and week follow this calendar — not the language.'
+	String get calendarHint => 'First and last day of the month and week follow this calendar — not the language.';
+
+	/// en: 'Jalali'
+	String get jalali => 'Jalali';
+
+	/// en: 'Gregorian'
+	String get gregorian => 'Gregorian';
 }
 
 // Path: app.nav
@@ -538,6 +572,7 @@ extension on Translations {
 			'home.theyOwe' => ({required Object amount}) => 'Owed to me ${amount}',
 			'home.fabPay' => 'I owe',
 			'home.fabReceive' => 'Owed to me',
+			'home.settings' => 'Settings',
 			'money.title' => 'Accounts',
 			'money.emptyTitle' => 'No give-and-take yet',
 			'money.emptyBody' => 'Add a debt or receivable in a couple of taps.',
@@ -603,6 +638,13 @@ extension on Translations {
 			'notes.title' => 'Notes',
 			'notes.emptyTitle' => 'Notes',
 			'notes.emptyBody' => 'Title, body, tags, and pinning arrive in the notes phase.',
+			'settings.title' => 'Settings',
+			'settings.theme' => 'Theme',
+			'settings.language' => 'Language',
+			'settings.calendar' => 'Calendar',
+			'settings.calendarHint' => 'First and last day of the month and week follow this calendar — not the language.',
+			'settings.jalali' => 'Jalali',
+			'settings.gregorian' => 'Gregorian',
 			_ => null,
 		};
 	}

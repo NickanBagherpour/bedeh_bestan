@@ -11,5 +11,6 @@
   "iOwe": "I owe $amount",
   "theyOwe": "Owed to me $amount",
   "fabPay": "I owe",
-  "fabReceive": "Owed to me"
+  "fabReceive": "Owed to me",
+  "settings": "Settings"
 }

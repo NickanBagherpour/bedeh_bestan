@@ -4,6 +4,7 @@ import 'package:feature_home/home.dart' show buildHomeRoutes;
 import 'package:feature_money/money.dart'
     show buildMoneyOverlayRoutes, buildMoneyRoutes;
 import 'package:feature_notes/notes.dart' show buildNotesRoutes;
+import 'package:feature_settings/settings.dart' show buildSettingsRoutes;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -27,6 +28,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         ],
       ),
       ...buildMoneyOverlayRoutes(ref),
+      ...buildSettingsRoutes(ref),
     ],
   );
 });

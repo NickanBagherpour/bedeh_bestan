@@ -20,6 +20,6 @@ Read **only** what the task needs. Do not load the whole `docs/` tree.
 
 ## Current features
 
-`features/home` · `features/money` · `features/calendar` · `features/notes`
+`features/home` · `features/money` · `features/calendar` · `features/notes` · `features/settings`
 
 App root: `apps/bedeh_bestan/` · DB: `packages/local_db/` · Routes: `packages/core/lib/src/router/app_routes.dart`

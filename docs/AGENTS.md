@@ -20,7 +20,7 @@ packages share foundation. **Do not copy MMS business logic.**
 ```
 apps/bedeh_bestan/     composition root (main, router, AppShell)
 features/              one Dart package per destination
-  home/ money/ calendar/ notes/
+  home/ money/ calendar/ notes/ settings/
 packages/
   core/                routes, settings, storage, Jalali, Toman helpers
   ui_kit/              theme + Kit* widgets
