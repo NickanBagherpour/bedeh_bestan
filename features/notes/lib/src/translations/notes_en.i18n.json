@@ -18,6 +18,7 @@
   "save": "Save",
   "edit": "Edit",
   "delete": "Delete",
+  "deleteConfirm": "Delete this note?",
   "openMoney": "Open account",
   "missingTitle": "Give it a title.",
   "loadError": "Could not read notes.",

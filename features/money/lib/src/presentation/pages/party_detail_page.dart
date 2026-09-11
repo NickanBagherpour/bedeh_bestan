@@ -1,4 +1,4 @@
-import 'package:core/core.dart' show AppRoutes;
+import 'package:core/core.dart' show AppRoutes, overlayAppBar, popOrGo;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,7 +6,13 @@ import 'package:local_db/local_db.dart' show MoneyItem, Party;
 import 'package:translations/translations.dart'
     show Translations, TranslationsLookup;
 import 'package:ui_kit/ui_kit.dart'
-    show AppHaptics, AppSpacing, KitCard, KitError, KitLoading;
+    show
+        AppHaptics,
+        AppSpacing,
+        KitCard,
+        KitError,
+        KitLoading,
+        showKitConfirmDialog;
 
 import '../../application/controllers/money_list_controller.dart';
 import '../../application/state/money_list_state.dart';
@@ -29,8 +35,11 @@ class PartyDetailPage extends ConsumerWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: overlayAppBar(
+        context: context,
         title: Text(party?.name ?? t.money.parties),
+        fallbackPath: AppRoutes.parties.path,
+        backTooltip: t.app.actions.back,
         actions: [
           if (party != null)
             IconButton(
@@ -135,7 +144,14 @@ class PartyDetailPage extends ConsumerWidget {
     WidgetRef ref,
     Translations t,
   ) async {
-    AppHaptics.warn();
+    final ok = await showKitConfirmDialog(
+      context: context,
+      title: t.money.deleteParty,
+      body: t.money.deletePartyConfirm,
+      confirmLabel: t.app.actions.delete,
+      cancelLabel: t.app.actions.cancel,
+    );
+    if (!ok || !context.mounted) return;
     final errorKey =
         await ref.read(moneyListControllerProvider.notifier).deleteParty(partyId);
     if (!context.mounted) return;
@@ -148,6 +164,6 @@ class PartyDetailPage extends ConsumerWidget {
       return;
     }
     AppHaptics.confirm();
-    context.go(AppRoutes.parties.path);
+    popOrGo(context, AppRoutes.parties.path);
   }
 }

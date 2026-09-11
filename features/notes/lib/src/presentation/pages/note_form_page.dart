@@ -1,3 +1,4 @@
+import 'package:core/core.dart' show AppRoutes, overlayAppBar;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -61,7 +62,12 @@ class _NoteFormPageState extends ConsumerState<NoteFormPage> {
         });
       }
       return Scaffold(
-        appBar: AppBar(title: Text(t.notes.editTitle)),
+        appBar: overlayAppBar(
+          context: context,
+          title: Text(t.notes.editTitle),
+          fallbackPath: AppRoutes.notes.path,
+          backTooltip: t.app.actions.back,
+        ),
         body: note == null && state.status == NotesStatus.loaded
             ? KitError(message: t.notes.missingItem)
             : const KitLoading(),
@@ -90,8 +96,11 @@ class _NoteFormPageState extends ConsumerState<NoteFormPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: overlayAppBar(
+        context: context,
         title: Text(_isEdit ? t.notes.editTitle : t.notes.newTitle),
+        fallbackPath: AppRoutes.notes.path,
+        backTooltip: t.app.actions.back,
       ),
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),

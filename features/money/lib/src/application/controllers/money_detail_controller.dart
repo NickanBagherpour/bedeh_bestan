@@ -96,4 +96,13 @@ final class MoneyDetailController extends Notifier<MoneyDetailState> {
       return key;
     }
   }
+
+  Future<String?> deleteItem() async {
+    try {
+      await ref.read(moneyRepositoryProvider).deleteItem(itemId);
+      return null;
+    } catch (_) {
+      return 'money.saveError';
+    }
+  }
 }

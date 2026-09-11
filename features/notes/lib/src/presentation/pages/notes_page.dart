@@ -6,7 +6,7 @@ import 'package:local_db/local_db.dart' show Note;
 import 'package:translations/translations.dart'
     show Translations, TranslationsLookup;
 import 'package:ui_kit/ui_kit.dart'
-    show AppHaptics, AppMotion, AppSpacing, KitEmpty, KitError, KitLoading;
+    show AppHaptics, AppSpacing, KitEmpty, KitError, KitLoading;
 
 import '../../application/controllers/notes_controller.dart';
 import '../../application/state/notes_state.dart';
@@ -31,73 +31,71 @@ class NotesPage extends ConsumerWidget {
         icon: const Icon(Icons.note_add_outlined),
         label: Text(t.notes.fab),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.md,
-              AppSpacing.xs,
-              AppSpacing.md,
-              AppSpacing.sm,
-            ),
-            child: Column(
-              children: [
-                TextField(
-                  decoration: InputDecoration(
-                    labelText: t.notes.search,
-                    prefixIcon: const Icon(Icons.search_rounded),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                AppSpacing.xs,
+                AppSpacing.md,
+                AppSpacing.sm,
+              ),
+              child: Column(
+                children: [
+                  TextField(
+                    decoration: InputDecoration(
+                      labelText: t.notes.search,
+                      prefixIcon: const Icon(Icons.search_rounded),
+                    ),
+                    onChanged: (value) {
+                      ref.read(notesControllerProvider.notifier).setQuery(value);
+                    },
                   ),
-                  onChanged: (value) {
-                    ref.read(notesControllerProvider.notifier).setQuery(value);
-                  },
-                ),
-                if (state.tags.isNotEmpty) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: Wrap(
-                      spacing: AppSpacing.xs,
-                      runSpacing: AppSpacing.xs,
-                      children: [
-                        FilterChip(
-                          label: Text(t.notes.allTags),
-                          selected: state.tag == null,
-                          onSelected: (_) {
-                            AppHaptics.selection();
-                            ref.read(notesControllerProvider.notifier).setTag(null);
-                          },
-                        ),
-                        for (final tag in state.tags)
+                  if (state.tags.isNotEmpty) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: Wrap(
+                        spacing: AppSpacing.xs,
+                        runSpacing: AppSpacing.xs,
+                        children: [
                           FilterChip(
-                            label: Text(tag),
-                            selected: state.tag == tag,
-                            onSelected: (selected) {
+                            label: Text(t.notes.allTags),
+                            selected: state.tag == null,
+                            onSelected: (_) {
                               AppHaptics.selection();
                               ref
                                   .read(notesControllerProvider.notifier)
-                                  .setTag(selected ? tag : null);
+                                  .setTag(null);
                             },
                           ),
-                      ],
+                          for (final tag in state.tags)
+                            FilterChip(
+                              label: Text(tag),
+                              selected: state.tag == tag,
+                              onSelected: (selected) {
+                                AppHaptics.selection();
+                                ref
+                                    .read(notesControllerProvider.notifier)
+                                    .setTag(selected ? tag : null);
+                              },
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
-          Expanded(
-            child: AnimatedSwitcher(
-              duration: AppMotion.normal,
-              switchInCurve: AppMotion.easeOut,
-              child: _body(context, ref, t, state, visible),
-            ),
-          ),
+          ..._bodySlivers(context, ref, t, state, visible),
         ],
       ),
     );
   }
 
-  Widget _body(
+  List<Widget> _bodySlivers(
     BuildContext context,
     WidgetRef ref,
     Translations t,
@@ -105,74 +103,95 @@ class NotesPage extends ConsumerWidget {
     List<Note> visible,
   ) {
     if (state.status == NotesStatus.error) {
-      return KitError(
-        key: const ValueKey('error'),
-        message: t.message(
-          state.errorKey ?? 'notes.loadError',
-          shouldTranslate: true,
+      return [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: KitError(
+            message: t.message(
+              state.errorKey ?? 'notes.loadError',
+              shouldTranslate: true,
+            ),
+            retryLabel: t.app.actions.retry,
+            onRetry: () => ref.read(notesControllerProvider.notifier).retry(),
+          ),
         ),
-        retryLabel: t.app.actions.retry,
-        onRetry: () => ref.read(notesControllerProvider.notifier).retry(),
-      );
+      ];
     }
     if (state.status == NotesStatus.loading) {
-      return const KitLoading(key: ValueKey('loading'));
+      return [
+        const SliverFillRemaining(
+          hasScrollBody: false,
+          child: KitLoading(),
+        ),
+      ];
     }
     if (state.notes.isEmpty) {
-      return KitEmpty(
-        key: const ValueKey('empty'),
-        icon: Icons.sticky_note_2_rounded,
-        title: t.notes.emptyTitle,
-        body: t.notes.emptyBody,
-        action: FilledButton.tonal(
-          onPressed: () {
-            AppHaptics.light();
-            context.push(AppRoutes.notesNew.path);
-          },
-          child: Text(t.notes.fab),
+      return [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: KitEmpty(
+            icon: Icons.sticky_note_2_rounded,
+            title: t.notes.emptyTitle,
+            body: t.notes.emptyBody,
+            action: FilledButton.tonal(
+              onPressed: () {
+                AppHaptics.light();
+                context.push(AppRoutes.notesNew.path);
+              },
+              child: Text(t.notes.fab),
+            ),
+          ),
         ),
-      );
+      ];
     }
     if (visible.isEmpty) {
-      return KitEmpty(
-        key: const ValueKey('filter'),
-        icon: Icons.filter_alt_outlined,
-        title: t.notes.emptyFilter,
-        body: t.notes.emptyBody,
-      );
+      return [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: KitEmpty(
+            icon: Icons.filter_alt_outlined,
+            title: t.notes.emptyFilter,
+            body: t.notes.emptyBody,
+          ),
+        ),
+      ];
     }
 
-    return ListView.separated(
-      key: const ValueKey('list'),
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.md,
-        0,
-        AppSpacing.md,
-        88,
-      ),
-      itemCount: visible.length,
-      separatorBuilder: (context, index) => const SizedBox(height: AppSpacing.sm),
-      itemBuilder: (context, index) {
-        final note = visible[index];
-        final party = state.partyFor(note.partyId);
-        final money = state.moneyFor(note.moneyItemId);
-        final meta = [
-          if (party != null) party.name,
-          if (money != null) money.title,
-        ].join(' · ');
-        return NoteTile(
-          title: note.title,
-          body: note.body,
-          tags: note.tags,
-          pinned: note.pinned,
-          meta: meta.isEmpty ? null : meta,
-          onTap: () => context.push(AppRoutes.notePath(note.id)),
-          onPin: () {
-            AppHaptics.selection();
-            ref.read(notesControllerProvider.notifier).togglePin(note.id);
+    return [
+      SliverPadding(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.md,
+          0,
+          AppSpacing.md,
+          88,
+        ),
+        sliver: SliverList.separated(
+          itemCount: visible.length,
+          separatorBuilder: (context, index) =>
+              const SizedBox(height: AppSpacing.sm),
+          itemBuilder: (context, index) {
+            final note = visible[index];
+            final party = state.partyFor(note.partyId);
+            final money = state.moneyFor(note.moneyItemId);
+            final meta = [
+              if (party != null) party.name,
+              if (money != null) money.title,
+            ].join(' · ');
+            return NoteTile(
+              title: note.title,
+              body: note.body,
+              tags: note.tags,
+              pinned: note.pinned,
+              meta: meta.isEmpty ? null : meta,
+              onTap: () => context.push(AppRoutes.notePath(note.id)),
+              onPin: () {
+                AppHaptics.selection();
+                ref.read(notesControllerProvider.notifier).togglePin(note.id);
+              },
+            );
           },
-        );
-      },
-    );
+        ),
+      ),
+    ];
   }
 }

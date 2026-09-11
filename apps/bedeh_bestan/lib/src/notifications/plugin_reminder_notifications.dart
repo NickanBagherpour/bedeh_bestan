@@ -22,16 +22,57 @@ final class PluginReminderNotifications
       FlutterLocalNotificationsPlugin();
   bool _ready = false;
 
-  static const _channelId = 'reminders';
+  /// New id so devices that created a silent `reminders` channel get sound.
+  static const _channelId = 'reminders_v2';
   static const _androidIcon = 'ic_stat_notify';
+
+  AndroidNotificationChannel get _channel => AndroidNotificationChannel(
+        _channelId,
+        channelName,
+        description: channelDescription,
+        importance: Importance.max,
+        playSound: true,
+        enableVibration: true,
+        showBadge: true,
+      );
+
+  NotificationDetails get _details => NotificationDetails(
+        android: AndroidNotificationDetails(
+          _channel.id,
+          _channel.name,
+          channelDescription: _channel.description,
+          importance: Importance.max,
+          priority: Priority.max,
+          playSound: true,
+          enableVibration: true,
+          audioAttributesUsage: AudioAttributesUsage.notificationEvent,
+          icon: _androidIcon,
+        ),
+        iOS: const DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
+        macOS: const DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
+      );
 
   @override
   Future<void> initialize() async {
     if (kIsWeb || !_supported) return;
     try {
       tzdata.initializeTimeZones();
+      _setLocalLocation();
       const android = AndroidInitializationSettings(_androidIcon);
-      const darwin = DarwinInitializationSettings();
+      const darwin = DarwinInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+        defaultPresentSound: true,
+      );
       const linux = LinuxInitializationSettings(defaultActionName: 'Open');
       const settings = InitializationSettings(
         android: android,
@@ -43,14 +84,12 @@ final class PluginReminderNotifications
         settings: settings,
         onDidReceiveNotificationResponse: _onResponse,
       );
-      await _plugin
+      final androidPlugin = _plugin
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
-          ?.requestNotificationsPermission();
-      await _plugin
-          .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
-          ?.requestExactAlarmsPermission();
+              AndroidFlutterLocalNotificationsPlugin>();
+      await androidPlugin?.createNotificationChannel(_channel);
+      await androidPlugin?.requestNotificationsPermission();
+      await androidPlugin?.requestExactAlarmsPermission();
       await _plugin
           .resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
@@ -78,21 +117,8 @@ final class PluginReminderNotifications
           id: notice.id,
           title: notice.title,
           body: notice.body.isEmpty ? null : notice.body,
-          scheduledDate: tz.TZDateTime.from(notice.at, tz.UTC),
-          notificationDetails: NotificationDetails(
-            android: AndroidNotificationDetails(
-              _channelId,
-              channelName,
-              channelDescription: channelDescription,
-              importance: Importance.high,
-              priority: Priority.high,
-              icon: _androidIcon,
-            ),
-            iOS: const DarwinNotificationDetails(
-              presentAlert: true,
-              presentSound: true,
-            ),
-          ),
+          scheduledDate: tz.TZDateTime.from(notice.at, tz.local),
+          notificationDetails: _details,
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
           payload: notice.reminderId,
         );
@@ -102,21 +128,8 @@ final class PluginReminderNotifications
             id: notice.id,
             title: notice.title,
             body: notice.body.isEmpty ? null : notice.body,
-            scheduledDate: tz.TZDateTime.from(notice.at, tz.UTC),
-            notificationDetails: NotificationDetails(
-              android: AndroidNotificationDetails(
-                _channelId,
-                channelName,
-                channelDescription: channelDescription,
-                importance: Importance.high,
-                priority: Priority.high,
-                icon: _androidIcon,
-              ),
-              iOS: const DarwinNotificationDetails(
-                presentAlert: true,
-                presentSound: true,
-              ),
-            ),
+            scheduledDate: tz.TZDateTime.from(notice.at, tz.local),
+            notificationDetails: _details,
             androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
             payload: notice.reminderId,
           );
@@ -129,6 +142,14 @@ final class PluginReminderNotifications
     final payload = response.payload;
     if (payload == null || payload.isEmpty) return;
     onTap?.call(payload);
+  }
+
+  void _setLocalLocation() {
+    try {
+      tz.setLocalLocation(tz.getLocation('Asia/Tehran'));
+    } catch (_) {
+      tz.setLocalLocation(tz.UTC);
+    }
   }
 
   bool get _supported {

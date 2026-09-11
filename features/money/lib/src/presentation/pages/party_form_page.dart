@@ -1,4 +1,4 @@
-import 'package:core/core.dart' show AppRoutes;
+import 'package:core/core.dart' show AppRoutes, overlayAppBar;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -58,21 +58,34 @@ class _PartyFormPageState extends ConsumerState<PartyFormPage> {
       }
       if (party == null && list.status == MoneyListStatus.loaded) {
         return Scaffold(
-          appBar: AppBar(title: Text(t.money.editPartyTitle)),
+          appBar: overlayAppBar(
+            context: context,
+            title: Text(t.money.editPartyTitle),
+            fallbackPath: AppRoutes.parties.path,
+            backTooltip: t.app.actions.back,
+          ),
           body: KitError(message: t.money.missingPartyItem),
         );
       }
       if (party == null) {
         return Scaffold(
-          appBar: AppBar(title: Text(t.money.editPartyTitle)),
+          appBar: overlayAppBar(
+            context: context,
+            title: Text(t.money.editPartyTitle),
+            fallbackPath: AppRoutes.parties.path,
+            backTooltip: t.app.actions.back,
+          ),
           body: const KitLoading(),
         );
       }
     }
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: overlayAppBar(
+        context: context,
         title: Text(_isEdit ? t.money.editPartyTitle : t.money.newPartyTitle),
+        fallbackPath: AppRoutes.parties.path,
+        backTooltip: t.app.actions.back,
       ),
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),
@@ -141,7 +154,7 @@ class _PartyFormPageState extends ConsumerState<PartyFormPage> {
               );
       if (!mounted) return;
       AppHaptics.confirm();
-      context.go(AppRoutes.partyItemPath(party.id));
+      context.pushReplacement(AppRoutes.partyItemPath(party.id));
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

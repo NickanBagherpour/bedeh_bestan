@@ -182,14 +182,34 @@ class AppDatabase extends _$AppDatabase {
 
   Future<void> deleteParty(String id) async {
     final usage = await partyUsage(id);
-    if (!usage.isEmpty) {
+    if (usage.moneyCount > 0) {
       throw const PartyException(PartyFailure.inUse);
     }
     final existing = await getParty(id);
     if (existing == null) {
       throw const PartyException(PartyFailure.missing);
     }
-    await (delete(parties)..where((row) => row.id.equals(id))).go();
+    await transaction(() async {
+      await customStatement(
+        'UPDATE notes SET party_id = NULL WHERE party_id = ?',
+        [id],
+      );
+      await (delete(parties)..where((row) => row.id.equals(id))).go();
+    });
+  }
+
+  Future<void> deleteMoneyItem(String id) async {
+    final existing = await getMoneyItem(id);
+    if (existing == null) return;
+    await transaction(() async {
+      await customStatement(
+        'UPDATE notes SET money_item_id = NULL WHERE money_item_id = ?',
+        [id],
+      );
+      await (delete(moneyPayments)..where((row) => row.moneyItemId.equals(id)))
+          .go();
+      await (delete(moneyItems)..where((row) => row.id.equals(id))).go();
+    });
   }
 
   Future<void> upsertMoneyItem(MoneyItem item) {

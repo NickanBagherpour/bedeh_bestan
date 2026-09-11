@@ -6,7 +6,9 @@ import 'package:core/core.dart'
         GroupedAmountFormatter,
         appSettingsProvider,
         formatLongDate,
+        overlayAppBar,
         parseStoredAmount,
+        popOrGo,
         toPersianDigits;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +17,14 @@ import 'package:local_db/local_db.dart' show MoneyDirection, MoneySchedule, Mone
 import 'package:translations/translations.dart'
     show Translations, TranslationsLookup;
 import 'package:ui_kit/ui_kit.dart'
-    show AppColors, AppHaptics, AppSpacing, KitCard, KitError, KitLoading;
+    show
+        AppColors,
+        AppHaptics,
+        AppSpacing,
+        KitCard,
+        KitError,
+        KitLoading,
+        showKitConfirmDialog;
 
 import '../../application/controllers/money_detail_controller.dart';
 import '../../application/state/money_detail_state.dart';
@@ -50,8 +59,11 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
     final persian = Localizations.localeOf(context).languageCode == 'fa';
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: overlayAppBar(
+        context: context,
         title: Text(state.item?.title ?? t.money.title),
+        fallbackPath: AppRoutes.money.path,
+        backTooltip: t.app.actions.back,
         actions: [
           if (state.item != null)
             IconButton(
@@ -265,8 +277,36 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
                 ),
               ),
             ),
+        const SizedBox(height: AppSpacing.lg),
+        OutlinedButton(
+          onPressed: state.busy ? null : () => _delete(context, t),
+          child: Text(t.money.delete),
+        ),
       ],
     );
+  }
+
+  Future<void> _delete(BuildContext context, Translations t) async {
+    final ok = await showKitConfirmDialog(
+      context: context,
+      title: t.money.delete,
+      body: t.money.deleteConfirm,
+      confirmLabel: t.app.actions.delete,
+      cancelLabel: t.app.actions.cancel,
+    );
+    if (!ok || !context.mounted) return;
+    final error = await ref
+        .read(moneyDetailControllerProvider(widget.itemId).notifier)
+        .deleteItem();
+    if (!context.mounted) return;
+    if (error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(t.message(error, shouldTranslate: true))),
+      );
+      return;
+    }
+    AppHaptics.confirm();
+    popOrGo(context, AppRoutes.money.path);
   }
 
   Future<void> _pay(

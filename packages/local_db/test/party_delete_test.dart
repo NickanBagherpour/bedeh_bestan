@@ -44,4 +44,22 @@ void main() {
     );
     expect(await db.getParty(SeedIds.melli), isNotNull);
   });
+
+  test('deleteMoneyItem drops payments and unlinks notes', () async {
+    final sheba = await db.getNote(SeedIds.noteSheba);
+    expect(sheba?.moneyItemId, SeedIds.melliInstallment);
+    await db.deleteMoneyItem(SeedIds.melliInstallment);
+    expect(await db.getMoneyItem(SeedIds.melliInstallment), isNull);
+    expect(await db.listPaymentsFor(SeedIds.melliInstallment), isEmpty);
+    expect((await db.getNote(SeedIds.noteSheba))?.moneyItemId, isNull);
+  });
+
+  test('deleteParty unlinks notes after money is gone', () async {
+    for (final id in SeedIds.moneyItems) {
+      await db.deleteMoneyItem(id);
+    }
+    await db.deleteParty(SeedIds.melli);
+    expect(await db.getParty(SeedIds.melli), isNull);
+    expect((await db.getNote(SeedIds.noteSheba))?.partyId, isNull);
+  });
 }

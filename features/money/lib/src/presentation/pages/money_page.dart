@@ -13,7 +13,13 @@ import 'package:local_db/local_db.dart' show MoneyDirection, MoneyItem, MoneySta
 import 'package:translations/translations.dart'
     show Translations, TranslationsLookup;
 import 'package:ui_kit/ui_kit.dart'
-    show AppHaptics, AppMotion, AppSpacing, KitEmpty, KitError, KitLoading;
+    show
+        AppHaptics,
+        AppSpacing,
+        KitEmpty,
+        KitError,
+        KitLoading,
+        showKitConfirmDialog;
 
 import '../../application/controllers/money_list_controller.dart';
 import '../../application/money_query.dart';
@@ -59,81 +65,77 @@ class MoneyPage extends ConsumerWidget {
         icon: const Icon(Icons.add_rounded),
         label: Text(t.money.add),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.md,
-              AppSpacing.xs,
-              AppSpacing.md,
-              AppSpacing.sm,
-            ),
-            child: Column(
-              children: [
-                SegmentedButton<MoneyListFilter>(
-                  showSelectedIcon: false,
-                  segments: [
-                    ButtonSegment(
-                      value: MoneyListFilter.all,
-                      label: Text(t.money.filterAll),
-                    ),
-                    ButtonSegment(
-                      value: MoneyListFilter.pay,
-                      label: Text(t.money.filterPay),
-                    ),
-                    ButtonSegment(
-                      value: MoneyListFilter.receive,
-                      label: Text(t.money.filterReceive),
-                    ),
-                  ],
-                  selected: {state.filter},
-                  onSelectionChanged: (value) {
-                    AppHaptics.selection();
-                    ref
-                        .read(moneyListControllerProvider.notifier)
-                        .setFilter(value.first);
-                  },
-                ),
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: TextButton(
-                    onPressed: () {
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                AppSpacing.xs,
+                AppSpacing.md,
+                AppSpacing.sm,
+              ),
+              child: Column(
+                children: [
+                  SegmentedButton<MoneyListFilter>(
+                    showSelectedIcon: false,
+                    segments: [
+                      ButtonSegment(
+                        value: MoneyListFilter.all,
+                        label: Text(t.money.filterAll),
+                      ),
+                      ButtonSegment(
+                        value: MoneyListFilter.pay,
+                        label: Text(t.money.filterPay),
+                      ),
+                      ButtonSegment(
+                        value: MoneyListFilter.receive,
+                        label: Text(t.money.filterReceive),
+                      ),
+                    ],
+                    selected: {state.filter},
+                    onSelectionChanged: (value) {
+                      AppHaptics.selection();
                       ref
                           .read(moneyListControllerProvider.notifier)
-                          .setHideSettled(hide: !state.hideSettled);
+                          .setFilter(value.first);
                     },
-                    child: Text(
-                      state.hideSettled
-                          ? t.money.showSettled
-                          : t.money.hideSettled,
+                  ),
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: TextButton(
+                      onPressed: () {
+                        ref
+                            .read(moneyListControllerProvider.notifier)
+                            .setHideSettled(hide: !state.hideSettled);
+                      },
+                      child: Text(
+                        state.hideSettled
+                            ? t.money.showSettled
+                            : t.money.hideSettled,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: AnimatedSwitcher(
-              duration: AppMotion.normal,
-              switchInCurve: AppMotion.easeOut,
-              child: _body(
-                context,
-                ref,
-                t,
-                state,
-                visible,
-                calendar,
-                persian,
-                currency,
+                ],
               ),
             ),
+          ),
+          ..._bodySlivers(
+            context,
+            ref,
+            t,
+            state,
+            visible,
+            calendar,
+            persian,
+            currency,
           ),
         ],
       ),
     );
   }
 
-  Widget _body(
+  List<Widget> _bodySlivers(
     BuildContext context,
     WidgetRef ref,
     Translations t,
@@ -144,73 +146,134 @@ class MoneyPage extends ConsumerWidget {
     AppCurrency currency,
   ) {
     if (state.status == MoneyListStatus.error) {
-      return KitError(
-        key: const ValueKey('error'),
-        message: t.message(
-          state.errorKey ?? 'money.loadError',
-          shouldTranslate: true,
+      return [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: KitError(
+            message: t.message(
+              state.errorKey ?? 'money.loadError',
+              shouldTranslate: true,
+            ),
+            retryLabel: t.app.actions.retry,
+            onRetry: () =>
+                ref.read(moneyListControllerProvider.notifier).retry(),
+          ),
         ),
-        retryLabel: t.app.actions.retry,
-        onRetry: () => ref.read(moneyListControllerProvider.notifier).retry(),
-      );
+      ];
     }
     if (state.status == MoneyListStatus.loading) {
-      return const KitLoading(key: ValueKey('loading'));
+      return [
+        const SliverFillRemaining(
+          hasScrollBody: false,
+          child: KitLoading(),
+        ),
+      ];
     }
     if (state.items.isEmpty) {
-      return KitEmpty(
-        key: const ValueKey('empty'),
-        icon: Icons.account_balance_wallet_rounded,
-        title: t.money.emptyTitle,
-        body: t.money.emptyBody,
-        action: FilledButton.tonal(
-          onPressed: () {
-            AppHaptics.light();
-            _pickDirection(context, t);
-          },
-          child: Text(t.money.add),
+      return [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: KitEmpty(
+            icon: Icons.account_balance_wallet_rounded,
+            title: t.money.emptyTitle,
+            body: t.money.emptyBody,
+            action: FilledButton.tonal(
+              onPressed: () {
+                AppHaptics.light();
+                _pickDirection(context, t);
+              },
+              child: Text(t.money.add),
+            ),
+          ),
         ),
-      );
+      ];
     }
     if (visible.isEmpty) {
-      return KitEmpty(
-        key: const ValueKey('filter'),
-        icon: Icons.filter_alt_outlined,
-        title: t.money.emptyFilter,
-        body: t.money.emptyBody,
-      );
+      return [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: KitEmpty(
+            icon: Icons.filter_alt_outlined,
+            title: t.money.emptyFilter,
+            body: t.money.emptyBody,
+          ),
+        ),
+      ];
     }
 
-    return ListView.separated(
-      key: const ValueKey('list'),
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.md,
-        0,
-        AppSpacing.md,
-        88,
+    return [
+      SliverPadding(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.md,
+          0,
+          AppSpacing.md,
+          88,
+        ),
+        sliver: SliverList.separated(
+          itemCount: visible.length,
+          separatorBuilder: (context, index) =>
+              const SizedBox(height: AppSpacing.sm),
+          itemBuilder: (context, index) {
+            final item = visible[index];
+            final party = state.partyFor(item.partyId);
+            final status = item.statusOn(DateTime.now());
+            return Dismissible(
+              key: ValueKey(item.id),
+              direction: DismissDirection.endToStart,
+              confirmDismiss: (_) => _confirmDelete(context, t),
+              onDismissed: (_) {
+                ref
+                    .read(moneyListControllerProvider.notifier)
+                    .deleteItem(item.id);
+              },
+              background: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.errorContainer,
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+                ),
+                child: Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.only(
+                      end: AppSpacing.md,
+                    ),
+                    child: Icon(
+                      Icons.delete_outline_rounded,
+                      color: Theme.of(context).colorScheme.onErrorContainer,
+                    ),
+                  ),
+                ),
+              ),
+              child: MoneyItemTile(
+                title: item.title,
+                partyName: party?.name ?? item.partyId,
+                amountLabel: formatItemMoney(
+                  item.remainingAmount,
+                  t: t,
+                  currency: currency,
+                  persianDigits: persian,
+                ),
+                dueLabel: _dueLabel(t, item.nextDueDate, calendar, persian),
+                statusLabel: _statusLabel(t, status),
+                accent: moneyAccentFor(item.direction),
+                statusColor:
+                    moneyStatusColor(status, Theme.of(context).colorScheme),
+                onTap: () => context.push(AppRoutes.moneyItemPath(item.id)),
+              ),
+            );
+          },
+        ),
       ),
-      itemCount: visible.length,
-      separatorBuilder: (context, index) => const SizedBox(height: AppSpacing.sm),
-      itemBuilder: (context, index) {
-        final item = visible[index];
-        final party = state.partyFor(item.partyId);
-        final status = item.statusOn(DateTime.now());
-        return MoneyItemTile(
-          title: item.title,
-          partyName: party?.name ?? item.partyId,
-          amountLabel: formatItemMoney(
-            item.remainingAmount,
-            t: t,
-            currency: currency,
-            persianDigits: persian,
-          ),
-          dueLabel: _dueLabel(t, item.nextDueDate, calendar, persian),
-          statusLabel: _statusLabel(t, status),
-          accent: moneyAccentFor(item.direction),
-          statusColor: moneyStatusColor(status, Theme.of(context).colorScheme),
-          onTap: () => context.push(AppRoutes.moneyItemPath(item.id)),
-        );
-      },
+    ];
+  }
+
+  Future<bool> _confirmDelete(BuildContext context, Translations t) {
+    return showKitConfirmDialog(
+      context: context,
+      title: t.money.delete,
+      body: t.money.deleteConfirm,
+      confirmLabel: t.app.actions.delete,
+      cancelLabel: t.app.actions.cancel,
     );
   }
 

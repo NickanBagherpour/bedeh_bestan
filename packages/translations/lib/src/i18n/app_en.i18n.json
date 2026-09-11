@@ -36,6 +36,8 @@
     "close": "Close",
     "save": "Save",
     "add": "Add",
-    "search": "Search"
+    "search": "Search",
+    "back": "Back",
+    "delete": "Delete"
   }
 }

@@ -83,6 +83,8 @@ class _Translations$calendar$fa extends Translations$calendar$en {
 	@override String get monthAgenda => 'این ماه';
 	@override String get today => 'امروز';
 	@override String todayHeading({required Object weekday, required Object date}) => '${weekday}، ${date}';
+	@override String get showMonth => 'نمای ماه';
+	@override String get hideMonth => 'بستن ماه';
 	@override String get addForDay => 'برای این روز';
 	@override String get newTitle => 'یادآوری تازه';
 	@override String get editTitle => 'ویرایش یادآوری';
@@ -99,6 +101,7 @@ class _Translations$calendar$fa extends Translations$calendar$en {
 	@override String get save => 'ذخیره';
 	@override String get edit => 'ویرایش';
 	@override String get delete => 'حذف';
+	@override String get deleteConfirm => 'این یادآوری حذف شود؟';
 	@override String get missingTitle => 'عنوان را بنویس.';
 	@override String get invalidRepeat => 'N باید حداقل ۲ باشد.';
 	@override String get loadError => 'خواندن یادآوری‌ها ممکن نشد.';
@@ -203,9 +206,12 @@ class _Translations$money$fa extends Translations$money$en {
 	@override String get emptyParties => 'هنوز طرف‌حسابی نیست';
 	@override String get emptyPartiesBody => 'شخص، فروشگاه یا بانکی که باهاش حساب داری را اضافه کن.';
 	@override String get emptyPartyFilter => 'طرف‌حسابی با این جستجو پیدا نشد.';
-	@override String get partyInUse => 'این طرف‌حساب هنوز حساب یا یادداشت دارد. اول آنها را بردار.';
+	@override String get partyInUse => 'این طرف‌حساب هنوز حساب دارد. اول حساب‌ها را بردار.';
 	@override String get missingPartyItem => 'این طرف‌حساب پیدا نشد.';
+	@override String get delete => 'حذف حساب';
+	@override String get deleteConfirm => 'این حساب و پرداخت‌هایش حذف می‌شود. یادداشت‌های وصل‌شده می‌مانند.';
 	@override String get deleteParty => 'حذف طرف‌حساب';
+	@override String get deletePartyConfirm => 'این طرف‌حساب حذف شود؟ اول باید حساب‌هایش را برداری.';
 	@override String get newPartyTitle => 'طرف‌حساب تازه';
 	@override String get editPartyTitle => 'ویرایش طرف‌حساب';
 	@override String get linkedAccounts => 'حساب‌ها';
@@ -238,6 +244,7 @@ class _Translations$notes$fa extends Translations$notes$en {
 	@override String get save => 'ذخیره';
 	@override String get edit => 'ویرایش';
 	@override String get delete => 'حذف';
+	@override String get deleteConfirm => 'این یادداشت حذف شود؟';
 	@override String get openMoney => 'باز کردن حساب';
 	@override String get missingTitle => 'عنوان را بنویس.';
 	@override String get loadError => 'خواندن یادداشت‌ها ممکن نشد.';
@@ -353,6 +360,8 @@ class _Translations$app$actions$fa extends Translations$app$actions$en {
 	@override String get save => 'ذخیره';
 	@override String get add => 'افزودن';
 	@override String get search => 'جستجو';
+	@override String get back => 'بازگشت';
+	@override String get delete => 'حذف';
 }
 
 // Path: calendar.repeatRule
@@ -458,6 +467,8 @@ extension on TranslationsFa {
 			'app.actions.save' => 'ذخیره',
 			'app.actions.add' => 'افزودن',
 			'app.actions.search' => 'جستجو',
+			'app.actions.back' => 'بازگشت',
+			'app.actions.delete' => 'حذف',
 			'calendar.title' => 'تقویم',
 			'calendar.fab' => 'یادآوری',
 			'calendar.emptyTitle' => 'این ماه یادآوری نیست',
@@ -467,6 +478,8 @@ extension on TranslationsFa {
 			'calendar.monthAgenda' => 'این ماه',
 			'calendar.today' => 'امروز',
 			'calendar.todayHeading' => ({required Object weekday, required Object date}) => '${weekday}، ${date}',
+			'calendar.showMonth' => 'نمای ماه',
+			'calendar.hideMonth' => 'بستن ماه',
 			'calendar.addForDay' => 'برای این روز',
 			'calendar.newTitle' => 'یادآوری تازه',
 			'calendar.editTitle' => 'ویرایش یادآوری',
@@ -483,6 +496,7 @@ extension on TranslationsFa {
 			'calendar.save' => 'ذخیره',
 			'calendar.edit' => 'ویرایش',
 			'calendar.delete' => 'حذف',
+			'calendar.deleteConfirm' => 'این یادآوری حذف شود؟',
 			'calendar.missingTitle' => 'عنوان را بنویس.',
 			'calendar.invalidRepeat' => 'N باید حداقل ۲ باشد.',
 			'calendar.loadError' => 'خواندن یادآوری‌ها ممکن نشد.',
@@ -587,9 +601,12 @@ extension on TranslationsFa {
 			'money.emptyParties' => 'هنوز طرف‌حسابی نیست',
 			'money.emptyPartiesBody' => 'شخص، فروشگاه یا بانکی که باهاش حساب داری را اضافه کن.',
 			'money.emptyPartyFilter' => 'طرف‌حسابی با این جستجو پیدا نشد.',
-			'money.partyInUse' => 'این طرف‌حساب هنوز حساب یا یادداشت دارد. اول آنها را بردار.',
+			'money.partyInUse' => 'این طرف‌حساب هنوز حساب دارد. اول حساب‌ها را بردار.',
 			'money.missingPartyItem' => 'این طرف‌حساب پیدا نشد.',
+			'money.delete' => 'حذف حساب',
+			'money.deleteConfirm' => 'این حساب و پرداخت‌هایش حذف می‌شود. یادداشت‌های وصل‌شده می‌مانند.',
 			'money.deleteParty' => 'حذف طرف‌حساب',
+			'money.deletePartyConfirm' => 'این طرف‌حساب حذف شود؟ اول باید حساب‌هایش را برداری.',
 			'money.newPartyTitle' => 'طرف‌حساب تازه',
 			'money.editPartyTitle' => 'ویرایش طرف‌حساب',
 			'money.linkedAccounts' => 'حساب‌ها',
@@ -613,6 +630,7 @@ extension on TranslationsFa {
 			'notes.save' => 'ذخیره',
 			'notes.edit' => 'ویرایش',
 			'notes.delete' => 'حذف',
+			'notes.deleteConfirm' => 'این یادداشت حذف شود؟',
 			'notes.openMoney' => 'باز کردن حساب',
 			'notes.missingTitle' => 'عنوان را بنویس.',
 			'notes.loadError' => 'خواندن یادداشت‌ها ممکن نشد.',

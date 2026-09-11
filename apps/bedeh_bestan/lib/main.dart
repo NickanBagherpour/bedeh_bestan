@@ -10,7 +10,7 @@ import 'package:feature_calendar/calendar.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_db/local_db.dart'
-    show AppDatabase, appDatabaseProvider, seedDemoData;
+    show AppDatabase, appDatabaseProvider, retireDemoSeed, seedDemoData;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:translations/translations.dart'
     show
@@ -32,7 +32,12 @@ Future<void> main() async {
   final initialSettings = loadAppSettings(storage: storage);
 
   final database = AppDatabase.open();
-  await seedDemoData(database);
+  const seedDemo = bool.fromEnvironment('SEED_DEMO', defaultValue: false);
+  if (seedDemo) {
+    await seedDemoData(database);
+  } else {
+    await retireDemoSeed(database);
+  }
 
   await useAppDefaultLocale();
   await LocaleSettings.setLocale(

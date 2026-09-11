@@ -14,7 +14,7 @@ Do not start the next phase until the user says `next phase`.
 | **6** Calendar | **done** | Jalali-primary agenda + month view. Repeats. FAB یادآوری |
 | **7** Notes | **done** | Title, body, tags, pin, optional link to party/money, search |
 | **8** Notifications + icon | **done** | Local notifications. App icon + splash. Launcher **بده‌بستان** |
-| **9** Polish | **done** | Motion, haptics, empty/error, contrast. Seed stays |
+| **9** Polish | **done** | Motion, haptics, empty/error, contrast. Demo seed is **dev-only**. |
 
 Out of scope v1: auth, ads, SMS, bank APIs, cloud backup, multi-user.
 
@@ -55,19 +55,19 @@ Home card on `features/home`. Period bounds from **settings calendar**, not loca
 
 `periodStart` / `periodEnd` = first and last day of the current month in the chosen calendar. Week helpers live in `core` `date_utils` (`weekBounds`) for later use; Home “this week” is still a rolling seven days.
 
-No charts in v1. Seed stays. No calendar/notes product UI.
+No charts in v1. No calendar/notes product UI.
 
 ---
 
 ## Phase 6 — Calendar (done)
 
-`features/calendar`. Month grid + day agenda honor the **calendar setting** (Jalali Saturday-first / Gregorian Monday-first). Language only changes weekday labels and digits. Overlay routes: `/calendar/new`, `/calendar/item/:id`, edit. Repeats expand with `shiftCalendarMonths`. FAB یادآوری. Seed reminders stay. Notifications still wait for Phase 8.
+`features/calendar`. Month grid + day agenda honor the **calendar setting** (Jalali Saturday-first / Gregorian Monday-first). Language only changes weekday labels and digits. Overlay routes: `/calendar/new`, `/calendar/item/:id`, edit. Repeats expand with `shiftCalendarMonths`. FAB یادآوری. Notifications still wait for Phase 8.
 
 ---
 
 ## Phase 7 — Notes (done)
 
-`features/notes`. List search (title/body/tags) + tag chips. Pinned first. Overlay routes: `/notes/new`, `/notes/item/:id`, edit. Optional party + money link by id (open حساب via `AppRoutes.moneyItemPath`, no `feature_money` import). Seed notes stay.
+`features/notes`. List search (title/body/tags) + tag chips. Pinned first. Overlay routes: `/notes/new`, `/notes/item/:id`, edit. Optional party + money link by id (open حساب via `AppRoutes.moneyItemPath`, no `feature_money` import).
 
 ---
 
@@ -79,4 +79,4 @@ Local notifications for reminders that have «اعلان سر ساعت» / «ا�
 
 ## Phase 9 — Polish (done)
 
-Motion (`KitFadeIn`, `AnimatedSwitcher`, existing route fade), haptics (`AppHaptics`), loading/error/empty (`KitLoading`, `KitError` + retry, empty CTAs), and stronger contrast on cream tints. Seed data stays.
+Motion (`KitFadeIn`, `AnimatedSwitcher`, existing route fade), haptics (`AppHaptics`), loading/error/empty (`KitLoading`, `KitError` + retry, empty CTAs), and stronger contrast on cream tints. Demo seed is **dev-only**.

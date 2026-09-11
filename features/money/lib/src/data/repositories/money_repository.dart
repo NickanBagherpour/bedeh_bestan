@@ -26,6 +26,8 @@ final class MoneyRepository {
 
   Future<void> upsertItem(MoneyItem item) => _database.upsertMoneyItem(item);
 
+  Future<void> deleteItem(String id) => _database.deleteMoneyItem(id);
+
   Future<MoneyItem> recordPayment({
     required String moneyItemId,
     required int amount,

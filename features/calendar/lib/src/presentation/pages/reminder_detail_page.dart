@@ -5,6 +5,8 @@ import 'package:core/core.dart'
         appSettingsProvider,
         formatLongDate,
         formatTime,
+        overlayAppBar,
+        popOrGo,
         toPersianDigits;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,7 +15,13 @@ import 'package:local_db/local_db.dart' show Reminder, RepeatRule;
 import 'package:translations/translations.dart'
     show Translations, TranslationsLookup;
 import 'package:ui_kit/ui_kit.dart'
-    show AppColors, AppHaptics, AppSpacing, KitCard, KitError, KitLoading;
+    show
+        AppColors,
+        AppSpacing,
+        KitCard,
+        KitError,
+        KitLoading,
+        showKitConfirmDialog;
 
 import '../../application/controllers/calendar_controller.dart';
 import '../../application/state/calendar_state.dart';
@@ -33,8 +41,11 @@ class ReminderDetailPage extends ConsumerWidget {
     final reminder = state.reminderById(reminderId);
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: overlayAppBar(
+        context: context,
         title: Text(reminder?.title ?? t.calendar.title),
+        fallbackPath: AppRoutes.calendar.path,
+        backTooltip: t.app.actions.back,
         actions: [
           if (reminder != null)
             IconButton(
@@ -111,12 +122,19 @@ class ReminderDetailPage extends ConsumerWidget {
         const SizedBox(height: AppSpacing.lg),
         OutlinedButton(
           onPressed: () async {
-            AppHaptics.warn();
+            final ok = await showKitConfirmDialog(
+              context: context,
+              title: t.calendar.delete,
+              body: t.calendar.deleteConfirm,
+              confirmLabel: t.app.actions.delete,
+              cancelLabel: t.app.actions.cancel,
+            );
+            if (!ok || !context.mounted) return;
             await ref
                 .read(calendarControllerProvider.notifier)
                 .deleteReminder(reminderId);
             if (!context.mounted) return;
-            context.pop();
+            popOrGo(context, AppRoutes.calendar.path);
           },
           child: Text(t.calendar.delete),
         ),

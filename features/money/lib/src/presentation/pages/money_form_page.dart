@@ -8,6 +8,7 @@ import 'package:core/core.dart'
         formatLongDate,
         formatMoney,
         groupAmount,
+        overlayAppBar,
         parseStoredAmount,
         parseTomanInput,
         toPersianDigits;
@@ -18,7 +19,13 @@ import 'package:local_db/local_db.dart'
     show MoneyDirection, MoneyItem, MoneySchedule, Party, PartyKind;
 import 'package:translations/translations.dart' show Translations;
 import 'package:ui_kit/ui_kit.dart'
-    show AppColors, AppHaptics, AppSpacing, KitCard, KitSearchSelect;
+    show
+        AppColors,
+        AppHaptics,
+        AppSpacing,
+        KitCard,
+        KitSearchSelect,
+        showKitDatePicker;
 
 import '../../application/controllers/money_list_controller.dart';
 import '../../application/state/money_list_state.dart';
@@ -142,8 +149,11 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: overlayAppBar(
+        context: context,
         title: Text(_isEdit ? t.money.editTitle : t.money.newTitle),
+        fallbackPath: AppRoutes.money.path,
+        backTooltip: t.app.actions.back,
       ),
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),
@@ -361,12 +371,18 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
   }
 
   Future<void> _pickDate({required bool isDue}) async {
+    final t = Translations.of(context);
+    final calendar = ref.read(appSettingsProvider).resolvedCalendar;
+    final persian = Localizations.localeOf(context).languageCode == 'fa';
     final initial = isDue ? _due : _start;
-    final picked = await showDatePicker(
+    final picked = await showKitDatePicker(
       context: context,
       initialDate: initial,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
+      calendar: calendar,
+      persian: persian,
+      weekdayLabels: _pickerWeekdays(t, calendar),
+      confirmLabel: t.app.actions.confirm,
+      cancelLabel: t.app.actions.cancel,
     );
     if (picked == null) return;
     setState(() {
@@ -444,7 +460,7 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
           );
       if (!mounted) return;
       AppHaptics.confirm();
-      context.go(AppRoutes.moneyItemPath(id));
+      context.pushReplacement(AppRoutes.moneyItemPath(id));
     } catch (_) {
       if (!mounted) return;
       _snack(t.money.saveError);
@@ -513,4 +529,11 @@ class _DateField extends StatelessWidget {
       onTap: onPick,
     );
   }
+}
+
+List<String> _pickerWeekdays(Translations t, CalendarType calendar) {
+  final w = t.calendar.weekday;
+  return calendar == CalendarType.jalali
+      ? [w.sat, w.sun, w.mon, w.tue, w.wed, w.thu, w.fri]
+      : [w.mon, w.tue, w.wed, w.thu, w.fri, w.sat, w.sun];
 }

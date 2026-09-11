@@ -37,6 +37,7 @@ class CalendarPage extends ConsumerStatefulWidget {
 class _CalendarPageState extends ConsumerState<CalendarPage> {
   late DateTime _focus;
   late DateTime _selected;
+  bool _monthOpen = true;
 
   @override
   void initState() {
@@ -119,6 +120,9 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
           CalendarMonthHeader(
             title: _monthTitle(month.start, calendar, persian),
             todayLabel: t.calendar.today,
+            monthToggleLabel:
+                _monthOpen ? t.calendar.hideMonth : t.calendar.showMonth,
+            monthOpen: _monthOpen,
             onPrev: () {
               AppHaptics.selection();
               _shift(-1, calendar);
@@ -134,26 +138,32 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                 _selected = today;
               });
             },
-          ),
-          CalendarWeekdayRow(labels: _weekdayLabels(t, calendar)),
-          CalendarMonthGrid(
-            cells: cells,
-            inMonth: month.containsDate,
-            isToday: (day) => isSameDate(day, today),
-            isSelected: (day) => isSameDate(day, _selected),
-            hasEvents: eventDays.contains,
-            labelOf: (day) {
-              final raw = '${calendarDayOfMonth(day, calendar)}';
-              return persian ? toPersianDigits(raw) : raw;
-            },
-            onSelect: (day) {
+            onToggleMonth: () {
               AppHaptics.selection();
-              setState(() {
-                _selected = dateOnly(day);
-                if (!month.containsDate(day)) _focus = dateOnly(day);
-              });
+              setState(() => _monthOpen = !_monthOpen);
             },
           ),
+          if (_monthOpen) ...[
+            CalendarWeekdayRow(labels: _weekdayLabels(t, calendar)),
+            CalendarMonthGrid(
+              cells: cells,
+              inMonth: month.containsDate,
+              isToday: (day) => isSameDate(day, today),
+              isSelected: (day) => isSameDate(day, _selected),
+              hasEvents: eventDays.contains,
+              labelOf: (day) {
+                final raw = '${calendarDayOfMonth(day, calendar)}';
+                return persian ? toPersianDigits(raw) : raw;
+              },
+              onSelect: (day) {
+                AppHaptics.selection();
+                setState(() {
+                  _selected = dateOnly(day);
+                  if (!month.containsDate(day)) _focus = dateOnly(day);
+                });
+              },
+            ),
+          ],
           const SizedBox(height: AppSpacing.md),
           if (state.status == CalendarStatus.error)
             KitError(

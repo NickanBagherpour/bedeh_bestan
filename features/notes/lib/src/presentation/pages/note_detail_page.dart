@@ -1,4 +1,4 @@
-import 'package:core/core.dart' show AppRoutes;
+import 'package:core/core.dart' show AppRoutes, overlayAppBar, popOrGo;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,7 +6,13 @@ import 'package:local_db/local_db.dart' show Note;
 import 'package:translations/translations.dart'
     show Translations, TranslationsLookup;
 import 'package:ui_kit/ui_kit.dart'
-    show AppColors, AppHaptics, AppSpacing, KitCard, KitError, KitLoading;
+    show
+        AppColors,
+        AppSpacing,
+        KitCard,
+        KitError,
+        KitLoading,
+        showKitConfirmDialog;
 
 import '../../application/controllers/notes_controller.dart';
 import '../../application/state/notes_state.dart';
@@ -24,8 +30,11 @@ class NoteDetailPage extends ConsumerWidget {
     final note = state.noteById(noteId);
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: overlayAppBar(
+        context: context,
         title: Text(note?.title ?? t.notes.title),
+        fallbackPath: AppRoutes.notes.path,
+        backTooltip: t.app.actions.back,
         actions: [
           if (note != null)
             IconButton(
@@ -128,10 +137,17 @@ class NoteDetailPage extends ConsumerWidget {
         const SizedBox(height: AppSpacing.lg),
         OutlinedButton(
           onPressed: () async {
-            AppHaptics.warn();
+            final ok = await showKitConfirmDialog(
+              context: context,
+              title: t.notes.delete,
+              body: t.notes.deleteConfirm,
+              confirmLabel: t.app.actions.delete,
+              cancelLabel: t.app.actions.cancel,
+            );
+            if (!ok || !context.mounted) return;
             await ref.read(notesControllerProvider.notifier).deleteNote(noteId);
             if (!context.mounted) return;
-            context.pop();
+            popOrGo(context, AppRoutes.notes.path);
           },
           child: Text(t.notes.delete),
         ),

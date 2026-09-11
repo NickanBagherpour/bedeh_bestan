@@ -1,4 +1,4 @@
-import 'package:core/core.dart' show AppCurrency, CalendarPreference;
+import 'package:core/core.dart' show AppCurrency, AppRoutes, CalendarPreference, overlayAppBar;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -20,7 +20,12 @@ class SettingsPage extends ConsumerWidget {
     final controller = ref.read(settingsControllerProvider.notifier);
 
     return Scaffold(
-      appBar: AppBar(title: Text(t.settings.title)),
+      appBar: overlayAppBar(
+        context: context,
+        title: Text(t.settings.title),
+        fallbackPath: AppRoutes.home.path,
+        backTooltip: t.app.actions.back,
+      ),
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),
         children: [

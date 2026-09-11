@@ -142,6 +142,15 @@ final class MoneyListController extends Notifier<MoneyListState> {
     await repo.upsertItem(item);
     return item.id;
   }
+
+  Future<String?> deleteItem(String id) async {
+    try {
+      await ref.read(moneyRepositoryProvider).deleteItem(id);
+      return null;
+    } catch (_) {
+      return 'money.saveError';
+    }
+  }
 }
 
 String paymentErrorKey(Object error) {

@@ -9,6 +9,8 @@ export 'src/theme/app_spacing.dart';
 export 'src/theme/app_theme.dart';
 export 'src/theme/app_typography.dart';
 export 'src/widgets/kit_card.dart';
+export 'src/widgets/kit_confirm_dialog.dart';
+export 'src/widgets/kit_date_picker.dart';
 export 'src/widgets/kit_empty.dart';
 export 'src/widgets/kit_error.dart';
 export 'src/widgets/kit_fade_in.dart';

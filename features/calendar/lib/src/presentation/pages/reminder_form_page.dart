@@ -1,9 +1,11 @@
 import 'package:core/core.dart'
     show
+        AppRoutes,
         CalendarType,
         appSettingsProvider,
         dateOnly,
         formatLongDate,
+        overlayAppBar,
         toPersianDigits;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,7 +13,8 @@ import 'package:go_router/go_router.dart';
 import 'package:local_db/local_db.dart' show RepeatRule;
 import 'package:translations/translations.dart'
     show Translations, TranslationsLookup;
-import 'package:ui_kit/ui_kit.dart' show AppHaptics, AppSpacing, KitError, KitLoading;
+import 'package:ui_kit/ui_kit.dart'
+    show AppHaptics, AppSpacing, KitError, KitLoading, showKitDatePicker;
 
 import '../../application/controllers/calendar_controller.dart';
 import '../../application/state/calendar_state.dart';
@@ -90,7 +93,12 @@ class _ReminderFormPageState extends ConsumerState<ReminderFormPage> {
       } else if (list.status == CalendarStatus.loaded ||
           list.status == CalendarStatus.error) {
         return Scaffold(
-          appBar: AppBar(title: Text(t.calendar.editTitle)),
+          appBar: overlayAppBar(
+            context: context,
+            title: Text(t.calendar.editTitle),
+            fallbackPath: AppRoutes.calendar.path,
+            backTooltip: t.app.actions.back,
+          ),
           body: list.status == CalendarStatus.error
               ? KitError(
                   message: t.message(
@@ -105,15 +113,23 @@ class _ReminderFormPageState extends ConsumerState<ReminderFormPage> {
         );
       } else {
         return Scaffold(
-          appBar: AppBar(title: Text(t.calendar.editTitle)),
+          appBar: overlayAppBar(
+            context: context,
+            title: Text(t.calendar.editTitle),
+            fallbackPath: AppRoutes.calendar.path,
+            backTooltip: t.app.actions.back,
+          ),
           body: const KitLoading(),
         );
       }
     }
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: overlayAppBar(
+        context: context,
         title: Text(_isEdit ? t.calendar.editTitle : t.calendar.newTitle),
+        fallbackPath: AppRoutes.calendar.path,
+        backTooltip: t.app.actions.back,
       ),
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),
@@ -213,11 +229,17 @@ class _ReminderFormPageState extends ConsumerState<ReminderFormPage> {
   }
 
   Future<void> _pickDate() async {
-    final picked = await showDatePicker(
+    final t = Translations.of(context);
+    final calendar = ref.read(appSettingsProvider).resolvedCalendar;
+    final persian = Localizations.localeOf(context).languageCode == 'fa';
+    final picked = await showKitDatePicker(
       context: context,
       initialDate: _day,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
+      calendar: calendar,
+      persian: persian,
+      weekdayLabels: _pickerWeekdays(t, calendar),
+      confirmLabel: t.app.actions.confirm,
+      cancelLabel: t.app.actions.cancel,
     );
     if (picked == null) return;
     setState(() => _day = dateOnly(picked));
@@ -285,4 +307,11 @@ String _repeatLabel(Translations t, RepeatRule rule) {
     RepeatRule.yearly => t.calendar.repeatRule.yearly,
     RepeatRule.everyNDays => t.calendar.repeatRule.everyNDays,
   };
+}
+
+List<String> _pickerWeekdays(Translations t, CalendarType calendar) {
+  final w = t.calendar.weekday;
+  return calendar == CalendarType.jalali
+      ? [w.sat, w.sun, w.mon, w.tue, w.wed, w.thu, w.fri]
+      : [w.mon, w.tue, w.wed, w.thu, w.fri, w.sat, w.sun];
 }

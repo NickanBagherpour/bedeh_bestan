@@ -27,40 +27,64 @@ class CalendarMonthHeader extends StatelessWidget {
     super.key,
     required this.title,
     required this.todayLabel,
+    required this.monthToggleLabel,
+    required this.monthOpen,
     required this.onPrev,
     required this.onNext,
     required this.onToday,
+    required this.onToggleMonth,
   });
 
   final String title;
   final String todayLabel;
+  final String monthToggleLabel;
+  final bool monthOpen;
   final VoidCallback onPrev;
   final VoidCallback onNext;
   final VoidCallback onToday;
+  final VoidCallback onToggleMonth;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Row(
+    return Column(
       children: [
-        IconButton(
-          onPressed: onPrev,
-          icon: const Icon(Icons.arrow_back_rounded),
-        ),
-        Expanded(
-          child: Text(
-            title,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w800,
+        Row(
+          children: [
+            IconButton(
+              onPressed: onPrev,
+              icon: const Icon(Icons.arrow_back_rounded),
             ),
-          ),
+            Expanded(
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+            IconButton(
+              onPressed: onNext,
+              icon: const Icon(Icons.arrow_forward_rounded),
+            ),
+          ],
         ),
-        IconButton(
-          onPressed: onNext,
-          icon: const Icon(Icons.arrow_forward_rounded),
+        Row(
+          children: [
+            TextButton(onPressed: onToday, child: Text(todayLabel)),
+            const Spacer(),
+            TextButton.icon(
+              onPressed: onToggleMonth,
+              icon: Icon(
+                monthOpen
+                    ? Icons.expand_less_rounded
+                    : Icons.expand_more_rounded,
+              ),
+              label: Text(monthToggleLabel),
+            ),
+          ],
         ),
-        TextButton(onPressed: onToday, child: Text(todayLabel)),
       ],
     );
   }

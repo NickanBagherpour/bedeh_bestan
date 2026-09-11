@@ -6,7 +6,7 @@ Local-only personal money + calendar + notes. Flutter Melos monorepo.
 
 ```bash
 dart pub get                    # or: melos bootstrap
-melos run dev                   # Linux desktop
+melos run dev:linux             # Linux desktop
 melos run dev:web               # Chrome (local CanvasKit)
 melos run translations          # after changing *.i18n.json
 melos run analyze && melos run test

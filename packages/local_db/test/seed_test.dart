@@ -44,7 +44,7 @@ void main() {
 
   test('notes can link to party and money', () async {
     final notes = await db.listNotes();
-    final sheba = notes.firstWhere((note) => note.id == 'note-sheba');
+    final sheba = notes.firstWhere((note) => note.id == SeedIds.noteSheba);
     expect(sheba.pinned, isTrue);
     expect(sheba.partyId, SeedIds.melli);
     expect(sheba.moneyItemId, SeedIds.melliInstallment);
@@ -58,5 +58,27 @@ void main() {
       payments.fold<int>(0, (sum, payment) => sum + payment.amount),
       15000000,
     );
+  });
+
+  test('retireDemoSeed drops demo rows and keeps user rows', () async {
+    await db.upsertParty(
+      Party(
+        id: 'party-user',
+        name: 'نگار',
+        kind: PartyKind.person,
+        createdAt: now,
+        updatedAt: now,
+      ),
+    );
+    await retireDemoSeed(db);
+    final snap = await db.snapshot();
+    expect(snap.partyCount, 1);
+    expect(snap.moneyCount, 0);
+    expect(snap.reminderCount, 0);
+    expect(snap.noteCount, 0);
+    expect(await db.getParty('party-user'), isNotNull);
+    expect(await db.getParty(SeedIds.ali), isNull);
+    await retireDemoSeed(db);
+    expect((await db.snapshot()).partyCount, 1);
   });
 }

@@ -116,6 +116,12 @@ class Translations$calendar$en {
 	/// en: '$weekday, $date'
 	String todayHeading({required Object weekday, required Object date}) => '${weekday}, ${date}';
 
+	/// en: 'Show month'
+	String get showMonth => 'Show month';
+
+	/// en: 'Hide month'
+	String get hideMonth => 'Hide month';
+
 	/// en: 'Add for this day'
 	String get addForDay => 'Add for this day';
 
@@ -163,6 +169,9 @@ class Translations$calendar$en {
 
 	/// en: 'Delete'
 	String get delete => 'Delete';
+
+	/// en: 'Delete this reminder?'
+	String get deleteConfirm => 'Delete this reminder?';
 
 	/// en: 'Give it a title.'
 	String get missingTitle => 'Give it a title.';
@@ -432,14 +441,23 @@ class Translations$money$en {
 	/// en: 'No party matches.'
 	String get emptyPartyFilter => 'No party matches.';
 
-	/// en: 'This party still has accounts or notes. Remove those first.'
-	String get partyInUse => 'This party still has accounts or notes. Remove those first.';
+	/// en: 'This party still has accounts. Remove those first.'
+	String get partyInUse => 'This party still has accounts. Remove those first.';
 
 	/// en: 'This party was not found.'
 	String get missingPartyItem => 'This party was not found.';
 
+	/// en: 'Delete account'
+	String get delete => 'Delete account';
+
+	/// en: 'This account and its payments will be removed. Linked notes stay.'
+	String get deleteConfirm => 'This account and its payments will be removed. Linked notes stay.';
+
 	/// en: 'Delete party'
 	String get deleteParty => 'Delete party';
+
+	/// en: 'Remove this party? Accounts with this party must be deleted first.'
+	String get deletePartyConfirm => 'Remove this party? Accounts with this party must be deleted first.';
 
 	/// en: 'New party'
 	String get newPartyTitle => 'New party';
@@ -518,6 +536,9 @@ class Translations$notes$en {
 
 	/// en: 'Delete'
 	String get delete => 'Delete';
+
+	/// en: 'Delete this note?'
+	String get deleteConfirm => 'Delete this note?';
 
 	/// en: 'Open account'
 	String get openMoney => 'Open account';
@@ -737,6 +758,12 @@ class Translations$app$actions$en {
 
 	/// en: 'Search'
 	String get search => 'Search';
+
+	/// en: 'Back'
+	String get back => 'Back';
+
+	/// en: 'Delete'
+	String get delete => 'Delete';
 }
 
 // Path: calendar.repeatRule
@@ -888,6 +915,8 @@ extension on Translations {
 			'app.actions.save' => 'Save',
 			'app.actions.add' => 'Add',
 			'app.actions.search' => 'Search',
+			'app.actions.back' => 'Back',
+			'app.actions.delete' => 'Delete',
 			'calendar.title' => 'Calendar',
 			'calendar.fab' => 'Reminder',
 			'calendar.emptyTitle' => 'No reminders this month',
@@ -897,6 +926,8 @@ extension on Translations {
 			'calendar.monthAgenda' => 'This month',
 			'calendar.today' => 'Today',
 			'calendar.todayHeading' => ({required Object weekday, required Object date}) => '${weekday}, ${date}',
+			'calendar.showMonth' => 'Show month',
+			'calendar.hideMonth' => 'Hide month',
 			'calendar.addForDay' => 'Add for this day',
 			'calendar.newTitle' => 'New reminder',
 			'calendar.editTitle' => 'Edit reminder',
@@ -913,6 +944,7 @@ extension on Translations {
 			'calendar.save' => 'Save',
 			'calendar.edit' => 'Edit',
 			'calendar.delete' => 'Delete',
+			'calendar.deleteConfirm' => 'Delete this reminder?',
 			'calendar.missingTitle' => 'Give it a title.',
 			'calendar.invalidRepeat' => 'N must be at least 2.',
 			'calendar.loadError' => 'Could not read reminders.',
@@ -1017,9 +1049,12 @@ extension on Translations {
 			'money.emptyParties' => 'No parties yet',
 			'money.emptyPartiesBody' => 'Add a person, shop, or bank you deal with.',
 			'money.emptyPartyFilter' => 'No party matches.',
-			'money.partyInUse' => 'This party still has accounts or notes. Remove those first.',
+			'money.partyInUse' => 'This party still has accounts. Remove those first.',
 			'money.missingPartyItem' => 'This party was not found.',
+			'money.delete' => 'Delete account',
+			'money.deleteConfirm' => 'This account and its payments will be removed. Linked notes stay.',
 			'money.deleteParty' => 'Delete party',
+			'money.deletePartyConfirm' => 'Remove this party? Accounts with this party must be deleted first.',
 			'money.newPartyTitle' => 'New party',
 			'money.editPartyTitle' => 'Edit party',
 			'money.linkedAccounts' => 'Accounts',
@@ -1043,6 +1078,7 @@ extension on Translations {
 			'notes.save' => 'Save',
 			'notes.edit' => 'Edit',
 			'notes.delete' => 'Delete',
+			'notes.deleteConfirm' => 'Delete this note?',
 			'notes.openMoney' => 'Open account',
 			'notes.missingTitle' => 'Give it a title.',
 			'notes.loadError' => 'Could not read notes.',

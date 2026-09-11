@@ -56,6 +56,10 @@ melos:
       run: cd apps/bedeh_bestan && flutter run -d linux
       stdio: inherit
 
+    dev:linux:
+      run: cd apps/bedeh_bestan && flutter run -d linux
+      stdio: inherit
+
     # Run in Chrome (local CanvasKit, no CDN, quiet logs).
     dev:web:
       run: cd apps/bedeh_bestan && flutter run -d chrome --no-web-resources-cdn --web-browser-flag=--disable-logging
