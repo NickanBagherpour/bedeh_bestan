@@ -39,7 +39,11 @@ melos:
       run: melos exec --concurrency=1 --fail-fast -- "flutter analyze"
 
     test:
-      run: melos exec --concurrency=1 --fail-fast --dir-exists=test -- "flutter test"
+      run: melos exec --concurrency=1 --fail-fast --dir-exists=test -- "flutter test --exclude-tags store"
+
+    store:screenshots:
+      run: cd apps/bedeh_bestan && flutter test --tags store --update-goldens
+      stdio: inherit
 
     translations:
       run: melos exec --scope="translations" -- "dart run slang"

@@ -14,6 +14,20 @@ melos run analyze && melos run test
 
 If `pub get` hits `pub.flutter-io.cn` hash errors, use `PUB_HOSTED_URL=https://pub.dev`.
 
+## Store release (Android)
+
+Listing copy, ad titles, and screenshots: [store/LISTING.md](store/LISTING.md).
+
+```bash
+# Signed APK for Cafe Bazaar / Myket
+cd apps/bedeh_bestan && flutter build apk --release
+
+# Play Store bundle
+cd apps/bedeh_bestan && flutter build appbundle --release
+```
+
+Keep `android/upload-keystore.jks` and `android/key.properties` off git and in a backup.
+
 ## Documentation
 
 | Doc | Purpose |

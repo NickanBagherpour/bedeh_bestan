@@ -29,6 +29,7 @@ app.*.map.json
 **/key.properties
 **/*.keystore
 **/*.jks
+store/builds/
 
 # Melos
 .melos_tool/
