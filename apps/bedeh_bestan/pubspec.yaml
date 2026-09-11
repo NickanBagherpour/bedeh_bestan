@@ -20,6 +20,8 @@ dependencies:
 
   core:
     path: ../../packages/core
+  local_db:
+    path: ../../packages/local_db
   translations:
     path: ../../packages/translations
   ui_kit:

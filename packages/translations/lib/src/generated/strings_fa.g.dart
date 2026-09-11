@@ -88,7 +88,14 @@ class _Translations$home$fa extends Translations$home$en {
 	@override String get payAndReceive => 'بده و بستان';
 	@override String get offlineBlurb => 'قسط‌ها، طلب‌ها و یادآوری‌ها — همه روی همین دستگاه.';
 	@override String get emptyTitle => 'خانه به‌زودی زنده می‌شود';
-	@override String get emptyBody => 'این هفته و «چه‌کسی چقدر» در فازهای بعدی این‌جا نمایش داده می‌شود.';
+	@override String get emptyBody => 'این هفته و «چه‌کسی چقدر» در فاز حساب می‌آید.';
+	@override String get loadError => 'خواندن دادهٔ محلی ممکن نشد.';
+	@override String get seedTitle => 'دادهٔ نمونه روی دستگاه است';
+	@override String get seedHint => 'فهرست حساب و «این هفته» در فاز بعد می‌آید.';
+	@override String seedParties({required Object count}) => '${count} طرف‌حساب';
+	@override String seedOpenMoney({required Object count}) => '${count} بده‌بستان باز';
+	@override String seedReminders({required Object count}) => '${count} یادآوری';
+	@override String seedNotes({required Object count}) => '${count} یادداشت';
 }
 
 // Path: money
@@ -216,7 +223,14 @@ extension on TranslationsFa {
 			'home.payAndReceive' => 'بده و بستان',
 			'home.offlineBlurb' => 'قسط‌ها، طلب‌ها و یادآوری‌ها — همه روی همین دستگاه.',
 			'home.emptyTitle' => 'خانه به‌زودی زنده می‌شود',
-			'home.emptyBody' => 'این هفته و «چه‌کسی چقدر» در فازهای بعدی این‌جا نمایش داده می‌شود.',
+			'home.emptyBody' => 'این هفته و «چه‌کسی چقدر» در فاز حساب می‌آید.',
+			'home.loadError' => 'خواندن دادهٔ محلی ممکن نشد.',
+			'home.seedTitle' => 'دادهٔ نمونه روی دستگاه است',
+			'home.seedHint' => 'فهرست حساب و «این هفته» در فاز بعد می‌آید.',
+			'home.seedParties' => ({required Object count}) => '${count} طرف‌حساب',
+			'home.seedOpenMoney' => ({required Object count}) => '${count} بده‌بستان باز',
+			'home.seedReminders' => ({required Object count}) => '${count} یادآوری',
+			'home.seedNotes' => ({required Object count}) => '${count} یادداشت',
 			'money.title' => 'حساب',
 			'money.emptyTitle' => 'بده‌بستان‌های تو این‌جا می‌آیند',
 			'money.emptyBody' => 'بدهی و طلب، اقساط و پرداخت‌ها را در فاز بعدی اضافه می‌کنیم.',

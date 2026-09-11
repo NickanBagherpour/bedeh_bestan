@@ -1,15 +1,23 @@
+import 'package:core/core.dart' show toPersianDigits;
 import 'package:flutter/material.dart';
-import 'package:translations/translations.dart' show Translations;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:translations/translations.dart' show Translations, TranslationsLookup;
 import 'package:ui_kit/ui_kit.dart' show AppColors, AppSpacing, KitCard, KitEmpty;
 
-/// خانه — placeholder home. Later phases show «this week» and «who owes what».
-class HomePage extends StatelessWidget {
+import '../../application/controllers/home_controller.dart';
+import '../../application/state/home_state.dart';
+import '../widgets/seed_snapshot_card.dart';
+
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final t = Translations.of(context);
+    final state = ref.watch(homeControllerProvider);
+    final persian = Localizations.localeOf(context).languageCode == 'fa';
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: ListView(
@@ -70,14 +78,46 @@ class HomePage extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: AppSpacing.xl),
-          KitEmpty(
-            icon: Icons.auto_awesome_rounded,
-            title: t.home.emptyTitle,
-            body: t.home.emptyBody,
-          ),
+          const SizedBox(height: AppSpacing.lg),
+          if (state.status == HomeStatus.error)
+            KitEmpty(
+              icon: Icons.error_outline_rounded,
+              title: t.message(
+                state.errorKey ?? 'home.loadError',
+                shouldTranslate: true,
+              ),
+              body: t.home.emptyBody,
+            )
+          else if (state.snapshot != null)
+            SeedSnapshotCard(
+              title: t.home.seedTitle,
+              body: t.home.seedHint,
+              partiesLabel: t.home.seedParties(
+                count: _count(state.snapshot!.partyCount, persian),
+              ),
+              openMoneyLabel: t.home.seedOpenMoney(
+                count: _count(state.snapshot!.openMoneyCount, persian),
+              ),
+              remindersLabel: t.home.seedReminders(
+                count: _count(state.snapshot!.reminderCount, persian),
+              ),
+              notesLabel: t.home.seedNotes(
+                count: _count(state.snapshot!.noteCount, persian),
+              ),
+            )
+          else
+            KitEmpty(
+              icon: Icons.auto_awesome_rounded,
+              title: t.home.emptyTitle,
+              body: t.home.emptyBody,
+            ),
         ],
       ),
     );
   }
+}
+
+String _count(int value, bool persian) {
+  final raw = value.toString();
+  return persian ? toPersianDigits(raw) : raw;
 }

@@ -116,8 +116,29 @@ class Translations$home$en {
 	/// en: 'Home will come alive soon'
 	String get emptyTitle => 'Home will come alive soon';
 
-	/// en: 'This week and who-owes-what show up here in later phases.'
-	String get emptyBody => 'This week and who-owes-what show up here in later phases.';
+	/// en: 'This week and who-owes-what show up here in the money phase.'
+	String get emptyBody => 'This week and who-owes-what show up here in the money phase.';
+
+	/// en: 'Could not read local data.'
+	String get loadError => 'Could not read local data.';
+
+	/// en: 'Demo data is on this device'
+	String get seedTitle => 'Demo data is on this device';
+
+	/// en: 'Lists and “this week” arrive in the next phase.'
+	String get seedHint => 'Lists and “this week” arrive in the next phase.';
+
+	/// en: '$count parties'
+	String seedParties({required Object count}) => '${count} parties';
+
+	/// en: '$count open accounts'
+	String seedOpenMoney({required Object count}) => '${count} open accounts';
+
+	/// en: '$count reminders'
+	String seedReminders({required Object count}) => '${count} reminders';
+
+	/// en: '$count notes'
+	String seedNotes({required Object count}) => '${count} notes';
 }
 
 // Path: money
@@ -293,7 +314,14 @@ extension on Translations {
 			'home.payAndReceive' => 'Give and take',
 			'home.offlineBlurb' => 'Installments, receivables, and reminders — all on this device.',
 			'home.emptyTitle' => 'Home will come alive soon',
-			'home.emptyBody' => 'This week and who-owes-what show up here in later phases.',
+			'home.emptyBody' => 'This week and who-owes-what show up here in the money phase.',
+			'home.loadError' => 'Could not read local data.',
+			'home.seedTitle' => 'Demo data is on this device',
+			'home.seedHint' => 'Lists and “this week” arrive in the next phase.',
+			'home.seedParties' => ({required Object count}) => '${count} parties',
+			'home.seedOpenMoney' => ({required Object count}) => '${count} open accounts',
+			'home.seedReminders' => ({required Object count}) => '${count} reminders',
+			'home.seedNotes' => ({required Object count}) => '${count} notes',
 			'money.title' => 'Accounts',
 			'money.emptyTitle' => 'Your give-and-take will live here',
 			'money.emptyBody' => 'Debts, receivables, installments, and payments arrive in the money phase.',

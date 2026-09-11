@@ -16,6 +16,7 @@ workspace:
   - packages/core
   - packages/ui_kit
   - packages/translations
+  - packages/local_db
   - features/home
   - features/money
   - features/calendar

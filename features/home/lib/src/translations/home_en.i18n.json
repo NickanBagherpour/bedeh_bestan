@@ -2,5 +2,12 @@
   "payAndReceive": "Give and take",
   "offlineBlurb": "Installments, receivables, and reminders — all on this device.",
   "emptyTitle": "Home will come alive soon",
-  "emptyBody": "This week and who-owes-what show up here in later phases."
+  "emptyBody": "This week and who-owes-what show up here in the money phase.",
+  "loadError": "Could not read local data.",
+  "seedTitle": "Demo data is on this device",
+  "seedHint": "Lists and “this week” arrive in the next phase.",
+  "seedParties": "$count parties",
+  "seedOpenMoney": "$count open accounts",
+  "seedReminders": "$count reminders",
+  "seedNotes": "$count notes"
 }

@@ -22,4 +22,4 @@ Read **only** what the task needs. Do not load the whole `docs/` tree.
 
 `features/home` · `features/money` · `features/calendar` · `features/notes`
 
-App root: `apps/bedeh_bestan/` · Routes: `packages/core/lib/src/router/app_routes.dart`
+App root: `apps/bedeh_bestan/` · DB: `packages/local_db/` · Routes: `packages/core/lib/src/router/app_routes.dart`

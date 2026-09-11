@@ -7,6 +7,8 @@ import 'package:core/core.dart'
         sharedPreferencesProvider;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:local_db/local_db.dart'
+    show AppDatabase, appDatabaseProvider, seedDemoData;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:translations/translations.dart'
     show
@@ -24,6 +26,9 @@ Future<void> main() async {
   final storage = AppStorage(preferences: preferences);
   final initialSettings = loadAppSettings(storage: storage);
 
+  final database = AppDatabase.open();
+  await seedDemoData(database);
+
   await useAppDefaultLocale();
   await LocaleSettings.setLocale(
     appLocaleFromLanguageCode(initialSettings.locale.languageCode),
@@ -35,6 +40,7 @@ Future<void> main() async {
         sharedPreferencesProvider.overrideWithValue(preferences),
         appStorageProvider.overrideWithValue(storage),
         initialAppSettingsProvider.overrideWithValue(initialSettings),
+        appDatabaseProvider.overrideWithValue(database),
       ],
       child: TranslationProvider(child: const BedeBestanApp()),
     ),

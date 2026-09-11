@@ -7,6 +7,9 @@ import 'package:core/core.dart'
         sharedPreferencesProvider;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:local_db/local_db.dart'
+    show appDatabaseProvider, seedDemoData;
+import 'package:local_db/memory.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:translations/translations.dart'
     show TranslationProvider, useAppDefaultLocale;
@@ -18,7 +21,10 @@ void main() {
     SharedPreferences.setMockInitialValues(<String, Object>{});
     final preferences = await SharedPreferences.getInstance();
     final storage = AppStorage(preferences: preferences);
+    final database = openMemoryDatabase();
+    await seedDemoData(database);
     await useAppDefaultLocale();
+    addTearDown(database.close);
 
     await tester.pumpWidget(
       ProviderScope(
@@ -27,6 +33,7 @@ void main() {
           appStorageProvider.overrideWithValue(storage),
           initialAppSettingsProvider
               .overrideWithValue(loadAppSettings(storage: storage)),
+          appDatabaseProvider.overrideWithValue(database),
         ],
         child: TranslationProvider(child: const BedeBestanApp()),
       ),
@@ -38,5 +45,6 @@ void main() {
     expect(find.text('حساب'), findsOneWidget);
     expect(find.text('تقویم'), findsOneWidget);
     expect(find.text('یادداشت'), findsOneWidget);
+    expect(find.textContaining('طرف‌حساب'), findsOneWidget);
   });
 }
