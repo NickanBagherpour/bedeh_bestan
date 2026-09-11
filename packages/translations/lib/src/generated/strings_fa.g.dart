@@ -75,8 +75,33 @@ class _Translations$calendar$fa extends Translations$calendar$en {
 
 	// Translations
 	@override String get title => 'تقویم';
-	@override String get emptyTitle => 'تقویم و یادآوری‌ها';
-	@override String get emptyBody => 'نمای ماه شمسی و فهرست رویدادها در فاز تقویم اضافه می‌شود.';
+	@override String get fab => 'یادآوری';
+	@override String get emptyTitle => 'این ماه یادآوری نیست';
+	@override String get emptyBody => 'یک یادآوری بگذار تا روی ماه و در فهرست روز دیده شود.';
+	@override String get emptyDay => 'این روز خالی است.';
+	@override String get agenda => 'رویدادها';
+	@override String get today => 'امروز';
+	@override String get newTitle => 'یادآوری تازه';
+	@override String get editTitle => 'ویرایش یادآوری';
+	@override String get titleField => 'عنوان';
+	@override String get bodyField => 'یادداشت';
+	@override String get date => 'تاریخ';
+	@override String get time => 'ساعت';
+	@override String get allDay => 'تمام‌روز';
+	@override String get repeat => 'تکرار';
+	@override String get everyN => 'هر N روز';
+	@override String get notifyOnTime => 'اعلان سر ساعت';
+	@override String get notifyDayBefore => 'اعلان یک روز قبل';
+	@override String get save => 'ذخیره';
+	@override String get edit => 'ویرایش';
+	@override String get delete => 'حذف';
+	@override String get missingTitle => 'عنوان را بنویس.';
+	@override String get invalidRepeat => 'N باید حداقل ۲ باشد.';
+	@override String get loadError => 'خواندن یادآوری‌ها ممکن نشد.';
+	@override String get saveError => 'ذخیرهٔ یادآوری ممکن نشد.';
+	@override String get missingItem => 'این یادآوری دیگر نیست.';
+	@override late final _Translations$calendar$repeatRule$fa repeatRule = _Translations$calendar$repeatRule$fa._(_root);
+	@override late final _Translations$calendar$weekday$fa weekday = _Translations$calendar$weekday$fa._(_root);
 }
 
 // Path: home
@@ -276,6 +301,37 @@ class _Translations$app$actions$fa extends Translations$app$actions$en {
 	@override String get add => 'افزودن';
 }
 
+// Path: calendar.repeatRule
+class _Translations$calendar$repeatRule$fa extends Translations$calendar$repeatRule$en {
+	_Translations$calendar$repeatRule$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get none => 'تکرار نمی‌شود';
+	@override String get daily => 'روزانه';
+	@override String get weekly => 'هفتگی';
+	@override String get monthly => 'ماهانه';
+	@override String get yearly => 'سالانه';
+	@override String get everyNDays => 'هر N روز';
+}
+
+// Path: calendar.weekday
+class _Translations$calendar$weekday$fa extends Translations$calendar$weekday$en {
+	_Translations$calendar$weekday$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get sat => 'ش';
+	@override String get sun => 'ی';
+	@override String get mon => 'د';
+	@override String get tue => 'س';
+	@override String get wed => 'چ';
+	@override String get thu => 'پ';
+	@override String get fri => 'ج';
+}
+
 // Path: money.status
 class _Translations$money$status$fa extends Translations$money$status$en {
 	_Translations$money$status$fa._(TranslationsFa root) : this._root = root, super.internal(root);
@@ -348,8 +404,44 @@ extension on TranslationsFa {
 			'app.actions.save' => 'ذخیره',
 			'app.actions.add' => 'افزودن',
 			'calendar.title' => 'تقویم',
-			'calendar.emptyTitle' => 'تقویم و یادآوری‌ها',
-			'calendar.emptyBody' => 'نمای ماه شمسی و فهرست رویدادها در فاز تقویم اضافه می‌شود.',
+			'calendar.fab' => 'یادآوری',
+			'calendar.emptyTitle' => 'این ماه یادآوری نیست',
+			'calendar.emptyBody' => 'یک یادآوری بگذار تا روی ماه و در فهرست روز دیده شود.',
+			'calendar.emptyDay' => 'این روز خالی است.',
+			'calendar.agenda' => 'رویدادها',
+			'calendar.today' => 'امروز',
+			'calendar.newTitle' => 'یادآوری تازه',
+			'calendar.editTitle' => 'ویرایش یادآوری',
+			'calendar.titleField' => 'عنوان',
+			'calendar.bodyField' => 'یادداشت',
+			'calendar.date' => 'تاریخ',
+			'calendar.time' => 'ساعت',
+			'calendar.allDay' => 'تمام‌روز',
+			'calendar.repeat' => 'تکرار',
+			'calendar.everyN' => 'هر N روز',
+			'calendar.notifyOnTime' => 'اعلان سر ساعت',
+			'calendar.notifyDayBefore' => 'اعلان یک روز قبل',
+			'calendar.save' => 'ذخیره',
+			'calendar.edit' => 'ویرایش',
+			'calendar.delete' => 'حذف',
+			'calendar.missingTitle' => 'عنوان را بنویس.',
+			'calendar.invalidRepeat' => 'N باید حداقل ۲ باشد.',
+			'calendar.loadError' => 'خواندن یادآوری‌ها ممکن نشد.',
+			'calendar.saveError' => 'ذخیرهٔ یادآوری ممکن نشد.',
+			'calendar.missingItem' => 'این یادآوری دیگر نیست.',
+			'calendar.repeatRule.none' => 'تکرار نمی‌شود',
+			'calendar.repeatRule.daily' => 'روزانه',
+			'calendar.repeatRule.weekly' => 'هفتگی',
+			'calendar.repeatRule.monthly' => 'ماهانه',
+			'calendar.repeatRule.yearly' => 'سالانه',
+			'calendar.repeatRule.everyNDays' => 'هر N روز',
+			'calendar.weekday.sat' => 'ش',
+			'calendar.weekday.sun' => 'ی',
+			'calendar.weekday.mon' => 'د',
+			'calendar.weekday.tue' => 'س',
+			'calendar.weekday.wed' => 'چ',
+			'calendar.weekday.thu' => 'پ',
+			'calendar.weekday.fri' => 'ج',
 			'home.payAndReceive' => 'بده و بستان',
 			'home.offlineBlurb' => 'قسط‌ها، طلب‌ها و یادآوری‌ها — همه روی همین دستگاه.',
 			'home.emptyTitle' => 'هفته‌ای آرام',

@@ -11,7 +11,7 @@ Do not start the next phase until the user says `next phase`.
 | **3** Money (core) | done | List, add/edit, detail (partial pay). Home: this week + who owes what. FAB بدهی/طلب |
 | **4** Settings | **done** | Theme + locale switching. Calendar system for month/week bounds (not tied to language) |
 | **5** Money report | **done** | Home card: paid so far, remaining بدهی, still to pay until month end |
-| **6** Calendar | queued | Jalali-primary agenda + month view. Repeats. FAB یادآوری |
+| **6** Calendar | **done** | Jalali-primary agenda + month view. Repeats. FAB یادآوری |
 | **7** Notes | queued | Title, body, tags, pin, optional link to party/money, search |
 | **8** Notifications + icon | queued | Local notifications. App icon + splash. Launcher **بده‌بستان** |
 | **9** Polish | queued | Motion, haptics, empty/error, contrast. Seed stays |
@@ -57,8 +57,13 @@ No charts in v1. Seed stays. No calendar/notes product UI.
 
 ---
 
-## Phase 6 notes (calendar)
+## Phase 6 — Calendar (done)
 
-- Jalali-primary agenda + simple month view in `features/calendar`. Repeats already exist on `Reminder`. FAB یادآوری.
-- Honor the **calendar setting** for the grid; language stays separate.
-- Money UI and report stay as-is. Seed stays.
+`features/calendar`. Month grid + day agenda honor the **calendar setting** (Jalali Saturday-first / Gregorian Monday-first). Language only changes weekday labels and digits. Overlay routes: `/calendar/new`, `/calendar/item/:id`, edit. Repeats expand with `shiftCalendarMonths`. FAB یادآوری. Seed reminders stay. Notifications still wait for Phase 8.
+
+---
+
+## Phase 7 notes (notes)
+
+- Title, body, tags, pin, optional link to party/money, search in `features/notes`.
+- Money and calendar stay as-is. Seed stays.

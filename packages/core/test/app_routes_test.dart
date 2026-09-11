@@ -8,6 +8,10 @@ void main() {
     expect(AppRoutes.indexOfPath('/money/item/abc/edit'), 1);
     expect(AppRoutes.moneyItemPath('x'), '/money/item/x');
     expect(AppRoutes.moneyNewPath(direction: 'pay'), '/money/new?direction=pay');
+    expect(AppRoutes.fromPath('/calendar/item/abc'), AppRoutes.calendar);
+    expect(AppRoutes.indexOfPath('/calendar/new'), 2);
+    expect(AppRoutes.reminderNewPath(day: DateTime(2026, 9, 11)),
+        '/calendar/new?day=2026-09-11');
   });
 
   test('settings is an overlay path, not a tab', () {

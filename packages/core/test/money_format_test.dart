@@ -6,8 +6,10 @@ import 'package:core/core.dart'
         formatStoredMoney,
         groupAmount,
         monthBounds,
+        monthGridCells,
         parseStoredAmount,
         parseTomanInput,
+        shiftCalendarMonths,
         weekBounds;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shamsi_date/shamsi_date.dart';
@@ -71,6 +73,36 @@ void main() {
     final gregorian = weekBounds(friday, CalendarType.gregorian);
     expect(gregorian.start.weekday, DateTime.monday);
     expect(gregorian.endInclusive.weekday, DateTime.sunday);
+  });
+
+  test('monthGridCells pad to full weeks in the active calendar', () {
+    final focus = DateTime(2026, 9, 11);
+    final jalali = monthGridCells(focus, CalendarType.jalali);
+    expect(jalali.length % 7, 0);
+    expect(jalali.first.weekday, DateTime.saturday);
+    expect(jalali.last.weekday, DateTime.friday);
+    expect(jalali.length, lessThanOrEqualTo(42));
+
+    final gregorian = monthGridCells(focus, CalendarType.gregorian);
+    expect(gregorian.length % 7, 0);
+    expect(gregorian.first.weekday, DateTime.monday);
+    expect(gregorian.last.weekday, DateTime.sunday);
+  });
+
+  test('shiftCalendarMonths follows Jalali months and clamps Gregorian days', () {
+    final jan31 = DateTime(2026, 1, 31);
+    expect(
+      shiftCalendarMonths(jan31, 1, CalendarType.gregorian),
+      DateTime(2026, 2, 28),
+    );
+
+    final shahrivar = Jalali(1403, 6, 15).toDateTime();
+    final mehr = Jalali.fromDateTime(
+      shiftCalendarMonths(shahrivar, 1, CalendarType.jalali),
+    );
+    expect(mehr.year, 1403);
+    expect(mehr.month, 7);
+    expect(mehr.day, 15);
   });
 }
 

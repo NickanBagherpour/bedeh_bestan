@@ -128,3 +128,111 @@ DateRange weekBounds(DateTime now, CalendarType calendar) {
       );
   }
 }
+
+/// English Gregorian month names (January = index 0).
+const List<String> gregorianMonthNamesEn = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
+/// Persian labels for Gregorian months.
+const List<String> gregorianMonthNamesFa = [
+  'ژانویه',
+  'فوریه',
+  'مارس',
+  'آوریل',
+  'مه',
+  'ژوئن',
+  'ژوئیه',
+  'اوت',
+  'سپتامبر',
+  'اکتبر',
+  'نوامبر',
+  'دسامبر',
+];
+
+/// Month + year for a calendar header, e.g. «شهریور ۱۴۰۵» or «September 2026».
+String formatMonthYear(
+  DateTime date,
+  CalendarType calendar, {
+  required bool persian,
+}) {
+  switch (calendar) {
+    case CalendarType.jalali:
+      final j = toJalali(date);
+      return '${jalaliMonthNames[j.month - 1]} ${j.year}';
+    case CalendarType.gregorian:
+      final names = persian ? gregorianMonthNamesFa : gregorianMonthNamesEn;
+      return '${names[date.month - 1]} ${date.year}';
+  }
+}
+
+/// Shifts [date] by [months] in the chosen calendar, clamping the day.
+DateTime shiftCalendarMonths(
+  DateTime date,
+  int months,
+  CalendarType calendar,
+) {
+  switch (calendar) {
+    case CalendarType.gregorian:
+      final shifted = date.month - 1 + months;
+      final year = date.year + (shifted / 12).floor();
+      var month = (shifted % 12) + 1;
+      if (month <= 0) month += 12;
+      final lastDay = DateTime(year, month + 1, 0).day;
+      final day = date.day < lastDay ? date.day : lastDay;
+      return DateTime(
+        year,
+        month,
+        day,
+        date.hour,
+        date.minute,
+        date.second,
+        date.millisecond,
+        date.microsecond,
+      );
+    case CalendarType.jalali:
+      final j = toJalali(date);
+      final total = j.year * 12 + (j.month - 1) + months;
+      final year = (total / 12).floor();
+      final month = (total % 12) + 1;
+      final last = Jalali(year, month, 1).monthLength;
+      final day = j.day < last ? j.day : last;
+      final next = Jalali(year, month, day).toDateTime();
+      return DateTime(
+        next.year,
+        next.month,
+        next.day,
+        date.hour,
+        date.minute,
+        date.second,
+        date.millisecond,
+        date.microsecond,
+      );
+  }
+}
+
+/// 5–6 week cells covering the month of [focus], padded to full weeks.
+List<DateTime> monthGridCells(DateTime focus, CalendarType calendar) {
+  final month = monthBounds(focus, calendar);
+  var day = weekBounds(month.start, calendar).start;
+  final cells = <DateTime>[];
+  while (true) {
+    cells.add(dateOnly(day));
+    final coveredMonth = !dateOnly(day).isBefore(month.endInclusive);
+    day = day.add(const Duration(days: 1));
+    if (coveredMonth && cells.length % 7 == 0) break;
+    if (cells.length >= 42) break;
+  }
+  return cells;
+}

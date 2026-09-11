@@ -225,9 +225,46 @@ class AppDatabase extends _$AppDatabase {
     });
   }
 
+  Stream<List<Reminder>> watchReminders() {
+    final query = select(reminders)
+      ..orderBy([(row) => OrderingTerm.asc(row.startAt)]);
+    return query.watch().map(
+      (rows) => [for (final row in rows) reminderFromRow(row)],
+    );
+  }
+
   Future<List<Reminder>> listReminders() async {
     final rows = await select(reminders).get();
     return [for (final row in rows) reminderFromRow(row)];
+  }
+
+  Future<Reminder?> getReminder(String id) async {
+    final row = await (select(reminders)..where((table) => table.id.equals(id)))
+        .getSingleOrNull();
+    return row == null ? null : reminderFromRow(row);
+  }
+
+  Future<void> upsertReminder(Reminder reminder) {
+    return into(reminders).insertOnConflictUpdate(
+      RemindersCompanion(
+        id: Value(reminder.id),
+        title: Value(reminder.title),
+        body: Value(reminder.body),
+        startAt: Value(reminder.startAt),
+        endAt: Value(reminder.endAt),
+        allDay: Value(reminder.allDay),
+        repeatRule: Value(reminder.repeatRule.name),
+        repeatEveryN: Value(reminder.repeatEveryN),
+        notifyOnTime: Value(reminder.notifyOnTime),
+        notifyDayBefore: Value(reminder.notifyDayBefore),
+        createdAt: Value(reminder.createdAt),
+        updatedAt: Value(reminder.updatedAt),
+      ),
+    );
+  }
+
+  Future<void> deleteReminder(String id) {
+    return (delete(reminders)..where((row) => row.id.equals(id))).go();
   }
 
   Future<List<Note>> listNotes() async {

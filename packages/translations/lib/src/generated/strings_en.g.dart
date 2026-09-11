@@ -92,11 +92,83 @@ class Translations$calendar$en {
 	/// en: 'Calendar'
 	String get title => 'Calendar';
 
-	/// en: 'Calendar and reminders'
-	String get emptyTitle => 'Calendar and reminders';
+	/// en: 'Reminder'
+	String get fab => 'Reminder';
 
-	/// en: 'A Jalali month view and event agenda land in the calendar phase.'
-	String get emptyBody => 'A Jalali month view and event agenda land in the calendar phase.';
+	/// en: 'No reminders this month'
+	String get emptyTitle => 'No reminders this month';
+
+	/// en: 'Add a reminder to see it on the month and in the agenda.'
+	String get emptyBody => 'Add a reminder to see it on the month and in the agenda.';
+
+	/// en: 'Nothing on this day.'
+	String get emptyDay => 'Nothing on this day.';
+
+	/// en: 'Agenda'
+	String get agenda => 'Agenda';
+
+	/// en: 'Today'
+	String get today => 'Today';
+
+	/// en: 'New reminder'
+	String get newTitle => 'New reminder';
+
+	/// en: 'Edit reminder'
+	String get editTitle => 'Edit reminder';
+
+	/// en: 'Title'
+	String get titleField => 'Title';
+
+	/// en: 'Note'
+	String get bodyField => 'Note';
+
+	/// en: 'Date'
+	String get date => 'Date';
+
+	/// en: 'Time'
+	String get time => 'Time';
+
+	/// en: 'All day'
+	String get allDay => 'All day';
+
+	/// en: 'Repeat'
+	String get repeat => 'Repeat';
+
+	/// en: 'Every N days'
+	String get everyN => 'Every N days';
+
+	/// en: 'Notify at the time'
+	String get notifyOnTime => 'Notify at the time';
+
+	/// en: 'Notify a day before'
+	String get notifyDayBefore => 'Notify a day before';
+
+	/// en: 'Save'
+	String get save => 'Save';
+
+	/// en: 'Edit'
+	String get edit => 'Edit';
+
+	/// en: 'Delete'
+	String get delete => 'Delete';
+
+	/// en: 'Give it a title.'
+	String get missingTitle => 'Give it a title.';
+
+	/// en: 'N must be at least 2.'
+	String get invalidRepeat => 'N must be at least 2.';
+
+	/// en: 'Could not read reminders.'
+	String get loadError => 'Could not read reminders.';
+
+	/// en: 'Could not save the reminder.'
+	String get saveError => 'Could not save the reminder.';
+
+	/// en: 'This reminder is gone.'
+	String get missingItem => 'This reminder is gone.';
+
+	late final Translations$calendar$repeatRule$en repeatRule = Translations$calendar$repeatRule$en.internal(_root);
+	late final Translations$calendar$weekday$en weekday = Translations$calendar$weekday$en.internal(_root);
 }
 
 // Path: home
@@ -505,6 +577,63 @@ class Translations$app$actions$en {
 	String get add => 'Add';
 }
 
+// Path: calendar.repeatRule
+class Translations$calendar$repeatRule$en {
+	Translations$calendar$repeatRule$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Does not repeat'
+	String get none => 'Does not repeat';
+
+	/// en: 'Daily'
+	String get daily => 'Daily';
+
+	/// en: 'Weekly'
+	String get weekly => 'Weekly';
+
+	/// en: 'Monthly'
+	String get monthly => 'Monthly';
+
+	/// en: 'Yearly'
+	String get yearly => 'Yearly';
+
+	/// en: 'Every N days'
+	String get everyNDays => 'Every N days';
+}
+
+// Path: calendar.weekday
+class Translations$calendar$weekday$en {
+	Translations$calendar$weekday$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Sat'
+	String get sat => 'Sat';
+
+	/// en: 'Sun'
+	String get sun => 'Sun';
+
+	/// en: 'Mon'
+	String get mon => 'Mon';
+
+	/// en: 'Tue'
+	String get tue => 'Tue';
+
+	/// en: 'Wed'
+	String get wed => 'Wed';
+
+	/// en: 'Thu'
+	String get thu => 'Thu';
+
+	/// en: 'Fri'
+	String get fri => 'Fri';
+}
+
 // Path: money.status
 class Translations$money$status$en {
 	Translations$money$status$en.internal(this._root);
@@ -597,8 +726,44 @@ extension on Translations {
 			'app.actions.save' => 'Save',
 			'app.actions.add' => 'Add',
 			'calendar.title' => 'Calendar',
-			'calendar.emptyTitle' => 'Calendar and reminders',
-			'calendar.emptyBody' => 'A Jalali month view and event agenda land in the calendar phase.',
+			'calendar.fab' => 'Reminder',
+			'calendar.emptyTitle' => 'No reminders this month',
+			'calendar.emptyBody' => 'Add a reminder to see it on the month and in the agenda.',
+			'calendar.emptyDay' => 'Nothing on this day.',
+			'calendar.agenda' => 'Agenda',
+			'calendar.today' => 'Today',
+			'calendar.newTitle' => 'New reminder',
+			'calendar.editTitle' => 'Edit reminder',
+			'calendar.titleField' => 'Title',
+			'calendar.bodyField' => 'Note',
+			'calendar.date' => 'Date',
+			'calendar.time' => 'Time',
+			'calendar.allDay' => 'All day',
+			'calendar.repeat' => 'Repeat',
+			'calendar.everyN' => 'Every N days',
+			'calendar.notifyOnTime' => 'Notify at the time',
+			'calendar.notifyDayBefore' => 'Notify a day before',
+			'calendar.save' => 'Save',
+			'calendar.edit' => 'Edit',
+			'calendar.delete' => 'Delete',
+			'calendar.missingTitle' => 'Give it a title.',
+			'calendar.invalidRepeat' => 'N must be at least 2.',
+			'calendar.loadError' => 'Could not read reminders.',
+			'calendar.saveError' => 'Could not save the reminder.',
+			'calendar.missingItem' => 'This reminder is gone.',
+			'calendar.repeatRule.none' => 'Does not repeat',
+			'calendar.repeatRule.daily' => 'Daily',
+			'calendar.repeatRule.weekly' => 'Weekly',
+			'calendar.repeatRule.monthly' => 'Monthly',
+			'calendar.repeatRule.yearly' => 'Yearly',
+			'calendar.repeatRule.everyNDays' => 'Every N days',
+			'calendar.weekday.sat' => 'Sat',
+			'calendar.weekday.sun' => 'Sun',
+			'calendar.weekday.mon' => 'Mon',
+			'calendar.weekday.tue' => 'Tue',
+			'calendar.weekday.wed' => 'Wed',
+			'calendar.weekday.thu' => 'Thu',
+			'calendar.weekday.fri' => 'Fri',
 			'home.payAndReceive' => 'Give and take',
 			'home.offlineBlurb' => 'Installments, receivables, and reminders — all on this device.',
 			'home.emptyTitle' => 'Quiet week',

@@ -20,6 +20,15 @@ abstract final class AppRoutes {
     path: '/money/item/:id/edit',
   );
   static const calendar = AppRoute(name: 'calendar', path: '/calendar');
+  static const calendarNew = AppRoute(name: 'calendarNew', path: '/calendar/new');
+  static const calendarItem = AppRoute(
+    name: 'calendarItem',
+    path: '/calendar/item/:id',
+  );
+  static const calendarEdit = AppRoute(
+    name: 'calendarEdit',
+    path: '/calendar/item/:id/edit',
+  );
   static const notes = AppRoute(name: 'notes', path: '/notes');
   static const settings = AppRoute(name: 'settings', path: '/settings');
 
@@ -33,6 +42,9 @@ abstract final class AppRoutes {
     moneyItem,
     moneyEdit,
     calendar,
+    calendarNew,
+    calendarItem,
+    calendarEdit,
     notes,
     settings,
   ];
@@ -46,6 +58,18 @@ abstract final class AppRoutes {
     return '${moneyNew.path}?direction=$direction';
   }
 
+  static String reminderPath(String id) => '/calendar/item/$id';
+
+  static String reminderEditPath(String id) => '/calendar/item/$id/edit';
+
+  static String reminderNewPath({DateTime? day}) {
+    if (day == null) return calendarNew.path;
+    final y = day.year.toString().padLeft(4, '0');
+    final m = day.month.toString().padLeft(2, '0');
+    final d = day.day.toString().padLeft(2, '0');
+    return '${calendarNew.path}?day=$y-$m-$d';
+  }
+
   /// Looks up a route by exact [path]; nested money paths stay on Accounts.
   static AppRoute fromPath(String path) {
     final normalized = path.isEmpty ? '/' : path;
@@ -55,6 +79,10 @@ abstract final class AppRoutes {
     if (normalized == money.path ||
         normalized.startsWith('${money.path}/')) {
       return money;
+    }
+    if (normalized == calendar.path ||
+        normalized.startsWith('${calendar.path}/')) {
+      return calendar;
     }
     return home;
   }

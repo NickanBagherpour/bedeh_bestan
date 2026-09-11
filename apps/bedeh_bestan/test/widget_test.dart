@@ -48,6 +48,16 @@ void main() {
     expect(find.text('این ماه'), findsOneWidget);
     expect(find.byTooltip('تنظیمات'), findsOneWidget);
 
+    await tester.tap(find.byIcon(Icons.calendar_month_outlined));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.textContaining('شهریور'), findsOneWidget);
+    expect(find.text('یادآوری'), findsOneWidget);
+
+    await tester.tap(find.text('خانه'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
     await tester.tap(find.byTooltip('تنظیمات'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
