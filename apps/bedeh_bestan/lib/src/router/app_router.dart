@@ -4,7 +4,8 @@ import 'package:feature_calendar/calendar.dart'
 import 'package:feature_home/home.dart' show buildHomeRoutes;
 import 'package:feature_money/money.dart'
     show buildMoneyOverlayRoutes, buildMoneyRoutes;
-import 'package:feature_notes/notes.dart' show buildNotesRoutes;
+import 'package:feature_notes/notes.dart'
+    show buildNotesOverlayRoutes, buildNotesRoutes;
 import 'package:feature_settings/settings.dart' show buildSettingsRoutes;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -30,6 +31,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       ...buildMoneyOverlayRoutes(ref),
       ...buildCalendarOverlayRoutes(ref),
+      ...buildNotesOverlayRoutes(ref),
       ...buildSettingsRoutes(ref),
     ],
   );

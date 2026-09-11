@@ -12,7 +12,7 @@ Do not start the next phase until the user says `next phase`.
 | **4** Settings | **done** | Theme + locale switching. Calendar system for month/week bounds (not tied to language) |
 | **5** Money report | **done** | Home card: paid so far, remaining بدهی, still to pay until month end |
 | **6** Calendar | **done** | Jalali-primary agenda + month view. Repeats. FAB یادآوری |
-| **7** Notes | queued | Title, body, tags, pin, optional link to party/money, search |
+| **7** Notes | **done** | Title, body, tags, pin, optional link to party/money, search |
 | **8** Notifications + icon | queued | Local notifications. App icon + splash. Launcher **بده‌بستان** |
 | **9** Polish | queued | Motion, haptics, empty/error, contrast. Seed stays |
 
@@ -63,7 +63,13 @@ No charts in v1. Seed stays. No calendar/notes product UI.
 
 ---
 
-## Phase 7 notes (notes)
+## Phase 7 — Notes (done)
 
-- Title, body, tags, pin, optional link to party/money, search in `features/notes`.
-- Money and calendar stay as-is. Seed stays.
+`features/notes`. List search (title/body/tags) + tag chips. Pinned first. Overlay routes: `/notes/new`, `/notes/item/:id`, edit. Optional party + money link by id (open حساب via `AppRoutes.moneyItemPath`, no `feature_money` import). Seed notes stay.
+
+---
+
+## Phase 8 notes (notifications + icon)
+
+- Local notifications for reminders.
+- App icon + splash. Launcher **بده‌بستان**.

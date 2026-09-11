@@ -1,21 +1,154 @@
+import 'package:core/core.dart' show AppRoutes;
 import 'package:flutter/material.dart';
-import 'package:translations/translations.dart' show Translations;
-import 'package:ui_kit/ui_kit.dart' show KitEmpty;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:local_db/local_db.dart' show Note;
+import 'package:translations/translations.dart'
+    show Translations, TranslationsLookup;
+import 'package:ui_kit/ui_kit.dart' show AppSpacing, KitEmpty;
 
-/// یادداشت — placeholder notes screen.
-class NotesPage extends StatelessWidget {
+import '../../application/controllers/notes_controller.dart';
+import '../../application/state/notes_state.dart';
+import '../widgets/note_tile.dart';
+
+class NotesPage extends ConsumerWidget {
   const NotesPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final t = Translations.of(context);
+    final state = ref.watch(notesControllerProvider);
+    final visible = state.visible;
+
     return Scaffold(
       appBar: AppBar(title: Text(t.notes.title)),
-      body: KitEmpty(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.push(AppRoutes.notesNew.path),
+        icon: const Icon(Icons.note_add_outlined),
+        label: Text(t.notes.fab),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.md,
+              AppSpacing.xs,
+              AppSpacing.md,
+              AppSpacing.sm,
+            ),
+            child: Column(
+              children: [
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: t.notes.search,
+                    prefixIcon: const Icon(Icons.search_rounded),
+                  ),
+                  onChanged: (value) {
+                    ref.read(notesControllerProvider.notifier).setQuery(value);
+                  },
+                ),
+                if (state.tags.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Wrap(
+                      spacing: AppSpacing.xs,
+                      runSpacing: AppSpacing.xs,
+                      children: [
+                        FilterChip(
+                          label: Text(t.notes.allTags),
+                          selected: state.tag == null,
+                          onSelected: (_) {
+                            ref.read(notesControllerProvider.notifier).setTag(null);
+                          },
+                        ),
+                        for (final tag in state.tags)
+                          FilterChip(
+                            label: Text(tag),
+                            selected: state.tag == tag,
+                            onSelected: (selected) {
+                              ref
+                                  .read(notesControllerProvider.notifier)
+                                  .setTag(selected ? tag : null);
+                            },
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          Expanded(child: _body(context, ref, t, state, visible)),
+        ],
+      ),
+    );
+  }
+
+  Widget _body(
+    BuildContext context,
+    WidgetRef ref,
+    Translations t,
+    NotesState state,
+    List<Note> visible,
+  ) {
+    if (state.status == NotesStatus.error) {
+      return KitEmpty(
+        icon: Icons.error_outline_rounded,
+        title: t.message(
+          state.errorKey ?? 'notes.loadError',
+          shouldTranslate: true,
+        ),
+        body: t.notes.emptyBody,
+      );
+    }
+    if (state.status == NotesStatus.loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (state.notes.isEmpty) {
+      return KitEmpty(
         icon: Icons.sticky_note_2_rounded,
         title: t.notes.emptyTitle,
         body: t.notes.emptyBody,
+      );
+    }
+    if (visible.isEmpty) {
+      return KitEmpty(
+        icon: Icons.filter_alt_outlined,
+        title: t.notes.emptyFilter,
+        body: t.notes.emptyBody,
+      );
+    }
+
+    return ListView.separated(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.md,
+        0,
+        AppSpacing.md,
+        88,
       ),
+      itemCount: visible.length,
+      separatorBuilder: (context, index) => const SizedBox(height: AppSpacing.sm),
+      itemBuilder: (context, index) {
+        final note = visible[index];
+        final party = state.partyFor(note.partyId);
+        final money = state.moneyFor(note.moneyItemId);
+        final meta = [
+          if (party != null) party.name,
+          if (money != null) money.title,
+        ].join(' · ');
+        return NoteTile(
+          title: note.title,
+          body: note.body,
+          tags: note.tags,
+          pinned: note.pinned,
+          meta: meta.isEmpty ? null : meta,
+          onTap: () => context.push(AppRoutes.notePath(note.id)),
+          onPin: () {
+            ref.read(notesControllerProvider.notifier).togglePin(note.id);
+          },
+        );
+      },
     );
   }
 }

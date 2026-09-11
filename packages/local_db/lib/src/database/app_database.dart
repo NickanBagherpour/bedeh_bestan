@@ -271,6 +271,38 @@ class AppDatabase extends _$AppDatabase {
     final rows = await select(notes).get();
     return [for (final row in rows) noteFromRow(row)];
   }
+
+  Stream<List<Note>> watchNotes() {
+    return select(notes).watch().map(
+      (rows) => [for (final row in rows) noteFromRow(row)],
+    );
+  }
+
+  Future<Note?> getNote(String id) async {
+    final row = await (select(notes)..where((table) => table.id.equals(id)))
+        .getSingleOrNull();
+    return row == null ? null : noteFromRow(row);
+  }
+
+  Future<void> upsertNote(Note note) {
+    return into(notes).insertOnConflictUpdate(
+      NotesCompanion(
+        id: Value(note.id),
+        title: Value(note.title),
+        body: Value(note.body),
+        tagsJson: Value(encodeTags(note.tags)),
+        pinned: Value(note.pinned),
+        partyId: Value(note.partyId),
+        moneyItemId: Value(note.moneyItemId),
+        createdAt: Value(note.createdAt),
+        updatedAt: Value(note.updatedAt),
+      ),
+    );
+  }
+
+  Future<void> deleteNote(String id) {
+    return (delete(notes)..where((row) => row.id.equals(id))).go();
+  }
 }
 
 Party partyFromRow(PartyRow row) {

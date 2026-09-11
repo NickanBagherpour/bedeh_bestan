@@ -426,11 +426,77 @@ class Translations$notes$en {
 	/// en: 'Notes'
 	String get title => 'Notes';
 
-	/// en: 'Notes'
-	String get emptyTitle => 'Notes';
+	/// en: 'Note'
+	String get fab => 'Note';
 
-	/// en: 'Title, body, tags, and pinning arrive in the notes phase.'
-	String get emptyBody => 'Title, body, tags, and pinning arrive in the notes phase.';
+	/// en: 'No notes yet'
+	String get emptyTitle => 'No notes yet';
+
+	/// en: 'Pin a thought, a SHABA, or a reminder about someone.'
+	String get emptyBody => 'Pin a thought, a SHABA, or a reminder about someone.';
+
+	/// en: 'Nothing matches.'
+	String get emptyFilter => 'Nothing matches.';
+
+	/// en: 'Search notes'
+	String get search => 'Search notes';
+
+	/// en: 'New note'
+	String get newTitle => 'New note';
+
+	/// en: 'Edit note'
+	String get editTitle => 'Edit note';
+
+	/// en: 'Title'
+	String get titleField => 'Title';
+
+	/// en: 'Body'
+	String get bodyField => 'Body';
+
+	/// en: 'Tags'
+	String get tagsField => 'Tags';
+
+	/// en: 'Comma-separated'
+	String get tagsHint => 'Comma-separated';
+
+	/// en: 'Pinned'
+	String get pinned => 'Pinned';
+
+	/// en: 'Person or shop'
+	String get party => 'Person or shop';
+
+	/// en: 'Account'
+	String get money => 'Account';
+
+	/// en: 'None'
+	String get none => 'None';
+
+	/// en: 'Save'
+	String get save => 'Save';
+
+	/// en: 'Edit'
+	String get edit => 'Edit';
+
+	/// en: 'Delete'
+	String get delete => 'Delete';
+
+	/// en: 'Open account'
+	String get openMoney => 'Open account';
+
+	/// en: 'Give it a title.'
+	String get missingTitle => 'Give it a title.';
+
+	/// en: 'Could not read notes.'
+	String get loadError => 'Could not read notes.';
+
+	/// en: 'Could not save the note.'
+	String get saveError => 'Could not save the note.';
+
+	/// en: 'This note is gone.'
+	String get missingItem => 'This note is gone.';
+
+	/// en: 'All tags'
+	String get allTags => 'All tags';
 }
 
 // Path: settings
@@ -858,8 +924,30 @@ extension on Translations {
 			'money.partyKind.shop' => 'Shop',
 			'money.partyKind.custom' => 'Custom',
 			'notes.title' => 'Notes',
-			'notes.emptyTitle' => 'Notes',
-			'notes.emptyBody' => 'Title, body, tags, and pinning arrive in the notes phase.',
+			'notes.fab' => 'Note',
+			'notes.emptyTitle' => 'No notes yet',
+			'notes.emptyBody' => 'Pin a thought, a SHABA, or a reminder about someone.',
+			'notes.emptyFilter' => 'Nothing matches.',
+			'notes.search' => 'Search notes',
+			'notes.newTitle' => 'New note',
+			'notes.editTitle' => 'Edit note',
+			'notes.titleField' => 'Title',
+			'notes.bodyField' => 'Body',
+			'notes.tagsField' => 'Tags',
+			'notes.tagsHint' => 'Comma-separated',
+			'notes.pinned' => 'Pinned',
+			'notes.party' => 'Person or shop',
+			'notes.money' => 'Account',
+			'notes.none' => 'None',
+			'notes.save' => 'Save',
+			'notes.edit' => 'Edit',
+			'notes.delete' => 'Delete',
+			'notes.openMoney' => 'Open account',
+			'notes.missingTitle' => 'Give it a title.',
+			'notes.loadError' => 'Could not read notes.',
+			'notes.saveError' => 'Could not save the note.',
+			'notes.missingItem' => 'This note is gone.',
+			'notes.allTags' => 'All tags',
 			'settings.title' => 'Settings',
 			'settings.theme' => 'Theme',
 			'settings.language' => 'Language',

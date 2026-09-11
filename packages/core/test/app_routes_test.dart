@@ -12,6 +12,10 @@ void main() {
     expect(AppRoutes.indexOfPath('/calendar/new'), 2);
     expect(AppRoutes.reminderNewPath(day: DateTime(2026, 9, 11)),
         '/calendar/new?day=2026-09-11');
+    expect(AppRoutes.fromPath('/notes/item/abc'), AppRoutes.notes);
+    expect(AppRoutes.indexOfPath('/notes/item/x'), 3);
+    expect(AppRoutes.notePath('x'), '/notes/item/x');
+    expect(AppRoutes.noteEditPath('x'), '/notes/item/x/edit');
   });
 
   test('settings is an overlay path, not a tab', () {

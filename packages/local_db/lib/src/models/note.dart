@@ -11,6 +11,32 @@ final class Note {
     this.moneyItemId,
   });
 
+  Note copyWith({
+    String? id,
+    String? title,
+    String? body,
+    List<String>? tags,
+    bool? pinned,
+    String? partyId,
+    String? moneyItemId,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    bool clearPartyId = false,
+    bool clearMoneyItemId = false,
+  }) {
+    return Note(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      body: body ?? this.body,
+      tags: tags ?? this.tags,
+      pinned: pinned ?? this.pinned,
+      partyId: clearPartyId ? null : (partyId ?? this.partyId),
+      moneyItemId: clearMoneyItemId ? null : (moneyItemId ?? this.moneyItemId),
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
   final String id;
   final String title;
   final String body;

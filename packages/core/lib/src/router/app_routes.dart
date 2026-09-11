@@ -30,6 +30,12 @@ abstract final class AppRoutes {
     path: '/calendar/item/:id/edit',
   );
   static const notes = AppRoute(name: 'notes', path: '/notes');
+  static const notesNew = AppRoute(name: 'notesNew', path: '/notes/new');
+  static const notesItem = AppRoute(name: 'notesItem', path: '/notes/item/:id');
+  static const notesEdit = AppRoute(
+    name: 'notesEdit',
+    path: '/notes/item/:id/edit',
+  );
   static const settings = AppRoute(name: 'settings', path: '/settings');
 
   /// Primary destinations in bottom-nav order.
@@ -46,6 +52,9 @@ abstract final class AppRoutes {
     calendarItem,
     calendarEdit,
     notes,
+    notesNew,
+    notesItem,
+    notesEdit,
     settings,
   ];
 
@@ -70,6 +79,10 @@ abstract final class AppRoutes {
     return '${calendarNew.path}?day=$y-$m-$d';
   }
 
+  static String notePath(String id) => '/notes/item/$id';
+
+  static String noteEditPath(String id) => '/notes/item/$id/edit';
+
   /// Looks up a route by exact [path]; nested money paths stay on Accounts.
   static AppRoute fromPath(String path) {
     final normalized = path.isEmpty ? '/' : path;
@@ -83,6 +96,10 @@ abstract final class AppRoutes {
     if (normalized == calendar.path ||
         normalized.startsWith('${calendar.path}/')) {
       return calendar;
+    }
+    if (normalized == notes.path ||
+        normalized.startsWith('${notes.path}/')) {
+      return notes;
     }
     return home;
   }

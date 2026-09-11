@@ -207,8 +207,30 @@ class _Translations$notes$fa extends Translations$notes$en {
 
 	// Translations
 	@override String get title => 'یادداشت';
-	@override String get emptyTitle => 'یادداشت‌ها';
-	@override String get emptyBody => 'عنوان، متن، برچسب و سنجاق‌کردن در فاز یادداشت‌ها می‌آید.';
+	@override String get fab => 'یادداشت';
+	@override String get emptyTitle => 'هنوز یادداشتی نیست';
+	@override String get emptyBody => 'یک فکر، شماره شبا، یا حرفی دربارهٔ کسی را سنجاق کن.';
+	@override String get emptyFilter => 'چیزی پیدا نشد.';
+	@override String get search => 'جستجوی یادداشت';
+	@override String get newTitle => 'یادداشت تازه';
+	@override String get editTitle => 'ویرایش یادداشت';
+	@override String get titleField => 'عنوان';
+	@override String get bodyField => 'متن';
+	@override String get tagsField => 'برچسب‌ها';
+	@override String get tagsHint => 'با ویرگول جدا کن';
+	@override String get pinned => 'سنجاق‌شده';
+	@override String get party => 'طرف حساب';
+	@override String get money => 'حساب';
+	@override String get none => 'هیچ‌کدام';
+	@override String get save => 'ذخیره';
+	@override String get edit => 'ویرایش';
+	@override String get delete => 'حذف';
+	@override String get openMoney => 'باز کردن حساب';
+	@override String get missingTitle => 'عنوان را بنویس.';
+	@override String get loadError => 'خواندن یادداشت‌ها ممکن نشد.';
+	@override String get saveError => 'ذخیرهٔ یادداشت ممکن نشد.';
+	@override String get missingItem => 'این یادداشت دیگر نیست.';
+	@override String get allTags => 'همهٔ برچسب‌ها';
 }
 
 // Path: settings
@@ -530,8 +552,30 @@ extension on TranslationsFa {
 			'money.partyKind.shop' => 'فروشگاه',
 			'money.partyKind.custom' => 'سایر',
 			'notes.title' => 'یادداشت',
-			'notes.emptyTitle' => 'یادداشت‌ها',
-			'notes.emptyBody' => 'عنوان، متن، برچسب و سنجاق‌کردن در فاز یادداشت‌ها می‌آید.',
+			'notes.fab' => 'یادداشت',
+			'notes.emptyTitle' => 'هنوز یادداشتی نیست',
+			'notes.emptyBody' => 'یک فکر، شماره شبا، یا حرفی دربارهٔ کسی را سنجاق کن.',
+			'notes.emptyFilter' => 'چیزی پیدا نشد.',
+			'notes.search' => 'جستجوی یادداشت',
+			'notes.newTitle' => 'یادداشت تازه',
+			'notes.editTitle' => 'ویرایش یادداشت',
+			'notes.titleField' => 'عنوان',
+			'notes.bodyField' => 'متن',
+			'notes.tagsField' => 'برچسب‌ها',
+			'notes.tagsHint' => 'با ویرگول جدا کن',
+			'notes.pinned' => 'سنجاق‌شده',
+			'notes.party' => 'طرف حساب',
+			'notes.money' => 'حساب',
+			'notes.none' => 'هیچ‌کدام',
+			'notes.save' => 'ذخیره',
+			'notes.edit' => 'ویرایش',
+			'notes.delete' => 'حذف',
+			'notes.openMoney' => 'باز کردن حساب',
+			'notes.missingTitle' => 'عنوان را بنویس.',
+			'notes.loadError' => 'خواندن یادداشت‌ها ممکن نشد.',
+			'notes.saveError' => 'ذخیرهٔ یادداشت ممکن نشد.',
+			'notes.missingItem' => 'این یادداشت دیگر نیست.',
+			'notes.allTags' => 'همهٔ برچسب‌ها',
 			'settings.title' => 'تنظیمات',
 			'settings.theme' => 'پوسته',
 			'settings.language' => 'زبان',
