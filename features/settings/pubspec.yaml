@@ -21,6 +21,10 @@ dependencies:
     path: ../../packages/translations
   ui_kit:
     path: ../../packages/ui_kit
+  local_db:
+    path: ../../packages/local_db
+
+  file_picker: ^8.3.7
 
 dev_dependencies:
   flutter_test:

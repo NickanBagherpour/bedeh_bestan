@@ -2,6 +2,7 @@
 library;
 
 export 'src/database/app_database.dart';
+export 'src/database/backup.dart';
 export 'src/database/database_provider.dart';
 export 'src/database/ids.dart';
 export 'src/database/payment_exception.dart';

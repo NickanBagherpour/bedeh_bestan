@@ -7,5 +7,14 @@
   "jalali": "Jalali",
   "gregorian": "Gregorian",
   "currency": "Currency",
-  "currencyHint": "Rial is shown ×10 (10 rial = 1 toman). Dollar is a label only."
+  "currencyHint": "Rial is shown ×10 (10 rial = 1 toman). Dollar is a label only.",
+  "backup": "Backup",
+  "backupHint": "Keeps money, calendar, notes, and these settings on this device. App updates keep your data. Uninstalling does not.",
+  "exportBackup": "Export backup",
+  "importBackup": "Restore backup",
+  "backupSaved": "Backup saved.",
+  "backupRestored": "Backup restored.",
+  "backupCancelled": "Cancelled.",
+  "backupFailed": "Could not complete the backup.",
+  "backupFileName": "bedeh-bestan-backup.json"
 }

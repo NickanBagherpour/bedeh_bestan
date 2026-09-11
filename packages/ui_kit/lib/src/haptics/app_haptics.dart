@@ -3,23 +3,18 @@ import 'package:flutter/services.dart';
 
 /// Calm haptic helpers. No-ops on web (no tactile hardware).
 abstract final class AppHaptics {
-  static Future<void> selection() async {
-    if (kIsWeb) return;
-    await HapticFeedback.selectionClick();
-  }
+  static Future<void> selection() => _run(HapticFeedback.selectionClick);
 
-  static Future<void> light() async {
-    if (kIsWeb) return;
-    await HapticFeedback.lightImpact();
-  }
+  static Future<void> light() => _run(HapticFeedback.lightImpact);
 
-  static Future<void> confirm() async {
-    if (kIsWeb) return;
-    await HapticFeedback.mediumImpact();
-  }
+  static Future<void> confirm() => _run(HapticFeedback.mediumImpact);
 
-  static Future<void> warn() async {
+  static Future<void> warn() => _run(HapticFeedback.heavyImpact);
+
+  static Future<void> _run(Future<void> Function() action) async {
     if (kIsWeb) return;
-    await HapticFeedback.heavyImpact();
+    try {
+      await action();
+    } catch (_) {}
   }
 }

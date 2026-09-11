@@ -1,0 +1,280 @@
+import 'dart:convert';
+
+import '../models/enums.dart';
+import '../models/money_item.dart';
+import '../models/money_payment.dart';
+import '../models/note.dart';
+import '../models/party.dart';
+import '../models/reminder.dart';
+import 'tags.dart';
+
+const libraryBackupFormat = 'bedeh_bestan.backup';
+const libraryBackupFormatVersion = 1;
+
+/// Full on-device library for backup / restore. Settings live outside the DB.
+final class LibraryDump {
+  const LibraryDump({
+    required this.schemaVersion,
+    required this.parties,
+    required this.moneyItems,
+    required this.payments,
+    required this.reminders,
+    required this.notes,
+    required this.meta,
+  });
+
+  final int schemaVersion;
+  final List<Party> parties;
+  final List<MoneyItem> moneyItems;
+  final List<MoneyPayment> payments;
+  final List<Reminder> reminders;
+  final List<Note> notes;
+  final Map<String, String> meta;
+}
+
+enum BackupFailure { invalidFormat, empty }
+
+final class BackupException implements Exception {
+  const BackupException(this.failure);
+
+  final BackupFailure failure;
+
+  @override
+  String toString() => 'BackupException($failure)';
+}
+
+String encodeLibraryDump(LibraryDump dump) {
+  return jsonEncode({
+    'format': libraryBackupFormat,
+    'formatVersion': libraryBackupFormatVersion,
+    'schemaVersion': dump.schemaVersion,
+    'exportedAt': DateTime.now().toUtc().millisecondsSinceEpoch,
+    'parties': [for (final row in dump.parties) _partyJson(row)],
+    'moneyItems': [for (final row in dump.moneyItems) _moneyJson(row)],
+    'payments': [for (final row in dump.payments) _paymentJson(row)],
+    'reminders': [for (final row in dump.reminders) _reminderJson(row)],
+    'notes': [for (final row in dump.notes) _noteJson(row)],
+    'meta': dump.meta,
+  });
+}
+
+LibraryDump decodeLibraryDump(String raw) {
+  Object? decoded;
+  try {
+    decoded = jsonDecode(raw);
+  } catch (_) {
+    throw const BackupException(BackupFailure.invalidFormat);
+  }
+  if (decoded is! Map) {
+    throw const BackupException(BackupFailure.invalidFormat);
+  }
+  final map = Map<String, Object?>.from(decoded);
+  if (map['format'] != libraryBackupFormat) {
+    throw const BackupException(BackupFailure.invalidFormat);
+  }
+  final parties = _objectList(map['parties']).map(_partyFrom).toList();
+  final moneyItems = _objectList(map['moneyItems']).map(_moneyFrom).toList();
+  final payments = _objectList(map['payments']).map(_paymentFrom).toList();
+  final reminders = _objectList(map['reminders']).map(_reminderFrom).toList();
+  final notes = _objectList(map['notes']).map(_noteFrom).toList();
+  if (parties.isEmpty &&
+      moneyItems.isEmpty &&
+      payments.isEmpty &&
+      reminders.isEmpty &&
+      notes.isEmpty) {
+    throw const BackupException(BackupFailure.empty);
+  }
+  return LibraryDump(
+    schemaVersion: (map['schemaVersion'] as num?)?.toInt() ?? 1,
+    parties: parties,
+    moneyItems: moneyItems,
+    payments: payments,
+    reminders: reminders,
+    notes: notes,
+    meta: _stringMap(map['meta']),
+  );
+}
+
+List<Map<String, Object?>> _objectList(Object? raw) {
+  if (raw is! List) return const [];
+  return [
+    for (final item in raw)
+      if (item is Map) Map<String, Object?>.from(item),
+  ];
+}
+
+Map<String, String> _stringMap(Object? raw) {
+  if (raw is! Map) return const {};
+  return {
+    for (final entry in raw.entries)
+      if (entry.key is String && entry.value != null)
+        entry.key as String: '${entry.value}',
+  };
+}
+
+String? _blankToNull(String? value) {
+  if (value == null || value.trim().isEmpty) return null;
+  return value;
+}
+
+int _millis(DateTime value) => value.millisecondsSinceEpoch;
+
+DateTime _time(Object? raw) {
+  if (raw is num) {
+    return DateTime.fromMillisecondsSinceEpoch(raw.toInt());
+  }
+  if (raw is String && raw.isNotEmpty) {
+    return DateTime.parse(raw);
+  }
+  return DateTime.fromMillisecondsSinceEpoch(0);
+}
+
+Map<String, Object?> _partyJson(Party row) => {
+      'id': row.id,
+      'name': row.name,
+      'kind': row.kind.name,
+      'note': row.note,
+      'createdAt': _millis(row.createdAt),
+      'updatedAt': _millis(row.updatedAt),
+    };
+
+Party _partyFrom(Map<String, Object?> json) {
+  return Party(
+    id: json['id'] as String,
+    name: json['name'] as String,
+    kind: enumByName(PartyKind.values, json['kind'] as String? ?? '', PartyKind.custom),
+    note: _blankToNull(json['note'] as String?),
+    createdAt: _time(json['createdAt']),
+    updatedAt: _time(json['updatedAt']),
+  );
+}
+
+Map<String, Object?> _moneyJson(MoneyItem row) => {
+      'id': row.id,
+      'partyId': row.partyId,
+      'direction': row.direction.name,
+      'title': row.title,
+      'totalAmount': row.totalAmount,
+      'paidAmount': row.paidAmount,
+      'schedule': row.schedule.name,
+      'installmentCount': row.installmentCount,
+      'installmentAmount': row.installmentAmount,
+      'periodsPaid': row.periodsPaid,
+      'startDate': _millis(row.startDate),
+      'nextDueDate': _millis(row.nextDueDate),
+      'note': row.note,
+      'createdAt': _millis(row.createdAt),
+      'updatedAt': _millis(row.updatedAt),
+    };
+
+MoneyItem _moneyFrom(Map<String, Object?> json) {
+  return MoneyItem(
+    id: json['id'] as String,
+    partyId: json['partyId'] as String,
+    direction: enumByName(
+      MoneyDirection.values,
+      json['direction'] as String? ?? '',
+      MoneyDirection.pay,
+    ),
+    title: json['title'] as String,
+    totalAmount: (json['totalAmount'] as num).toInt(),
+    paidAmount: (json['paidAmount'] as num?)?.toInt() ?? 0,
+    schedule: enumByName(
+      MoneySchedule.values,
+      json['schedule'] as String? ?? '',
+      MoneySchedule.oneTime,
+    ),
+    installmentCount: (json['installmentCount'] as num?)?.toInt(),
+    installmentAmount: (json['installmentAmount'] as num?)?.toInt(),
+    periodsPaid: (json['periodsPaid'] as num?)?.toInt() ?? 0,
+    startDate: _time(json['startDate']),
+    nextDueDate: _time(json['nextDueDate']),
+    note: _blankToNull(json['note'] as String?),
+    createdAt: _time(json['createdAt']),
+    updatedAt: _time(json['updatedAt']),
+  );
+}
+
+Map<String, Object?> _paymentJson(MoneyPayment row) => {
+      'id': row.id,
+      'moneyItemId': row.moneyItemId,
+      'amount': row.amount,
+      'paidAt': _millis(row.paidAt),
+      'note': row.note,
+    };
+
+MoneyPayment _paymentFrom(Map<String, Object?> json) {
+  return MoneyPayment(
+    id: json['id'] as String,
+    moneyItemId: json['moneyItemId'] as String,
+    amount: (json['amount'] as num).toInt(),
+    paidAt: _time(json['paidAt']),
+    note: _blankToNull(json['note'] as String?),
+  );
+}
+
+Map<String, Object?> _reminderJson(Reminder row) => {
+      'id': row.id,
+      'title': row.title,
+      'body': row.body,
+      'startAt': _millis(row.startAt),
+      'endAt': row.endAt == null ? null : _millis(row.endAt!),
+      'allDay': row.allDay,
+      'repeatRule': row.repeatRule.name,
+      'repeatEveryN': row.repeatEveryN,
+      'notifyOnTime': row.notifyOnTime,
+      'notifyDayBefore': row.notifyDayBefore,
+      'createdAt': _millis(row.createdAt),
+      'updatedAt': _millis(row.updatedAt),
+    };
+
+Reminder _reminderFrom(Map<String, Object?> json) {
+  return Reminder(
+    id: json['id'] as String,
+    title: json['title'] as String,
+    body: _blankToNull(json['body'] as String?),
+    startAt: _time(json['startAt']),
+    endAt: json['endAt'] == null ? null : _time(json['endAt']),
+    allDay: json['allDay'] as bool? ?? false,
+    repeatRule: enumByName(
+      RepeatRule.values,
+      json['repeatRule'] as String? ?? '',
+      RepeatRule.none,
+    ),
+    repeatEveryN: (json['repeatEveryN'] as num?)?.toInt(),
+    notifyOnTime: json['notifyOnTime'] as bool? ?? true,
+    notifyDayBefore: json['notifyDayBefore'] as bool? ?? false,
+    createdAt: _time(json['createdAt']),
+    updatedAt: _time(json['updatedAt']),
+  );
+}
+
+Map<String, Object?> _noteJson(Note row) => {
+      'id': row.id,
+      'title': row.title,
+      'body': row.body,
+      'tags': row.tags,
+      'tagsJson': encodeTags(row.tags),
+      'pinned': row.pinned,
+      'partyId': row.partyId,
+      'moneyItemId': row.moneyItemId,
+      'createdAt': _millis(row.createdAt),
+      'updatedAt': _millis(row.updatedAt),
+    };
+
+Note _noteFrom(Map<String, Object?> json) {
+  final tags = json['tags'];
+  return Note(
+    id: json['id'] as String,
+    title: json['title'] as String,
+    body: json['body'] as String? ?? '',
+    tags: tags is List
+        ? [for (final tag in tags) tag.toString()]
+        : decodeTags(json['tagsJson'] as String? ?? '[]'),
+    pinned: json['pinned'] as bool? ?? false,
+    partyId: _blankToNull(json['partyId'] as String?),
+    moneyItemId: _blankToNull(json['moneyItemId'] as String?),
+    createdAt: _time(json['createdAt']),
+    updatedAt: _time(json['updatedAt']),
+  );
+}

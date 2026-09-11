@@ -2,7 +2,7 @@ import 'package:core/core.dart' show AppCurrency, CalendarPreference;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:translations/translations.dart' show Translations;
-import 'package:ui_kit/ui_kit.dart' show AppSpacing;
+import 'package:ui_kit/ui_kit.dart' show AppHaptics, AppSpacing;
 
 import '../../application/controllers/settings_controller.dart';
 import '../widgets/settings_choice_row.dart';
@@ -81,6 +81,33 @@ class SettingsPage extends ConsumerWidget {
               onChanged: controller.setCurrency,
             ),
           ),
+          SettingsSection(
+            title: t.settings.backup,
+            footer: t.settings.backupHint,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.file_upload_outlined),
+                  title: Text(t.settings.exportBackup),
+                  onTap: () => _runBackup(
+                    context,
+                    t,
+                    () => controller.exportBackup(
+                      fileName: t.settings.backupFileName,
+                    ),
+                  ),
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.file_download_outlined),
+                  title: Text(t.settings.importBackup),
+                  onTap: () => _runBackup(context, t, controller.importBackup),
+                ),
+              ],
+            ),
+          ),
           Text(
             t.app.latinName,
             style: theme.textTheme.bodySmall?.copyWith(
@@ -91,4 +118,25 @@ class SettingsPage extends ConsumerWidget {
       ),
     );
   }
+}
+
+Future<void> _runBackup(
+  BuildContext context,
+  Translations t,
+  Future<BackupActionResult> Function() action,
+) async {
+  AppHaptics.selection();
+  final result = await action();
+  if (!context.mounted) return;
+  final message = switch (result) {
+    BackupActionResult.saved => t.settings.backupSaved,
+    BackupActionResult.restored => t.settings.backupRestored,
+    BackupActionResult.cancelled => t.settings.backupCancelled,
+    BackupActionResult.failed => t.settings.backupFailed,
+  };
+  if (result == BackupActionResult.saved ||
+      result == BackupActionResult.restored) {
+    AppHaptics.confirm();
+  }
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
 }

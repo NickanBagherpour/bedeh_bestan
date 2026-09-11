@@ -65,6 +65,10 @@ final class AppSettingsController extends Notifier<AppSettings> {
         .read(appStorageProvider)
         .writeString(AppSettingsKeys.currency, currency.name);
   }
+
+  Future<void> reloadFromStorage() async {
+    state = loadAppSettings(storage: ref.read(appStorageProvider));
+  }
 }
 
 /// Loads persisted settings at startup (call before building the container).

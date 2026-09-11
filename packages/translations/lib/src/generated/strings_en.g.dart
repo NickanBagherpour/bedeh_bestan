@@ -536,6 +536,33 @@ class Translations$settings$en {
 
 	/// en: 'Rial is shown ×10 (10 rial = 1 toman). Dollar is a label only.'
 	String get currencyHint => 'Rial is shown ×10 (10 rial = 1 toman). Dollar is a label only.';
+
+	/// en: 'Backup'
+	String get backup => 'Backup';
+
+	/// en: 'Keeps money, calendar, notes, and these settings on this device. App updates keep your data. Uninstalling does not.'
+	String get backupHint => 'Keeps money, calendar, notes, and these settings on this device. App updates keep your data. Uninstalling does not.';
+
+	/// en: 'Export backup'
+	String get exportBackup => 'Export backup';
+
+	/// en: 'Restore backup'
+	String get importBackup => 'Restore backup';
+
+	/// en: 'Backup saved.'
+	String get backupSaved => 'Backup saved.';
+
+	/// en: 'Backup restored.'
+	String get backupRestored => 'Backup restored.';
+
+	/// en: 'Cancelled.'
+	String get backupCancelled => 'Cancelled.';
+
+	/// en: 'Could not complete the backup.'
+	String get backupFailed => 'Could not complete the backup.';
+
+	/// en: 'bedeh-bestan-backup.json'
+	String get backupFileName => 'bedeh-bestan-backup.json';
 }
 
 // Path: app.currency
@@ -961,6 +988,15 @@ extension on Translations {
 			'settings.gregorian' => 'Gregorian',
 			'settings.currency' => 'Currency',
 			'settings.currencyHint' => 'Rial is shown ×10 (10 rial = 1 toman). Dollar is a label only.',
+			'settings.backup' => 'Backup',
+			'settings.backupHint' => 'Keeps money, calendar, notes, and these settings on this device. App updates keep your data. Uninstalling does not.',
+			'settings.exportBackup' => 'Export backup',
+			'settings.importBackup' => 'Restore backup',
+			'settings.backupSaved' => 'Backup saved.',
+			'settings.backupRestored' => 'Backup restored.',
+			'settings.backupCancelled' => 'Cancelled.',
+			'settings.backupFailed' => 'Could not complete the backup.',
+			'settings.backupFileName' => 'bedeh-bestan-backup.json',
 			_ => null,
 		};
 	}

@@ -11,6 +11,10 @@ packages/local_db/
 
 - Open + seed in `apps/bedeh_bestan/lib/main.dart` **before** `runApp`.
 - Override `appDatabaseProvider`.
+- File lives in the app documents directory (`bedeh_bestan.sqlite`). **App
+  updates keep it.** Uninstall / changing the application id starts empty.
+  Schema bumps use `onUpgrade` + `CREATE TABLE IF NOT EXISTS` — they must not
+  drop user tables. Export / restore is in Settings.
 - Chrome / web: `AppDatabase.open()` passes `DriftWebOptions`. The compiled
   `sqlite3.wasm` and `drift_worker.js` live in `apps/bedeh_bestan/web/` and
   must match the `drift` version in `pubspec.lock` (download from the

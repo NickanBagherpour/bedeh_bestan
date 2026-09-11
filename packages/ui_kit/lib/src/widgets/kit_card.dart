@@ -34,7 +34,7 @@ class KitCard extends StatelessWidget {
           BoxShadow(
             color: isDark
                 ? Colors.black.withValues(alpha: 0.34)
-                : const Color(0x140B2E2F),
+                : const Color(0x330E7A74),
             blurRadius: 22,
             offset: const Offset(0, 8),
           ),

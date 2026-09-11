@@ -30,6 +30,8 @@ abstract final class AppTheme {
     final outline = isDark ? AppColors.darkOutline : AppColors.lightOutline;
     final surfaceAlt =
         isDark ? AppColors.darkSurfaceAlt : AppColors.lightSurfaceAlt;
+    final appBarColor = isDark ? background : AppColors.lightAppBar;
+    final navColor = isDark ? scheme.surface : AppColors.lightNav;
 
     return ThemeData(
       useMaterial3: true,
@@ -64,7 +66,7 @@ abstract final class AppTheme {
       appBarTheme: AppBarTheme(
         elevation: 0,
         scrolledUnderElevation: 0,
-        backgroundColor: background,
+        backgroundColor: appBarColor,
         surfaceTintColor: Colors.transparent,
         foregroundColor: scheme.onSurface,
         centerTitle: false,
@@ -75,11 +77,11 @@ abstract final class AppTheme {
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: scheme.surface,
+        backgroundColor: navColor,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         height: 68,
-        indicatorColor: scheme.primary.withValues(alpha: isDark ? 0.32 : 0.16),
+        indicatorColor: scheme.primary.withValues(alpha: isDark ? 0.36 : 0.22),
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         iconTheme: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
@@ -118,7 +120,7 @@ abstract final class AppTheme {
       ),
       chipTheme: ChipThemeData(
         backgroundColor: surfaceAlt,
-        selectedColor: scheme.primary.withValues(alpha: isDark ? 0.28 : 0.14),
+        selectedColor: scheme.secondary.withValues(alpha: isDark ? 0.28 : 0.22),
         side: BorderSide(color: outline),
         labelStyle: textTheme.labelMedium,
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),

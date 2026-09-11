@@ -250,6 +250,15 @@ class _Translations$settings$fa extends Translations$settings$en {
 	@override String get gregorian => 'میلادی';
 	@override String get currency => 'واحد پول';
 	@override String get currencyHint => 'ریال ده برابر تومان نشان داده می‌شود. دلار فقط برچسب است.';
+	@override String get backup => 'پشتیبان';
+	@override String get backupHint => 'حساب، تقویم، یادداشت و همین تنظیمات روی همین دستگاه می‌ماند. به‌روزرسانی برنامه داده را نگه می‌دارد؛ حذف برنامه نه.';
+	@override String get exportBackup => 'خروجی پشتیبان';
+	@override String get importBackup => 'بازگردانی پشتیبان';
+	@override String get backupSaved => 'پشتیبان ذخیره شد.';
+	@override String get backupRestored => 'پشتیبان بازگردانی شد.';
+	@override String get backupCancelled => 'لغو شد.';
+	@override String get backupFailed => 'پشتیبان کامل نشد.';
+	@override String get backupFileName => 'bedeh-bestan-backup.json';
 }
 
 // Path: app.currency
@@ -587,6 +596,15 @@ extension on TranslationsFa {
 			'settings.gregorian' => 'میلادی',
 			'settings.currency' => 'واحد پول',
 			'settings.currencyHint' => 'ریال ده برابر تومان نشان داده می‌شود. دلار فقط برچسب است.',
+			'settings.backup' => 'پشتیبان',
+			'settings.backupHint' => 'حساب، تقویم، یادداشت و همین تنظیمات روی همین دستگاه می‌ماند. به‌روزرسانی برنامه داده را نگه می‌دارد؛ حذف برنامه نه.',
+			'settings.exportBackup' => 'خروجی پشتیبان',
+			'settings.importBackup' => 'بازگردانی پشتیبان',
+			'settings.backupSaved' => 'پشتیبان ذخیره شد.',
+			'settings.backupRestored' => 'پشتیبان بازگردانی شد.',
+			'settings.backupCancelled' => 'لغو شد.',
+			'settings.backupFailed' => 'پشتیبان کامل نشد.',
+			'settings.backupFileName' => 'bedeh-bestan-backup.json',
 			_ => null,
 		};
 	}

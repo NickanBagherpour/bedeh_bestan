@@ -10,6 +10,7 @@ import '../models/money_payment.dart';
 import '../models/note.dart';
 import '../models/party.dart';
 import '../models/reminder.dart';
+import 'backup.dart';
 import 'ids.dart';
 import 'payment_exception.dart';
 import 'tables.dart';
@@ -38,6 +39,15 @@ class AppDatabase extends _$AppDatabase {
     return AppDatabase(
       driftDatabase(
         name: 'bedeh_bestan',
+        native: DriftNativeOptions(
+          // One writer + live streams without SQLITE_BUSY / "database is locked".
+          shareAcrossIsolates: true,
+          setup: (db) {
+            db.execute('PRAGMA busy_timeout = 8000');
+            db.execute('PRAGMA journal_mode = WAL');
+            db.execute('PRAGMA foreign_keys = ON');
+          },
+        ),
         web: DriftWebOptions(
           sqlite3Wasm: Uri.parse('sqlite3.wasm'),
           driftWorker: Uri.parse('drift_worker.js'),
@@ -47,13 +57,25 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration {
     return MigrationStrategy(
+      onCreate: (m) async {
+        await m.createAll();
+      },
+      onUpgrade: (m, from, to) async {
+        // Never drop user tables. CREATE TABLE IF NOT EXISTS fills gaps from
+        // earlier v1 builds that kept schemaVersion at 1 while tables were added.
+        await m.createAll();
+      },
       beforeOpen: (details) async {
+        await customStatement('PRAGMA busy_timeout = 8000');
+        await customStatement('PRAGMA journal_mode = WAL');
         await customStatement('PRAGMA foreign_keys = ON');
+        await createMigrator().createAll();
+        await _ensureColumns();
       },
     );
   }
@@ -292,8 +314,8 @@ class AppDatabase extends _$AppDatabase {
         body: Value(note.body),
         tagsJson: Value(encodeTags(note.tags)),
         pinned: Value(note.pinned),
-        partyId: Value(note.partyId),
-        moneyItemId: Value(note.moneyItemId),
+        partyId: Value(_optionalFk(note.partyId)),
+        moneyItemId: Value(_optionalFk(note.moneyItemId)),
         createdAt: Value(note.createdAt),
         updatedAt: Value(note.updatedAt),
       ),
@@ -303,6 +325,137 @@ class AppDatabase extends _$AppDatabase {
   Future<void> deleteNote(String id) {
     return (delete(notes)..where((row) => row.id.equals(id))).go();
   }
+
+  Future<LibraryDump> captureLibrary() async {
+    final partyRows = await select(parties).get();
+    final moneyRows = await select(moneyItems).get();
+    final paymentRows = await select(moneyPayments).get();
+    final reminderRows = await select(reminders).get();
+    final noteRows = await select(notes).get();
+    final metaRows = await select(metaEntries).get();
+    return LibraryDump(
+      schemaVersion: schemaVersion,
+      parties: [for (final row in partyRows) partyFromRow(row)],
+      moneyItems: [for (final row in moneyRows) moneyFromRow(row)],
+      payments: [for (final row in paymentRows) paymentFromRow(row)],
+      reminders: [for (final row in reminderRows) reminderFromRow(row)],
+      notes: [for (final row in noteRows) noteFromRow(row)],
+      meta: {for (final row in metaRows) row.key: row.value},
+    );
+  }
+
+  Future<String> exportBackupJson() async {
+    return encodeLibraryDump(await captureLibrary());
+  }
+
+  Future<void> importBackupJson(String raw) {
+    return replaceLibrary(decodeLibraryDump(raw));
+  }
+
+  Future<void> replaceLibrary(LibraryDump dump) {
+    return transaction(() async {
+      await customStatement('PRAGMA foreign_keys = OFF');
+      await delete(notes).go();
+      await delete(moneyPayments).go();
+      await delete(reminders).go();
+      await delete(moneyItems).go();
+      await delete(parties).go();
+      await delete(metaEntries).go();
+      for (final party in dump.parties) {
+        await upsertParty(party);
+      }
+      for (final item in dump.moneyItems) {
+        await upsertMoneyItem(item);
+      }
+      for (final payment in dump.payments) {
+        await into(moneyPayments).insertOnConflictUpdate(
+          MoneyPaymentsCompanion(
+            id: Value(payment.id),
+            moneyItemId: Value(payment.moneyItemId),
+            amount: Value(payment.amount),
+            paidAt: Value(payment.paidAt),
+            note: Value(payment.note),
+          ),
+        );
+      }
+      for (final reminder in dump.reminders) {
+        await upsertReminder(reminder);
+      }
+      for (final note in dump.notes) {
+        await upsertNote(note);
+      }
+      for (final entry in dump.meta.entries) {
+        await into(metaEntries).insertOnConflictUpdate(
+          MetaEntriesCompanion(
+            key: Value(entry.key),
+            value: Value(entry.value),
+          ),
+        );
+      }
+      await customStatement('PRAGMA foreign_keys = ON');
+    });
+  }
+
+  Future<void> _ensureColumns() async {
+    await _ensureColumn('parties', 'note', 'TEXT NULL');
+    await _ensureColumn('money_items', 'paid_amount', 'INTEGER NOT NULL DEFAULT 0');
+    await _ensureColumn(
+      'money_items',
+      'installment_count',
+      'INTEGER NULL',
+    );
+    await _ensureColumn(
+      'money_items',
+      'installment_amount',
+      'INTEGER NULL',
+    );
+    await _ensureColumn(
+      'money_items',
+      'periods_paid',
+      'INTEGER NOT NULL DEFAULT 0',
+    );
+    await _ensureColumn('money_items', 'note', 'TEXT NULL');
+    await _ensureColumn('reminders', 'body', 'TEXT NULL');
+    await _ensureColumn('reminders', 'end_at', 'INTEGER NULL');
+    await _ensureColumn(
+      'reminders',
+      'all_day',
+      'INTEGER NOT NULL DEFAULT 0',
+    );
+    await _ensureColumn('reminders', 'repeat_every_n', 'INTEGER NULL');
+    await _ensureColumn(
+      'reminders',
+      'notify_on_time',
+      'INTEGER NOT NULL DEFAULT 1',
+    );
+    await _ensureColumn(
+      'reminders',
+      'notify_day_before',
+      'INTEGER NOT NULL DEFAULT 0',
+    );
+    await _ensureColumn('notes', 'body', "TEXT NOT NULL DEFAULT ''");
+    await _ensureColumn('notes', 'tags_json', "TEXT NOT NULL DEFAULT '[]'");
+    await _ensureColumn('notes', 'pinned', 'INTEGER NOT NULL DEFAULT 0');
+    await _ensureColumn('notes', 'party_id', 'TEXT NULL');
+    await _ensureColumn('notes', 'money_item_id', 'TEXT NULL');
+  }
+
+  Future<void> _ensureColumn(
+    String table,
+    String column,
+    String spec,
+  ) async {
+    final rows = await customSelect('PRAGMA table_info($table)').get();
+    if (rows.isEmpty) return;
+    final exists = rows.any((row) => '${row.data['name']}' == column);
+    if (exists) return;
+    await customStatement('ALTER TABLE $table ADD COLUMN $column $spec');
+  }
+}
+
+String? _optionalFk(String? id) {
+  if (id == null || id.trim().isEmpty) return null;
+  return id;
 }
 
 Party partyFromRow(PartyRow row) {

@@ -82,8 +82,8 @@ final class NotesController extends Notifier<NotesState> {
       body: draft.body.trim(),
       tags: draft.tags,
       pinned: draft.pinned,
-      partyId: draft.partyId,
-      moneyItemId: draft.moneyItemId,
+      partyId: _blankToNull(draft.partyId),
+      moneyItemId: _blankToNull(draft.moneyItemId),
       createdAt: existing?.createdAt ?? now,
       updatedAt: now,
     );
@@ -102,4 +102,9 @@ final class NotesController extends Notifier<NotesState> {
   Future<void> deleteNote(String id) {
     return ref.read(notesRepositoryProvider).deleteNote(id);
   }
+}
+
+String? _blankToNull(String? value) {
+  if (value == null || value.trim().isEmpty) return null;
+  return value;
 }

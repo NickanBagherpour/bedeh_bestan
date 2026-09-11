@@ -47,4 +47,6 @@ abstract final class AppSettingsKeys {
   static const locale = 'app.settings.locale';
   static const calendar = 'app.settings.calendar';
   static const currency = 'app.settings.currency';
+
+  static const List<String> all = [themeMode, locale, calendar, currency];
 }
