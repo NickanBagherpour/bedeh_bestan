@@ -14,6 +14,17 @@ melos run analyze && melos run test
 
 If `pub get` hits `pub.flutter-io.cn` hash errors, use `PUB_HOSTED_URL=https://pub.dev`.
 
+### Linux desktop prerequisites (Ubuntu/Debian)
+
+`dev:linux` needs native build tools once per machine:
+
+```bash
+sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+flutter doctor -v   # Linux toolchain should show ✓
+```
+
+Until then, use `melos run dev:web`.
+
 ## Store release (Android)
 
 Listing copy, ad titles, and screenshots: [store/LISTING.md](store/LISTING.md).
