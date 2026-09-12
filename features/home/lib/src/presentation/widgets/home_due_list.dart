@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ui_kit/ui_kit.dart' show AppColors, AppHaptics, AppSpacing, KitCard;
+import 'package:ui_kit/ui_kit.dart'
+    show AppColors, AppHaptics, AppSpacing, KitCard, KitIconBadge;
 
 import '../../application/home_dashboard.dart';
 
@@ -7,22 +8,26 @@ class HomeDueList extends StatelessWidget {
   const HomeDueList({
     super.key,
     required this.title,
+    required this.icon,
     required this.emptyLabel,
     required this.rows,
     required this.amountOf,
     required this.dueOf,
     required this.statusOf,
     required this.accentOf,
+    required this.iconOf,
     required this.onTap,
   });
 
   final String title;
+  final IconData icon;
   final String emptyLabel;
   final List<HomeDueRow> rows;
   final String Function(HomeDueRow row) amountOf;
   final String Function(HomeDueRow row) dueOf;
   final String Function(HomeDueRow row) statusOf;
   final Color Function(HomeDueRow row) accentOf;
+  final IconData Function(HomeDueRow row) iconOf;
   final ValueChanged<HomeDueRow> onTap;
 
   @override
@@ -32,11 +37,17 @@ class HomeDueList extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            title,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w800,
-            ),
+          Row(
+            children: [
+              Icon(icon, size: 20, color: theme.colorScheme.primary),
+              const SizedBox(width: AppSpacing.xs),
+              Text(
+                title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: AppSpacing.sm),
           if (rows.isEmpty)
@@ -53,17 +64,32 @@ class HomeDueList extends StatelessWidget {
                   AppHaptics.selection();
                   onTap(row);
                 },
+                borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
                   child: Row(
                     children: [
+                      KitIconBadge(
+                        icon: iconOf(row),
+                        color: accentOf(row),
+                        size: 40,
+                        filled: false,
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(row.title, style: theme.textTheme.titleSmall),
+                            Text(
+                              row.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.titleSmall,
+                            ),
                             Text(
                               '${row.partyName} · ${statusOf(row)}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.colorScheme.onSurfaceVariant,
                               ),

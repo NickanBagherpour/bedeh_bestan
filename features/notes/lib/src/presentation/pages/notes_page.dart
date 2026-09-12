@@ -22,7 +22,11 @@ class NotesPage extends ConsumerWidget {
     final visible = state.visible;
 
     return Scaffold(
-      appBar: AppBar(title: Text(t.notes.title)),
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        title: Text(t.notes.title),
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           AppHaptics.light();

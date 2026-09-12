@@ -33,7 +33,6 @@ class MoneyPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final t = Translations.of(context);
     final state = ref.watch(moneyListControllerProvider);
     final calendar = ref.watch(appSettingsProvider).resolvedCalendar;
@@ -43,8 +42,9 @@ class MoneyPage extends ConsumerWidget {
     final visible = state.visible(now: now);
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         title: Text(t.money.title),
         actions: [
           IconButton(
@@ -256,6 +256,7 @@ class MoneyPage extends ConsumerWidget {
                 dueLabel: _dueLabel(t, item.nextDueDate, calendar, persian),
                 statusLabel: _statusLabel(t, status),
                 accent: moneyAccentFor(item.direction),
+                icon: moneyIconFor(item.direction),
                 statusColor:
                     moneyStatusColor(status, Theme.of(context).colorScheme),
                 onTap: () => context.push(AppRoutes.moneyItemPath(item.id)),

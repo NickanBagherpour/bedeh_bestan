@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_gradients.dart';
 import '../theme/app_spacing.dart';
 
-/// Calm empty state — icon, title, optional body and action.
-class KitEmpty extends StatelessWidget {
+/// Calm empty state — a softly floating gradient glyph, title, body and action.
+class KitEmpty extends StatefulWidget {
   const KitEmpty({
     super.key,
     required this.title,
@@ -20,9 +21,32 @@ class KitEmpty extends StatelessWidget {
   final Color? accent;
 
   @override
+  State<KitEmpty> createState() => _KitEmptyState();
+}
+
+class _KitEmptyState extends State<KitEmpty>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final tint = accent ?? theme.colorScheme.primary;
+    final tint = widget.accent ?? theme.colorScheme.primary;
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 420),
@@ -31,36 +55,47 @@ class KitEmpty extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 96,
-                height: 96,
-                decoration: BoxDecoration(
-                  color: tint.withValues(alpha: 0.12),
-                  shape: BoxShape.circle,
+              AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  final t = Curves.easeInOut.transform(_controller.value);
+                  return Transform.translate(
+                    offset: Offset(0, -6 * t),
+                    child: child,
+                  );
+                },
+                child: Container(
+                  width: 104,
+                  height: 104,
+                  decoration: BoxDecoration(
+                    gradient: AppGradients.accent(tint),
+                    borderRadius: BorderRadius.circular(32),
+                    boxShadow: AppGradients.glow(tint, strength: 0.30),
+                  ),
+                  child: Icon(widget.icon, size: 46, color: Colors.white),
                 ),
-                child: Icon(icon, size: 44, color: tint),
               ),
               const SizedBox(height: AppSpacing.md),
               Text(
-                title,
+                widget.title,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              if (body != null) ...[
+              if (widget.body != null) ...[
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  body!,
+                  widget.body!,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
-              if (action != null) ...[
+              if (widget.action != null) ...[
                 const SizedBox(height: AppSpacing.lg),
-                action!,
+                widget.action!,
               ],
             ],
           ),

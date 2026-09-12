@@ -256,6 +256,21 @@ class Translations$home$en {
 
 	/// en: 'Due by month end $amount'
 	String dueByEnd({required Object amount}) => 'Due by month end ${amount}';
+
+	/// en: 'Paid'
+	String get capPaidOut => 'Paid';
+
+	/// en: 'Received'
+	String get capPaidIn => 'Received';
+
+	/// en: 'To pay'
+	String get capStillOwe => 'To pay';
+
+	/// en: 'Due this month'
+	String get capDueByEnd => 'Due this month';
+
+	/// en: 'Give and take'
+	String get greeting => 'Give and take';
 }
 
 // Path: money
@@ -1083,6 +1098,11 @@ extension on Translations {
 			'home.paidIn' => ({required Object amount}) => 'Received ${amount}',
 			'home.stillOwe' => ({required Object amount}) => 'Still to pay ${amount}',
 			'home.dueByEnd' => ({required Object amount}) => 'Due by month end ${amount}',
+			'home.capPaidOut' => 'Paid',
+			'home.capPaidIn' => 'Received',
+			'home.capStillOwe' => 'To pay',
+			'home.capDueByEnd' => 'Due this month',
+			'home.greeting' => 'Give and take',
 			'money.title' => 'Accounts',
 			'money.emptyTitle' => 'No give-and-take yet',
 			'money.emptyBody' => 'Add a debt or receivable in a couple of taps.',

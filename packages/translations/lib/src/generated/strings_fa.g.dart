@@ -137,6 +137,11 @@ class _Translations$home$fa extends Translations$home$en {
 	@override String paidIn({required Object amount}) => 'دریافت‌شده ${amount}';
 	@override String stillOwe({required Object amount}) => 'ماندهٔ بدهی ${amount}';
 	@override String dueByEnd({required Object amount}) => 'سررسید تا آخر ماه ${amount}';
+	@override String get capPaidOut => 'پرداخت';
+	@override String get capPaidIn => 'دریافت';
+	@override String get capStillOwe => 'ماندهٔ بدهی';
+	@override String get capDueByEnd => 'سررسید این ماه';
+	@override String get greeting => 'بده‌بستان';
 }
 
 // Path: money
@@ -574,6 +579,11 @@ extension on TranslationsFa {
 			'home.paidIn' => ({required Object amount}) => 'دریافت‌شده ${amount}',
 			'home.stillOwe' => ({required Object amount}) => 'ماندهٔ بدهی ${amount}',
 			'home.dueByEnd' => ({required Object amount}) => 'سررسید تا آخر ماه ${amount}',
+			'home.capPaidOut' => 'پرداخت',
+			'home.capPaidIn' => 'دریافت',
+			'home.capStillOwe' => 'ماندهٔ بدهی',
+			'home.capDueByEnd' => 'سررسید این ماه',
+			'home.greeting' => 'بده‌بستان',
 			'money.title' => 'حساب',
 			'money.emptyTitle' => 'هنوز بده‌بستانی نیست',
 			'money.emptyBody' => 'با چند ضربه بدهی یا طلب اضافه کن.',

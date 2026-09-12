@@ -16,11 +16,14 @@ import 'package:translations/translations.dart'
 import 'package:ui_kit/ui_kit.dart'
     show
         AppColors,
+        AppGradients,
         AppHaptics,
         AppSpacing,
         KitCard,
         KitError,
         KitFadeIn,
+        KitHeroHeader,
+        KitIconBadge,
         KitLoading;
 
 import '../../application/controllers/home_controller.dart';
@@ -43,7 +46,7 @@ class HomePage extends ConsumerWidget {
     final persian = Localizations.localeOf(context).languageCode == 'fa';
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor: Colors.transparent,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           AppHaptics.light();
@@ -53,81 +56,51 @@ class HomePage extends ConsumerWidget {
         label: Text(t.app.actions.add),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(AppSpacing.md),
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.md,
+          AppSpacing.sm,
+          AppSpacing.md,
+          AppSpacing.md,
+        ),
         children: [
-          const SizedBox(height: AppSpacing.sm),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      t.app.appName,
-                      style: theme.textTheme.displaySmall?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xxs),
-                    Text(
-                      t.app.subtitle,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              IconButton(
+          KitFadeIn(
+            child: KitHeroHeader(
+              title: t.app.appName,
+              subtitle: t.app.subtitle,
+              watermark: Icons.swap_horiz_rounded,
+              trailing: IconButton(
                 tooltip: t.home.settings,
                 onPressed: () {
                   AppHaptics.selection();
                   context.push(AppRoutes.settings.path);
                 },
-                icon: const Icon(Icons.settings_outlined),
+                icon: const Icon(Icons.settings_rounded, color: Colors.white),
               ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          KitCard(
-            child: Row(
-              children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: AppColors.receive.withValues(alpha: 0.14),
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+              footer: Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                    ),
+                    child: const Icon(
+                      Icons.shield_moon_rounded,
+                      color: Colors.white,
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.swap_vert_rounded,
-                    color: AppColors.receive,
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.md),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        t.home.payAndReceive,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      t.home.offlineBlurb,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.9),
                       ),
-                      const SizedBox(height: AppSpacing.xxs),
-                      Text(
-                        t.home.offlineBlurb,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
@@ -198,16 +171,24 @@ class HomePage extends ConsumerWidget {
           : AppColors.receive;
     }
 
+    IconData iconOf(HomeDueRow row) {
+      return row.direction == MoneyDirection.pay
+          ? Icons.south_west_rounded
+          : Icons.north_east_rounded;
+    }
+
     return [
       KitFadeIn(
         child: HomeReportCard(
           title: t.home.reportTitle,
-          paidOutLabel: t.home.paidOut(amount: money(dashboard.report.paidOut)),
-          paidInLabel: t.home.paidIn(amount: money(dashboard.report.paidIn)),
-          stillOweLabel:
-              t.home.stillOwe(amount: money(dashboard.report.remainingPay)),
-          dueByEndLabel:
-              t.home.dueByEnd(amount: money(dashboard.report.dueByPeriodEnd)),
+          paidOutValue: money(dashboard.report.paidOut),
+          paidInValue: money(dashboard.report.paidIn),
+          stillOweValue: money(dashboard.report.remainingPay),
+          dueByEndValue: money(dashboard.report.dueByPeriodEnd),
+          paidOutCaption: t.home.capPaidOut,
+          paidInCaption: t.home.capPaidIn,
+          stillOweCaption: t.home.capStillOwe,
+          dueByEndCaption: t.home.capDueByEnd,
         ),
       ),
       const SizedBox(height: AppSpacing.md),
@@ -216,12 +197,14 @@ class HomePage extends ConsumerWidget {
           delay: const Duration(milliseconds: 40),
           child: HomeDueList(
             title: t.home.overdue,
+            icon: Icons.warning_amber_rounded,
             emptyLabel: t.home.emptyBody,
             rows: dashboard.overdue,
             amountOf: (row) => money(row.remainingAmount),
             dueOf: due,
             statusOf: status,
             accentOf: accent,
+            iconOf: iconOf,
             onTap: (row) => context.push(AppRoutes.moneyItemPath(row.id)),
           ),
         ),
@@ -231,12 +214,14 @@ class HomePage extends ConsumerWidget {
         delay: const Duration(milliseconds: 80),
         child: HomeDueList(
           title: t.home.dueThisWeek,
+          icon: Icons.event_available_rounded,
           emptyLabel: t.home.emptyBody,
           rows: dashboard.dueThisWeek,
           amountOf: (row) => money(row.remainingAmount),
           dueOf: due,
           statusOf: status,
           accentOf: accent,
+          iconOf: iconOf,
           onTap: (row) => context.push(AppRoutes.moneyItemPath(row.id)),
         ),
       ),
@@ -277,31 +262,22 @@ class HomePage extends ConsumerWidget {
                     ),
               ),
               const SizedBox(height: AppSpacing.md),
-              KitCard(
-                color: AppColors.pay.withValues(alpha: 0.10),
+              _DirectionOption(
+                icon: Icons.south_west_rounded,
+                color: AppColors.pay,
+                label: t.home.fabPay,
                 onTap: () {
                   Navigator.of(sheetContext).pop();
                   context.push(
                     AppRoutes.moneyNewPath(direction: MoneyDirection.pay.name),
                   );
                 },
-                child: Row(
-                  children: [
-                    const Icon(Icons.south_west_rounded, color: AppColors.pay),
-                    const SizedBox(width: AppSpacing.sm),
-                    Text(
-                      t.home.fabPay,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: AppColors.pay,
-                            fontWeight: FontWeight.w800,
-                          ),
-                    ),
-                  ],
-                ),
               ),
               const SizedBox(height: AppSpacing.sm),
-              KitCard(
-                color: AppColors.receive.withValues(alpha: 0.10),
+              _DirectionOption(
+                icon: Icons.north_east_rounded,
+                color: AppColors.receive,
+                label: t.home.fabReceive,
                 onTap: () {
                   Navigator.of(sheetContext).pop();
                   context.push(
@@ -310,27 +286,54 @@ class HomePage extends ConsumerWidget {
                     ),
                   );
                 },
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.north_east_rounded,
-                      color: AppColors.receive,
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Text(
-                      t.home.fabReceive,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: AppColors.receive,
-                            fontWeight: FontWeight.w800,
-                          ),
-                    ),
-                  ],
-                ),
               ),
             ],
           ),
         );
       },
+    );
+  }
+}
+
+/// A colorful direction choice row inside the add sheet.
+class _DirectionOption extends StatelessWidget {
+  const _DirectionOption({
+    required this.icon,
+    required this.color,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final Color color;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return KitCard(
+      gradient: AppGradients.softTint(color, alpha: 0.16),
+      accent: color,
+      onTap: onTap,
+      child: Row(
+        children: [
+          KitIconBadge(icon: icon, color: color, size: 44),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: AppColors.onTint(color),
+                    fontWeight: FontWeight.w800,
+                  ),
+            ),
+          ),
+          Icon(
+            Icons.chevron_left_rounded,
+            color: AppColors.onTint(color),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -100,7 +100,11 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text(t.calendar.title)),
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        title: Text(t.calendar.title),
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openNew(context),
         icon: const Icon(Icons.notification_add_outlined),

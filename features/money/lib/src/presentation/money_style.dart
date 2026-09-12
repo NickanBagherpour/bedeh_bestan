@@ -11,6 +11,13 @@ Color moneyAccentFor(MoneyDirection direction) {
   };
 }
 
+IconData moneyIconFor(MoneyDirection direction) {
+  return switch (direction) {
+    MoneyDirection.pay => Icons.south_west_rounded,
+    MoneyDirection.receive => Icons.north_east_rounded,
+  };
+}
+
 Color moneyStatusColor(MoneyStatus status, ColorScheme scheme) {
   return switch (status) {
     MoneyStatus.overdue => scheme.error,

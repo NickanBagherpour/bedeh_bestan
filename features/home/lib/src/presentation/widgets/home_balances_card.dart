@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ui_kit/ui_kit.dart' show AppColors, AppSpacing, KitCard;
+import 'package:ui_kit/ui_kit.dart'
+    show AppColors, AppSpacing, KitCard, KitMonogram;
 
 import '../../application/home_dashboard.dart';
 
@@ -26,11 +27,21 @@ class HomeBalancesCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            title,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w800,
-            ),
+          Row(
+            children: [
+              Icon(
+                Icons.groups_rounded,
+                size: 20,
+                color: theme.colorScheme.primary,
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              Text(
+                title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: AppSpacing.sm),
           if (balances.isEmpty)
@@ -43,32 +54,47 @@ class HomeBalancesCard extends StatelessWidget {
           else
             for (final row in balances)
               Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+                child: Row(
                   children: [
-                    Text(
-                      row.partyName,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
+                    KitMonogram(
+                      name: row.partyName,
+                      color: row.receiveRemaining >= row.payRemaining
+                          ? AppColors.receive
+                          : AppColors.pay,
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            row.partyName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          if (row.payRemaining > 0)
+                            Text(
+                              payLabelOf(row),
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: AppColors.pay,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          if (row.receiveRemaining > 0)
+                            Text(
+                              receiveLabelOf(row),
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: AppColors.receive,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                        ],
                       ),
                     ),
-                    if (row.payRemaining > 0)
-                      Text(
-                        payLabelOf(row),
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: AppColors.pay,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    if (row.receiveRemaining > 0)
-                      Text(
-                        receiveLabelOf(row),
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: AppColors.receive,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
                   ],
                 ),
               ),

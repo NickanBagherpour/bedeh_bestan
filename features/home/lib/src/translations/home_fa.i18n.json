@@ -17,5 +17,10 @@
   "paidOut": "پرداخت‌شده $amount",
   "paidIn": "دریافت‌شده $amount",
   "stillOwe": "ماندهٔ بدهی $amount",
-  "dueByEnd": "سررسید تا آخر ماه $amount"
+  "dueByEnd": "سررسید تا آخر ماه $amount",
+  "capPaidOut": "پرداخت",
+  "capPaidIn": "دریافت",
+  "capStillOwe": "ماندهٔ بدهی",
+  "capDueByEnd": "سررسید این ماه",
+  "greeting": "بده‌بستان"
 }

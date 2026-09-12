@@ -17,5 +17,10 @@
   "paidOut": "Paid $amount",
   "paidIn": "Received $amount",
   "stillOwe": "Still to pay $amount",
-  "dueByEnd": "Due by month end $amount"
+  "dueByEnd": "Due by month end $amount",
+  "capPaidOut": "Paid",
+  "capPaidIn": "Received",
+  "capStillOwe": "To pay",
+  "capDueByEnd": "Due this month",
+  "greeting": "Give and take"
 }
