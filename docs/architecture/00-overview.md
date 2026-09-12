@@ -15,6 +15,7 @@ Blueprint: `/media/nickan/workspace/trains/devportal` branch `build/mms`
 | `packages/core` | `AppRoutes`, settings, `AppStorage`, Jalali, Toman grouping |
 | `packages/ui_kit` | `AppTheme`, tokens, `KitCard` / `KitEmpty` |
 | `packages/translations` | slang; input is every `*.i18n.json` in the repo |
+| `packages/local_db` | Drift schema, domain rows, Persian seed |
 
 ## Data flow (local-only)
 
@@ -28,12 +29,13 @@ On-device DB / SharedPreferences
   → Dumb widgets
 ```
 
-Phase 1 has no DB yet — placeholders only. Phase 2 adds the local database.
+Phase 3 added money list / form / detail. Home shows due-this-week and who-owes-what.
 
 ## Dependency rules
 
 - App may depend on every feature + every package.
-- A feature may depend on `core`, `ui_kit`, `translations` only (not other features).
+- A feature may depend on `core`, `ui_kit`, `translations`, `local_db` (not other features).
+- `local_db` may depend on nothing internal.
 - `ui_kit` may depend on `core`.
 - `core` and `translations` depend on nothing internal.
 

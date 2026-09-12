@@ -19,8 +19,10 @@ Text(t.translate('money.status.overdue')); // data keys only
 
 Default locale is **fa** (`useAppDefaultLocale()` in `main.dart`). Persist via `appSettingsProvider.setLocale`.
 
+Theme, locale, calendar, and currency persist via `appSettingsProvider`. The settings **screen** is `features/settings` (Home gear → `/settings`). Calendar (Jalali / Gregorian) is a separate setting from language — it drives date display and month/week bounds. Currency (تومان / ریال / Dollar) is also a setting; switching language updates it only when it was still the previous language default. Stored amounts stay integer toman; ریال is shown ×10.
+
 ## Theme
 
 `packages/ui_kit`: `AppColors`, `AppSpacing`, `AppTypography`, `AppFonts` (Vazirmatn), `AppMotion`, `AppTheme.lightFor/darkFor`.
 
-Prefer `Theme.of(context).colorScheme`. Semantic accents: `AppColors.pay` (بدهی), `.receive` (طلب), `.reminder`, `.note`.
+`BedeBestanApp` already honors `themeMode` / `locale`. Prefer `Theme.of(context).colorScheme`. Semantic accents: `AppColors.pay` (بدهی), `.receive` (طلب), `.reminder`, `.note`.

@@ -1,6 +1,26 @@
 {
   "payAndReceive": "بده و بستان",
   "offlineBlurb": "قسط‌ها، طلب‌ها و یادآوری‌ها — همه روی همین دستگاه.",
-  "emptyTitle": "خانه به‌زودی زنده می‌شود",
-  "emptyBody": "این هفته و «چه‌کسی چقدر» در فازهای بعدی این‌جا نمایش داده می‌شود."
+  "emptyTitle": "هفته‌ای آرام",
+  "emptyBody": "تا هفت روز آینده سررسیدی نیست.",
+  "loadError": "خواندن دادهٔ محلی ممکن نشد.",
+  "dueThisWeek": "این هفته",
+  "overdue": "معوق",
+  "whoOwes": "چه‌کسی چقدر",
+  "emptyBalances": "ماندهٔ بازی نیست.",
+  "iOwe": "بدهی $amount",
+  "theyOwe": "طلب $amount",
+  "fabPay": "بدهی",
+  "fabReceive": "طلب",
+  "settings": "تنظیمات",
+  "reportTitle": "این ماه",
+  "paidOut": "پرداخت‌شده $amount",
+  "paidIn": "دریافت‌شده $amount",
+  "stillOwe": "ماندهٔ بدهی $amount",
+  "dueByEnd": "سررسید تا آخر ماه $amount",
+  "capPaidOut": "پرداخت",
+  "capPaidIn": "دریافت",
+  "capStillOwe": "ماندهٔ بدهی",
+  "capDueByEnd": "سررسید این ماه",
+  "greeting": "بده‌بستان"
 }

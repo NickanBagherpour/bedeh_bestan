@@ -6,13 +6,38 @@ Local-only personal money + calendar + notes. Flutter Melos monorepo.
 
 ```bash
 dart pub get                    # or: melos bootstrap
-melos run dev                   # Linux desktop
+melos run dev:linux             # Linux desktop
 melos run dev:web               # Chrome (local CanvasKit)
 melos run translations          # after changing *.i18n.json
 melos run analyze && melos run test
 ```
 
 If `pub get` hits `pub.flutter-io.cn` hash errors, use `PUB_HOSTED_URL=https://pub.dev`.
+
+### Linux desktop prerequisites (Ubuntu/Debian)
+
+`dev:linux` needs native build tools once per machine:
+
+```bash
+sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+flutter doctor -v   # Linux toolchain should show ✓
+```
+
+Until then, use `melos run dev:web`.
+
+## Store release (Android)
+
+Listing copy, ad titles, and screenshots: [store/LISTING.md](store/LISTING.md).
+
+```bash
+# Signed APK for Cafe Bazaar / Myket
+cd apps/bedeh_bestan && flutter build apk --release
+
+# Play Store bundle
+cd apps/bedeh_bestan && flutter build appbundle --release
+```
+
+Keep `android/upload-keystore.jks` and `android/key.properties` off git and in a backup.
 
 ## Documentation
 
@@ -26,7 +51,7 @@ If `pub get` hits `pub.flutter-io.cn` hash errors, use `PUB_HOSTED_URL=https://p
 
 ```
 apps/bedeh_bestan/     composition root (router, AppShell)
-features/              home, money, calendar, notes
+features/              home, money, calendar, notes, settings
 packages/              core, ui_kit, translations
 docs/                  architecture, prompts, phases
 ```

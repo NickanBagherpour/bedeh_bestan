@@ -2,7 +2,11 @@
   "appName": "بده‌بستان",
   "subtitle": "قسط، طلب، یادآوری",
   "latinName": "BedeBestan",
-  "currency": "تومان",
+  "currency": {
+    "toman": "تومان",
+    "rial": "ریال",
+    "usd": "دلار"
+  },
   "comingSoon": "به‌زودی",
   "emptyTitle": "موردی وجود ندارد",
   "nav": {
@@ -31,6 +35,9 @@
     "confirm": "تأیید",
     "close": "بستن",
     "save": "ذخیره",
-    "add": "افزودن"
+    "add": "افزودن",
+    "search": "جستجو",
+    "back": "بازگشت",
+    "delete": "حذف"
   }
 }

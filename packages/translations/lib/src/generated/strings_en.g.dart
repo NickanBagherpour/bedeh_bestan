@@ -46,6 +46,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$home$en home = Translations$home$en.internal(_root);
 	late final Translations$money$en money = Translations$money$en.internal(_root);
 	late final Translations$notes$en notes = Translations$notes$en.internal(_root);
+	late final Translations$settings$en settings = Translations$settings$en.internal(_root);
 }
 
 // Path: app
@@ -65,8 +66,7 @@ class Translations$app$en {
 	/// en: 'BedeBestan'
 	String get latinName => 'BedeBestan';
 
-	/// en: 'Toman'
-	String get currency => 'Toman';
+	late final Translations$app$currency$en currency = Translations$app$currency$en.internal(_root);
 
 	/// en: 'Coming soon'
 	String get comingSoon => 'Coming soon';
@@ -92,11 +92,104 @@ class Translations$calendar$en {
 	/// en: 'Calendar'
 	String get title => 'Calendar';
 
-	/// en: 'Calendar and reminders'
-	String get emptyTitle => 'Calendar and reminders';
+	/// en: 'Reminder'
+	String get fab => 'Reminder';
 
-	/// en: 'A Jalali month view and event agenda land in the calendar phase.'
-	String get emptyBody => 'A Jalali month view and event agenda land in the calendar phase.';
+	/// en: 'No reminders this month'
+	String get emptyTitle => 'No reminders this month';
+
+	/// en: 'Add a reminder to see it on the month and in the agenda.'
+	String get emptyBody => 'Add a reminder to see it on the month and in the agenda.';
+
+	/// en: 'Nothing on this day.'
+	String get emptyDay => 'Nothing on this day.';
+
+	/// en: 'This day'
+	String get agenda => 'This day';
+
+	/// en: 'This month'
+	String get monthAgenda => 'This month';
+
+	/// en: 'Today'
+	String get today => 'Today';
+
+	/// en: '$weekday, $date'
+	String todayHeading({required Object weekday, required Object date}) => '${weekday}, ${date}';
+
+	/// en: 'Show month'
+	String get showMonth => 'Show month';
+
+	/// en: 'Hide month'
+	String get hideMonth => 'Hide month';
+
+	/// en: 'Add for this day'
+	String get addForDay => 'Add for this day';
+
+	/// en: 'New reminder'
+	String get newTitle => 'New reminder';
+
+	/// en: 'Edit reminder'
+	String get editTitle => 'Edit reminder';
+
+	/// en: 'Title'
+	String get titleField => 'Title';
+
+	/// en: 'Note'
+	String get bodyField => 'Note';
+
+	/// en: 'Date'
+	String get date => 'Date';
+
+	/// en: 'Time'
+	String get time => 'Time';
+
+	/// en: 'All day'
+	String get allDay => 'All day';
+
+	/// en: 'Repeat'
+	String get repeat => 'Repeat';
+
+	/// en: 'Every N days'
+	String get everyN => 'Every N days';
+
+	/// en: 'Notify at the time'
+	String get notifyOnTime => 'Notify at the time';
+
+	/// en: 'Notify a day before'
+	String get notifyDayBefore => 'Notify a day before';
+
+	/// en: 'Tomorrow: $title'
+	String notificationDayBefore({required Object title}) => 'Tomorrow: ${title}';
+
+	/// en: 'Save'
+	String get save => 'Save';
+
+	/// en: 'Edit'
+	String get edit => 'Edit';
+
+	/// en: 'Delete'
+	String get delete => 'Delete';
+
+	/// en: 'Delete this reminder?'
+	String get deleteConfirm => 'Delete this reminder?';
+
+	/// en: 'Give it a title.'
+	String get missingTitle => 'Give it a title.';
+
+	/// en: 'N must be at least 2.'
+	String get invalidRepeat => 'N must be at least 2.';
+
+	/// en: 'Could not read reminders.'
+	String get loadError => 'Could not read reminders.';
+
+	/// en: 'Could not save the reminder.'
+	String get saveError => 'Could not save the reminder.';
+
+	/// en: 'This reminder is gone.'
+	String get missingItem => 'This reminder is gone.';
+
+	late final Translations$calendar$repeatRule$en repeatRule = Translations$calendar$repeatRule$en.internal(_root);
+	late final Translations$calendar$weekday$en weekday = Translations$calendar$weekday$en.internal(_root);
 }
 
 // Path: home
@@ -113,11 +206,71 @@ class Translations$home$en {
 	/// en: 'Installments, receivables, and reminders — all on this device.'
 	String get offlineBlurb => 'Installments, receivables, and reminders — all on this device.';
 
-	/// en: 'Home will come alive soon'
-	String get emptyTitle => 'Home will come alive soon';
+	/// en: 'Quiet week'
+	String get emptyTitle => 'Quiet week';
 
-	/// en: 'This week and who-owes-what show up here in later phases.'
-	String get emptyBody => 'This week and who-owes-what show up here in later phases.';
+	/// en: 'Nothing is due in the next seven days.'
+	String get emptyBody => 'Nothing is due in the next seven days.';
+
+	/// en: 'Could not read local data.'
+	String get loadError => 'Could not read local data.';
+
+	/// en: 'This week'
+	String get dueThisWeek => 'This week';
+
+	/// en: 'Overdue'
+	String get overdue => 'Overdue';
+
+	/// en: 'Who owes what'
+	String get whoOwes => 'Who owes what';
+
+	/// en: 'No open balances.'
+	String get emptyBalances => 'No open balances.';
+
+	/// en: 'I owe $amount'
+	String iOwe({required Object amount}) => 'I owe ${amount}';
+
+	/// en: 'Owed to me $amount'
+	String theyOwe({required Object amount}) => 'Owed to me ${amount}';
+
+	/// en: 'I owe'
+	String get fabPay => 'I owe';
+
+	/// en: 'Owed to me'
+	String get fabReceive => 'Owed to me';
+
+	/// en: 'Settings'
+	String get settings => 'Settings';
+
+	/// en: 'This month'
+	String get reportTitle => 'This month';
+
+	/// en: 'Paid $amount'
+	String paidOut({required Object amount}) => 'Paid ${amount}';
+
+	/// en: 'Received $amount'
+	String paidIn({required Object amount}) => 'Received ${amount}';
+
+	/// en: 'Still to pay $amount'
+	String stillOwe({required Object amount}) => 'Still to pay ${amount}';
+
+	/// en: 'Due by month end $amount'
+	String dueByEnd({required Object amount}) => 'Due by month end ${amount}';
+
+	/// en: 'Paid'
+	String get capPaidOut => 'Paid';
+
+	/// en: 'Received'
+	String get capPaidIn => 'Received';
+
+	/// en: 'To pay'
+	String get capStillOwe => 'To pay';
+
+	/// en: 'Due this month'
+	String get capDueByEnd => 'Due this month';
+
+	/// en: 'Give and take'
+	String get greeting => 'Give and take';
 }
 
 // Path: money
@@ -131,11 +284,278 @@ class Translations$money$en {
 	/// en: 'Accounts'
 	String get title => 'Accounts';
 
-	/// en: 'Your give-and-take will live here'
-	String get emptyTitle => 'Your give-and-take will live here';
+	/// en: 'No give-and-take yet'
+	String get emptyTitle => 'No give-and-take yet';
 
-	/// en: 'Debts, receivables, installments, and payments arrive in the money phase.'
-	String get emptyBody => 'Debts, receivables, installments, and payments arrive in the money phase.';
+	/// en: 'Add a debt or receivable in a couple of taps.'
+	String get emptyBody => 'Add a debt or receivable in a couple of taps.';
+
+	/// en: 'Nothing matches this filter.'
+	String get emptyFilter => 'Nothing matches this filter.';
+
+	/// en: 'Add'
+	String get add => 'Add';
+
+	/// en: 'I owe'
+	String get fabPay => 'I owe';
+
+	/// en: 'Owed to me'
+	String get fabReceive => 'Owed to me';
+
+	/// en: 'All'
+	String get filterAll => 'All';
+
+	/// en: 'I owe'
+	String get filterPay => 'I owe';
+
+	/// en: 'Owed to me'
+	String get filterReceive => 'Owed to me';
+
+	/// en: 'Hide settled'
+	String get hideSettled => 'Hide settled';
+
+	/// en: 'Show settled'
+	String get showSettled => 'Show settled';
+
+	/// en: 'Remaining'
+	String get remaining => 'Remaining';
+
+	/// en: 'Total'
+	String get total => 'Total';
+
+	/// en: 'Paid'
+	String get paid => 'Paid';
+
+	/// en: 'Due'
+	String get due => 'Due';
+
+	/// en: 'Party'
+	String get party => 'Party';
+
+	/// en: 'Title'
+	String get titleField => 'Title';
+
+	/// en: 'Amount'
+	String get amount => 'Amount';
+
+	/// en: 'Note'
+	String get note => 'Note';
+
+	/// en: 'Optional'
+	String get optional => 'Optional';
+
+	/// en: 'Schedule'
+	String get schedule => 'Schedule';
+
+	/// en: 'One-time'
+	String get oneTime => 'One-time';
+
+	/// en: 'Installment'
+	String get installment => 'Installment';
+
+	/// en: 'Periods'
+	String get periods => 'Periods';
+
+	/// en: 'Each installment'
+	String get installmentAmount => 'Each installment';
+
+	/// en: 'Total $amount'
+	String computedTotal({required Object amount}) => 'Total ${amount}';
+
+	/// en: 'Start'
+	String get startDate => 'Start';
+
+	/// en: 'Due date'
+	String get dueDate => 'Due date';
+
+	/// en: 'First due'
+	String get firstDue => 'First due';
+
+	/// en: 'New party'
+	String get newParty => 'New party';
+
+	/// en: 'Existing party'
+	String get existingParty => 'Existing party';
+
+	/// en: 'Name'
+	String get partyName => 'Name';
+
+	/// en: 'Phone'
+	String get phone => 'Phone';
+
+	/// en: 'National code'
+	String get nationalCode => 'National code';
+
+	/// en: 'Birth date'
+	String get birthDate => 'Birth date';
+
+	/// en: 'Card number'
+	String get cardNumber => 'Card number';
+
+	/// en: 'IBAN (Sheba)'
+	String get sheba => 'IBAN (Sheba)';
+
+	/// en: 'Call'
+	String get callAction => 'Call';
+
+	/// en: 'Copy'
+	String get copyAction => 'Copy';
+
+	/// en: 'Copied.'
+	String get copied => 'Copied.';
+
+	/// en: 'Could not start a call.'
+	String get callFailed => 'Could not start a call.';
+
+	/// en: 'Save'
+	String get save => 'Save';
+
+	/// en: 'Edit'
+	String get edit => 'Edit';
+
+	/// en: 'Record payment'
+	String get recordPayment => 'Record payment';
+
+	/// en: 'Payment amount'
+	String get paymentAmount => 'Payment amount';
+
+	/// en: 'Payments'
+	String get payments => 'Payments';
+
+	/// en: 'No payments yet.'
+	String get noPayments => 'No payments yet.';
+
+	/// en: 'Record pay'
+	String get payCta => 'Record pay';
+
+	/// en: 'Record receive'
+	String get receiveCta => 'Record receive';
+
+	/// en: 'Enter a valid amount.'
+	String get invalidAmount => 'Enter a valid amount.';
+
+	/// en: 'Amount is more than remaining.'
+	String get payTooLarge => 'Amount is more than remaining.';
+
+	/// en: 'Add a title.'
+	String get missingTitle => 'Add a title.';
+
+	/// en: 'Pick or add a party.'
+	String get missingParty => 'Pick or add a party.';
+
+	/// en: 'This account was not found.'
+	String get missingItem => 'This account was not found.';
+
+	/// en: 'This account is already settled.'
+	String get alreadySettled => 'This account is already settled.';
+
+	/// en: 'Could not read local data.'
+	String get loadError => 'Could not read local data.';
+
+	/// en: 'Could not save.'
+	String get saveError => 'Could not save.';
+
+	/// en: 'New account'
+	String get newTitle => 'New account';
+
+	/// en: 'Edit account'
+	String get editTitle => 'Edit account';
+
+	/// en: '$paid of $total'
+	String periodsProgress({required Object paid, required Object total}) => '${paid} of ${total}';
+
+	late final Translations$money$status$en status = Translations$money$status$en.internal(_root);
+	late final Translations$money$direction$en direction = Translations$money$direction$en.internal(_root);
+	late final Translations$money$partyKind$en partyKind = Translations$money$partyKind$en.internal(_root);
+
+	/// en: 'Parties'
+	String get parties => 'Parties';
+
+	/// en: 'Search parties'
+	String get searchParty => 'Search parties';
+
+	/// en: 'No parties yet'
+	String get emptyParties => 'No parties yet';
+
+	/// en: 'Add a person, shop, or bank you deal with.'
+	String get emptyPartiesBody => 'Add a person, shop, or bank you deal with.';
+
+	/// en: 'No party matches.'
+	String get emptyPartyFilter => 'No party matches.';
+
+	/// en: 'This party still has accounts. Remove those first.'
+	String get partyInUse => 'This party still has accounts. Remove those first.';
+
+	/// en: 'This party was not found.'
+	String get missingPartyItem => 'This party was not found.';
+
+	/// en: 'Delete account'
+	String get delete => 'Delete account';
+
+	/// en: 'This account and its payments will be removed. Linked notes stay.'
+	String get deleteConfirm => 'This account and its payments will be removed. Linked notes stay.';
+
+	/// en: 'Delete party'
+	String get deleteParty => 'Delete party';
+
+	/// en: 'Remove this party? Accounts with this party must be deleted first.'
+	String get deletePartyConfirm => 'Remove this party? Accounts with this party must be deleted first.';
+
+	/// en: 'New party'
+	String get newPartyTitle => 'New party';
+
+	/// en: 'Edit party'
+	String get editPartyTitle => 'Edit party';
+
+	/// en: 'Accounts'
+	String get linkedAccounts => 'Accounts';
+
+	/// en: 'No accounts with this party yet.'
+	String get noLinkedAccounts => 'No accounts with this party yet.';
+
+	/// en: 'Net balance'
+	String get netBalance => 'Net balance';
+
+	/// en: 'Statement'
+	String get statement => 'Statement';
+
+	/// en: 'Balance'
+	String get balance => 'Balance';
+
+	/// en: 'No transactions yet.'
+	String get emptyLedger => 'No transactions yet.';
+
+	/// en: 'Share'
+	String get share => 'Share';
+
+	/// en: 'Share statement'
+	String get shareStatement => 'Share statement';
+
+	/// en: 'Statement: $name'
+	String shareSubject({required Object name}) => 'Statement: ${name}';
+
+	/// en: 'Could not open the share sheet.'
+	String get shareFailed => 'Could not open the share sheet.';
+
+	/// en: 'Due today'
+	String get dueTitle => 'Due today';
+
+	/// en: 'Due tomorrow'
+	String get dueSoonTitle => 'Due tomorrow';
+
+	/// en: '$title'
+	String dueBody({required Object title}) => '${title}';
+
+	/// en: 'Installment schedule'
+	String get scheduleTitle => 'Installment schedule';
+
+	/// en: 'Installment $index'
+	String installmentRow({required Object index}) => 'Installment ${index}';
+
+	/// en: 'Remaining $amount'
+	String remainingAmount({required Object amount}) => 'Remaining ${amount}';
+
+	late final Translations$money$installmentState$en installmentState = Translations$money$installmentState$en.internal(_root);
 }
 
 // Path: notes
@@ -149,11 +569,191 @@ class Translations$notes$en {
 	/// en: 'Notes'
 	String get title => 'Notes';
 
-	/// en: 'Notes'
-	String get emptyTitle => 'Notes';
+	/// en: 'Note'
+	String get fab => 'Note';
 
-	/// en: 'Title, body, tags, and pinning arrive in the notes phase.'
-	String get emptyBody => 'Title, body, tags, and pinning arrive in the notes phase.';
+	/// en: 'No notes yet'
+	String get emptyTitle => 'No notes yet';
+
+	/// en: 'Pin a thought, a SHABA, or a reminder about someone.'
+	String get emptyBody => 'Pin a thought, a SHABA, or a reminder about someone.';
+
+	/// en: 'Nothing matches.'
+	String get emptyFilter => 'Nothing matches.';
+
+	/// en: 'Search notes'
+	String get search => 'Search notes';
+
+	/// en: 'New note'
+	String get newTitle => 'New note';
+
+	/// en: 'Edit note'
+	String get editTitle => 'Edit note';
+
+	/// en: 'Title'
+	String get titleField => 'Title';
+
+	/// en: 'Body'
+	String get bodyField => 'Body';
+
+	/// en: 'Tags'
+	String get tagsField => 'Tags';
+
+	/// en: 'Comma-separated'
+	String get tagsHint => 'Comma-separated';
+
+	/// en: 'Pinned'
+	String get pinned => 'Pinned';
+
+	/// en: 'Checklist'
+	String get checklist => 'Checklist';
+
+	/// en: 'Add item'
+	String get addItem => 'Add item';
+
+	/// en: 'Remove item'
+	String get removeItem => 'Remove item';
+
+	/// en: 'List item'
+	String get checklistItemHint => 'List item';
+
+	/// en: 'Person or shop'
+	String get party => 'Person or shop';
+
+	/// en: 'Account'
+	String get money => 'Account';
+
+	/// en: 'None'
+	String get none => 'None';
+
+	/// en: 'Save'
+	String get save => 'Save';
+
+	/// en: 'Edit'
+	String get edit => 'Edit';
+
+	/// en: 'Delete'
+	String get delete => 'Delete';
+
+	/// en: 'Delete this note?'
+	String get deleteConfirm => 'Delete this note?';
+
+	/// en: 'Open account'
+	String get openMoney => 'Open account';
+
+	/// en: 'Give it a title.'
+	String get missingTitle => 'Give it a title.';
+
+	/// en: 'Could not read notes.'
+	String get loadError => 'Could not read notes.';
+
+	/// en: 'Could not save the note.'
+	String get saveError => 'Could not save the note.';
+
+	/// en: 'This note is gone.'
+	String get missingItem => 'This note is gone.';
+
+	/// en: 'All tags'
+	String get allTags => 'All tags';
+
+	/// en: 'Search people'
+	String get searchParty => 'Search people';
+
+	/// en: 'Search accounts'
+	String get searchMoney => 'Search accounts';
+}
+
+// Path: settings
+class Translations$settings$en {
+	Translations$settings$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Settings'
+	String get title => 'Settings';
+
+	/// en: 'Theme'
+	String get theme => 'Theme';
+
+	/// en: 'Language'
+	String get language => 'Language';
+
+	/// en: 'Calendar'
+	String get calendar => 'Calendar';
+
+	/// en: 'First and last day of the month and week follow this calendar — not the language.'
+	String get calendarHint => 'First and last day of the month and week follow this calendar — not the language.';
+
+	/// en: 'Jalali'
+	String get jalali => 'Jalali';
+
+	/// en: 'Gregorian'
+	String get gregorian => 'Gregorian';
+
+	/// en: 'Currency'
+	String get currency => 'Currency';
+
+	/// en: 'Rial is shown ×10 (10 rial = 1 toman). Dollar is a label only.'
+	String get currencyHint => 'Rial is shown ×10 (10 rial = 1 toman). Dollar is a label only.';
+
+	/// en: 'Backup'
+	String get backup => 'Backup';
+
+	/// en: 'Keeps money, calendar, notes, and these settings on this device. App updates keep your data. Uninstalling does not.'
+	String get backupHint => 'Keeps money, calendar, notes, and these settings on this device. App updates keep your data. Uninstalling does not.';
+
+	/// en: 'Export backup'
+	String get exportBackup => 'Export backup';
+
+	/// en: 'Restore backup'
+	String get importBackup => 'Restore backup';
+
+	/// en: 'Backup saved.'
+	String get backupSaved => 'Backup saved.';
+
+	/// en: 'Backup restored.'
+	String get backupRestored => 'Backup restored.';
+
+	/// en: 'Cancelled.'
+	String get backupCancelled => 'Cancelled.';
+
+	/// en: 'Could not complete the backup.'
+	String get backupFailed => 'Could not complete the backup.';
+
+	/// en: 'bedeh-bestan-backup.json'
+	String get backupFileName => 'bedeh-bestan-backup.json';
+
+	/// en: 'About'
+	String get about => 'About';
+
+	/// en: 'Version $version'
+	String version({required Object version}) => 'Version ${version}';
+
+	/// en: 'Privacy'
+	String get privacy => 'Privacy';
+
+	/// en: 'Everything stays on this phone. No account, no cloud, no tracking.'
+	String get privacyBody => 'Everything stays on this phone. No account, no cloud, no tracking.';
+}
+
+// Path: app.currency
+class Translations$app$currency$en {
+	Translations$app$currency$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Toman'
+	String get toman => 'Toman';
+
+	/// en: 'Rial'
+	String get rial => 'Rial';
+
+	/// en: 'Dollar'
+	String get usd => 'Dollar';
 }
 
 // Path: app.nav
@@ -253,6 +853,147 @@ class Translations$app$actions$en {
 
 	/// en: 'Add'
 	String get add => 'Add';
+
+	/// en: 'Search'
+	String get search => 'Search';
+
+	/// en: 'Back'
+	String get back => 'Back';
+
+	/// en: 'Delete'
+	String get delete => 'Delete';
+}
+
+// Path: calendar.repeatRule
+class Translations$calendar$repeatRule$en {
+	Translations$calendar$repeatRule$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Does not repeat'
+	String get none => 'Does not repeat';
+
+	/// en: 'Daily'
+	String get daily => 'Daily';
+
+	/// en: 'Weekly'
+	String get weekly => 'Weekly';
+
+	/// en: 'Monthly'
+	String get monthly => 'Monthly';
+
+	/// en: 'Yearly'
+	String get yearly => 'Yearly';
+
+	/// en: 'Every N days'
+	String get everyNDays => 'Every N days';
+}
+
+// Path: calendar.weekday
+class Translations$calendar$weekday$en {
+	Translations$calendar$weekday$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Sat'
+	String get sat => 'Sat';
+
+	/// en: 'Sun'
+	String get sun => 'Sun';
+
+	/// en: 'Mon'
+	String get mon => 'Mon';
+
+	/// en: 'Tue'
+	String get tue => 'Tue';
+
+	/// en: 'Wed'
+	String get wed => 'Wed';
+
+	/// en: 'Thu'
+	String get thu => 'Thu';
+
+	/// en: 'Fri'
+	String get fri => 'Fri';
+}
+
+// Path: money.status
+class Translations$money$status$en {
+	Translations$money$status$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Upcoming'
+	String get upcoming => 'Upcoming';
+
+	/// en: 'Due today'
+	String get dueToday => 'Due today';
+
+	/// en: 'Overdue'
+	String get overdue => 'Overdue';
+
+	/// en: 'Settled'
+	String get settled => 'Settled';
+}
+
+// Path: money.direction
+class Translations$money$direction$en {
+	Translations$money$direction$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'I owe'
+	String get pay => 'I owe';
+
+	/// en: 'Owed to me'
+	String get receive => 'Owed to me';
+}
+
+// Path: money.partyKind
+class Translations$money$partyKind$en {
+	Translations$money$partyKind$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Person'
+	String get person => 'Person';
+
+	/// en: 'Bank'
+	String get bank => 'Bank';
+
+	/// en: 'Shop'
+	String get shop => 'Shop';
+
+	/// en: 'Custom'
+	String get custom => 'Custom';
+}
+
+// Path: money.installmentState
+class Translations$money$installmentState$en {
+	Translations$money$installmentState$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Paid'
+	String get paid => 'Paid';
+
+	/// en: 'Due'
+	String get due => 'Due';
+
+	/// en: 'Upcoming'
+	String get upcoming => 'Upcoming';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -266,7 +1007,9 @@ extension on Translations {
 			'app.appName' => 'BedeBestan',
 			'app.subtitle' => 'Installments, receivables, reminders',
 			'app.latinName' => 'BedeBestan',
-			'app.currency' => 'Toman',
+			'app.currency.toman' => 'Toman',
+			'app.currency.rial' => 'Rial',
+			'app.currency.usd' => 'Dollar',
 			'app.comingSoon' => 'Coming soon',
 			'app.emptyTitle' => 'Nothing here yet',
 			'app.nav.home' => 'Home',
@@ -287,19 +1030,236 @@ extension on Translations {
 			'app.actions.close' => 'Close',
 			'app.actions.save' => 'Save',
 			'app.actions.add' => 'Add',
+			'app.actions.search' => 'Search',
+			'app.actions.back' => 'Back',
+			'app.actions.delete' => 'Delete',
 			'calendar.title' => 'Calendar',
-			'calendar.emptyTitle' => 'Calendar and reminders',
-			'calendar.emptyBody' => 'A Jalali month view and event agenda land in the calendar phase.',
+			'calendar.fab' => 'Reminder',
+			'calendar.emptyTitle' => 'No reminders this month',
+			'calendar.emptyBody' => 'Add a reminder to see it on the month and in the agenda.',
+			'calendar.emptyDay' => 'Nothing on this day.',
+			'calendar.agenda' => 'This day',
+			'calendar.monthAgenda' => 'This month',
+			'calendar.today' => 'Today',
+			'calendar.todayHeading' => ({required Object weekday, required Object date}) => '${weekday}, ${date}',
+			'calendar.showMonth' => 'Show month',
+			'calendar.hideMonth' => 'Hide month',
+			'calendar.addForDay' => 'Add for this day',
+			'calendar.newTitle' => 'New reminder',
+			'calendar.editTitle' => 'Edit reminder',
+			'calendar.titleField' => 'Title',
+			'calendar.bodyField' => 'Note',
+			'calendar.date' => 'Date',
+			'calendar.time' => 'Time',
+			'calendar.allDay' => 'All day',
+			'calendar.repeat' => 'Repeat',
+			'calendar.everyN' => 'Every N days',
+			'calendar.notifyOnTime' => 'Notify at the time',
+			'calendar.notifyDayBefore' => 'Notify a day before',
+			'calendar.notificationDayBefore' => ({required Object title}) => 'Tomorrow: ${title}',
+			'calendar.save' => 'Save',
+			'calendar.edit' => 'Edit',
+			'calendar.delete' => 'Delete',
+			'calendar.deleteConfirm' => 'Delete this reminder?',
+			'calendar.missingTitle' => 'Give it a title.',
+			'calendar.invalidRepeat' => 'N must be at least 2.',
+			'calendar.loadError' => 'Could not read reminders.',
+			'calendar.saveError' => 'Could not save the reminder.',
+			'calendar.missingItem' => 'This reminder is gone.',
+			'calendar.repeatRule.none' => 'Does not repeat',
+			'calendar.repeatRule.daily' => 'Daily',
+			'calendar.repeatRule.weekly' => 'Weekly',
+			'calendar.repeatRule.monthly' => 'Monthly',
+			'calendar.repeatRule.yearly' => 'Yearly',
+			'calendar.repeatRule.everyNDays' => 'Every N days',
+			'calendar.weekday.sat' => 'Sat',
+			'calendar.weekday.sun' => 'Sun',
+			'calendar.weekday.mon' => 'Mon',
+			'calendar.weekday.tue' => 'Tue',
+			'calendar.weekday.wed' => 'Wed',
+			'calendar.weekday.thu' => 'Thu',
+			'calendar.weekday.fri' => 'Fri',
 			'home.payAndReceive' => 'Give and take',
 			'home.offlineBlurb' => 'Installments, receivables, and reminders — all on this device.',
-			'home.emptyTitle' => 'Home will come alive soon',
-			'home.emptyBody' => 'This week and who-owes-what show up here in later phases.',
+			'home.emptyTitle' => 'Quiet week',
+			'home.emptyBody' => 'Nothing is due in the next seven days.',
+			'home.loadError' => 'Could not read local data.',
+			'home.dueThisWeek' => 'This week',
+			'home.overdue' => 'Overdue',
+			'home.whoOwes' => 'Who owes what',
+			'home.emptyBalances' => 'No open balances.',
+			'home.iOwe' => ({required Object amount}) => 'I owe ${amount}',
+			'home.theyOwe' => ({required Object amount}) => 'Owed to me ${amount}',
+			'home.fabPay' => 'I owe',
+			'home.fabReceive' => 'Owed to me',
+			'home.settings' => 'Settings',
+			'home.reportTitle' => 'This month',
+			'home.paidOut' => ({required Object amount}) => 'Paid ${amount}',
+			'home.paidIn' => ({required Object amount}) => 'Received ${amount}',
+			'home.stillOwe' => ({required Object amount}) => 'Still to pay ${amount}',
+			'home.dueByEnd' => ({required Object amount}) => 'Due by month end ${amount}',
+			'home.capPaidOut' => 'Paid',
+			'home.capPaidIn' => 'Received',
+			'home.capStillOwe' => 'To pay',
+			'home.capDueByEnd' => 'Due this month',
+			'home.greeting' => 'Give and take',
 			'money.title' => 'Accounts',
-			'money.emptyTitle' => 'Your give-and-take will live here',
-			'money.emptyBody' => 'Debts, receivables, installments, and payments arrive in the money phase.',
+			'money.emptyTitle' => 'No give-and-take yet',
+			'money.emptyBody' => 'Add a debt or receivable in a couple of taps.',
+			'money.emptyFilter' => 'Nothing matches this filter.',
+			'money.add' => 'Add',
+			'money.fabPay' => 'I owe',
+			'money.fabReceive' => 'Owed to me',
+			'money.filterAll' => 'All',
+			'money.filterPay' => 'I owe',
+			'money.filterReceive' => 'Owed to me',
+			'money.hideSettled' => 'Hide settled',
+			'money.showSettled' => 'Show settled',
+			'money.remaining' => 'Remaining',
+			'money.total' => 'Total',
+			'money.paid' => 'Paid',
+			'money.due' => 'Due',
+			'money.party' => 'Party',
+			'money.titleField' => 'Title',
+			'money.amount' => 'Amount',
+			'money.note' => 'Note',
+			'money.optional' => 'Optional',
+			'money.schedule' => 'Schedule',
+			'money.oneTime' => 'One-time',
+			'money.installment' => 'Installment',
+			'money.periods' => 'Periods',
+			'money.installmentAmount' => 'Each installment',
+			'money.computedTotal' => ({required Object amount}) => 'Total ${amount}',
+			'money.startDate' => 'Start',
+			'money.dueDate' => 'Due date',
+			'money.firstDue' => 'First due',
+			'money.newParty' => 'New party',
+			'money.existingParty' => 'Existing party',
+			'money.partyName' => 'Name',
+			'money.phone' => 'Phone',
+			'money.nationalCode' => 'National code',
+			'money.birthDate' => 'Birth date',
+			'money.cardNumber' => 'Card number',
+			'money.sheba' => 'IBAN (Sheba)',
+			'money.callAction' => 'Call',
+			'money.copyAction' => 'Copy',
+			'money.copied' => 'Copied.',
+			'money.callFailed' => 'Could not start a call.',
+			'money.save' => 'Save',
+			'money.edit' => 'Edit',
+			'money.recordPayment' => 'Record payment',
+			'money.paymentAmount' => 'Payment amount',
+			'money.payments' => 'Payments',
+			'money.noPayments' => 'No payments yet.',
+			'money.payCta' => 'Record pay',
+			'money.receiveCta' => 'Record receive',
+			'money.invalidAmount' => 'Enter a valid amount.',
+			'money.payTooLarge' => 'Amount is more than remaining.',
+			'money.missingTitle' => 'Add a title.',
+			'money.missingParty' => 'Pick or add a party.',
+			'money.missingItem' => 'This account was not found.',
+			'money.alreadySettled' => 'This account is already settled.',
+			'money.loadError' => 'Could not read local data.',
+			'money.saveError' => 'Could not save.',
+			'money.newTitle' => 'New account',
+			'money.editTitle' => 'Edit account',
+			'money.periodsProgress' => ({required Object paid, required Object total}) => '${paid} of ${total}',
+			'money.status.upcoming' => 'Upcoming',
+			'money.status.dueToday' => 'Due today',
+			'money.status.overdue' => 'Overdue',
+			'money.status.settled' => 'Settled',
+			'money.direction.pay' => 'I owe',
+			'money.direction.receive' => 'Owed to me',
+			'money.partyKind.person' => 'Person',
+			'money.partyKind.bank' => 'Bank',
+			'money.partyKind.shop' => 'Shop',
+			'money.partyKind.custom' => 'Custom',
+			'money.parties' => 'Parties',
+			'money.searchParty' => 'Search parties',
+			'money.emptyParties' => 'No parties yet',
+			'money.emptyPartiesBody' => 'Add a person, shop, or bank you deal with.',
+			'money.emptyPartyFilter' => 'No party matches.',
+			'money.partyInUse' => 'This party still has accounts. Remove those first.',
+			'money.missingPartyItem' => 'This party was not found.',
+			'money.delete' => 'Delete account',
+			'money.deleteConfirm' => 'This account and its payments will be removed. Linked notes stay.',
+			'money.deleteParty' => 'Delete party',
+			'money.deletePartyConfirm' => 'Remove this party? Accounts with this party must be deleted first.',
+			'money.newPartyTitle' => 'New party',
+			'money.editPartyTitle' => 'Edit party',
+			'money.linkedAccounts' => 'Accounts',
+			'money.noLinkedAccounts' => 'No accounts with this party yet.',
+			'money.netBalance' => 'Net balance',
+			'money.statement' => 'Statement',
+			'money.balance' => 'Balance',
+			'money.emptyLedger' => 'No transactions yet.',
+			'money.share' => 'Share',
+			'money.shareStatement' => 'Share statement',
+			'money.shareSubject' => ({required Object name}) => 'Statement: ${name}',
+			'money.shareFailed' => 'Could not open the share sheet.',
+			'money.dueTitle' => 'Due today',
+			'money.dueSoonTitle' => 'Due tomorrow',
+			'money.dueBody' => ({required Object title}) => '${title}',
+			'money.scheduleTitle' => 'Installment schedule',
+			'money.installmentRow' => ({required Object index}) => 'Installment ${index}',
+			'money.remainingAmount' => ({required Object amount}) => 'Remaining ${amount}',
+			'money.installmentState.paid' => 'Paid',
+			'money.installmentState.due' => 'Due',
+			'money.installmentState.upcoming' => 'Upcoming',
 			'notes.title' => 'Notes',
-			'notes.emptyTitle' => 'Notes',
-			'notes.emptyBody' => 'Title, body, tags, and pinning arrive in the notes phase.',
+			'notes.fab' => 'Note',
+			'notes.emptyTitle' => 'No notes yet',
+			'notes.emptyBody' => 'Pin a thought, a SHABA, or a reminder about someone.',
+			'notes.emptyFilter' => 'Nothing matches.',
+			'notes.search' => 'Search notes',
+			'notes.newTitle' => 'New note',
+			'notes.editTitle' => 'Edit note',
+			'notes.titleField' => 'Title',
+			'notes.bodyField' => 'Body',
+			'notes.tagsField' => 'Tags',
+			'notes.tagsHint' => 'Comma-separated',
+			'notes.pinned' => 'Pinned',
+			'notes.checklist' => 'Checklist',
+			'notes.addItem' => 'Add item',
+			'notes.removeItem' => 'Remove item',
+			'notes.checklistItemHint' => 'List item',
+			'notes.party' => 'Person or shop',
+			'notes.money' => 'Account',
+			'notes.none' => 'None',
+			'notes.save' => 'Save',
+			'notes.edit' => 'Edit',
+			'notes.delete' => 'Delete',
+			'notes.deleteConfirm' => 'Delete this note?',
+			'notes.openMoney' => 'Open account',
+			'notes.missingTitle' => 'Give it a title.',
+			'notes.loadError' => 'Could not read notes.',
+			'notes.saveError' => 'Could not save the note.',
+			'notes.missingItem' => 'This note is gone.',
+			'notes.allTags' => 'All tags',
+			'notes.searchParty' => 'Search people',
+			'notes.searchMoney' => 'Search accounts',
+			'settings.title' => 'Settings',
+			'settings.theme' => 'Theme',
+			'settings.language' => 'Language',
+			'settings.calendar' => 'Calendar',
+			'settings.calendarHint' => 'First and last day of the month and week follow this calendar — not the language.',
+			'settings.jalali' => 'Jalali',
+			'settings.gregorian' => 'Gregorian',
+			'settings.currency' => 'Currency',
+			'settings.currencyHint' => 'Rial is shown ×10 (10 rial = 1 toman). Dollar is a label only.',
+			'settings.backup' => 'Backup',
+			'settings.backupHint' => 'Keeps money, calendar, notes, and these settings on this device. App updates keep your data. Uninstalling does not.',
+			'settings.exportBackup' => 'Export backup',
+			'settings.importBackup' => 'Restore backup',
+			'settings.backupSaved' => 'Backup saved.',
+			'settings.backupRestored' => 'Backup restored.',
+			'settings.backupCancelled' => 'Cancelled.',
+			'settings.backupFailed' => 'Could not complete the backup.',
+			'settings.backupFileName' => 'bedeh-bestan-backup.json',
+			'settings.about' => 'About',
+			'settings.version' => ({required Object version}) => 'Version ${version}',
+			'settings.privacy' => 'Privacy',
+			'settings.privacyBody' => 'Everything stays on this phone. No account, no cloud, no tracking.',
 			_ => null,
 		};
 	}

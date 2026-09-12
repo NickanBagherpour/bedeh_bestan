@@ -2,7 +2,11 @@
   "appName": "BedeBestan",
   "subtitle": "Installments, receivables, reminders",
   "latinName": "BedeBestan",
-  "currency": "Toman",
+  "currency": {
+    "toman": "Toman",
+    "rial": "Rial",
+    "usd": "Dollar"
+  },
   "comingSoon": "Coming soon",
   "emptyTitle": "Nothing here yet",
   "nav": {
@@ -31,6 +35,9 @@
     "confirm": "Confirm",
     "close": "Close",
     "save": "Save",
-    "add": "Add"
+    "add": "Add",
+    "search": "Search",
+    "back": "Back",
+    "delete": "Delete"
   }
 }

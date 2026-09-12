@@ -1,6 +1,26 @@
 {
   "payAndReceive": "Give and take",
   "offlineBlurb": "Installments, receivables, and reminders — all on this device.",
-  "emptyTitle": "Home will come alive soon",
-  "emptyBody": "This week and who-owes-what show up here in later phases."
+  "emptyTitle": "Quiet week",
+  "emptyBody": "Nothing is due in the next seven days.",
+  "loadError": "Could not read local data.",
+  "dueThisWeek": "This week",
+  "overdue": "Overdue",
+  "whoOwes": "Who owes what",
+  "emptyBalances": "No open balances.",
+  "iOwe": "I owe $amount",
+  "theyOwe": "Owed to me $amount",
+  "fabPay": "I owe",
+  "fabReceive": "Owed to me",
+  "settings": "Settings",
+  "reportTitle": "This month",
+  "paidOut": "Paid $amount",
+  "paidIn": "Received $amount",
+  "stillOwe": "Still to pay $amount",
+  "dueByEnd": "Due by month end $amount",
+  "capPaidOut": "Paid",
+  "capPaidIn": "Received",
+  "capStillOwe": "To pay",
+  "capDueByEnd": "Due this month",
+  "greeting": "Give and take"
 }

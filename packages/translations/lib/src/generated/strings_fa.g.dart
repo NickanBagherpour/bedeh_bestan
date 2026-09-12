@@ -44,6 +44,7 @@ class TranslationsFa extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$home$fa home = _Translations$home$fa._(_root);
 	@override late final _Translations$money$fa money = _Translations$money$fa._(_root);
 	@override late final _Translations$notes$fa notes = _Translations$notes$fa._(_root);
+	@override late final _Translations$settings$fa settings = _Translations$settings$fa._(_root);
 }
 
 // Path: app
@@ -56,7 +57,7 @@ class _Translations$app$fa extends Translations$app$en {
 	@override String get appName => 'بده‌بستان';
 	@override String get subtitle => 'قسط، طلب، یادآوری';
 	@override String get latinName => 'BedeBestan';
-	@override String get currency => 'تومان';
+	@override late final _Translations$app$currency$fa currency = _Translations$app$currency$fa._(_root);
 	@override String get comingSoon => 'به‌زودی';
 	@override String get emptyTitle => 'موردی وجود ندارد';
 	@override late final _Translations$app$nav$fa nav = _Translations$app$nav$fa._(_root);
@@ -74,8 +75,40 @@ class _Translations$calendar$fa extends Translations$calendar$en {
 
 	// Translations
 	@override String get title => 'تقویم';
-	@override String get emptyTitle => 'تقویم و یادآوری‌ها';
-	@override String get emptyBody => 'نمای ماه شمسی و فهرست رویدادها در فاز تقویم اضافه می‌شود.';
+	@override String get fab => 'یادآوری';
+	@override String get emptyTitle => 'این ماه یادآوری نیست';
+	@override String get emptyBody => 'یک یادآوری بگذار تا روی ماه و در فهرست روز دیده شود.';
+	@override String get emptyDay => 'این روز خالی است.';
+	@override String get agenda => 'این روز';
+	@override String get monthAgenda => 'این ماه';
+	@override String get today => 'امروز';
+	@override String todayHeading({required Object weekday, required Object date}) => '${weekday}، ${date}';
+	@override String get showMonth => 'نمای ماه';
+	@override String get hideMonth => 'بستن ماه';
+	@override String get addForDay => 'برای این روز';
+	@override String get newTitle => 'یادآوری تازه';
+	@override String get editTitle => 'ویرایش یادآوری';
+	@override String get titleField => 'عنوان';
+	@override String get bodyField => 'یادداشت';
+	@override String get date => 'تاریخ';
+	@override String get time => 'ساعت';
+	@override String get allDay => 'تمام‌روز';
+	@override String get repeat => 'تکرار';
+	@override String get everyN => 'هر N روز';
+	@override String get notifyOnTime => 'اعلان سر ساعت';
+	@override String get notifyDayBefore => 'اعلان یک روز قبل';
+	@override String notificationDayBefore({required Object title}) => 'فردا: ${title}';
+	@override String get save => 'ذخیره';
+	@override String get edit => 'ویرایش';
+	@override String get delete => 'حذف';
+	@override String get deleteConfirm => 'این یادآوری حذف شود؟';
+	@override String get missingTitle => 'عنوان را بنویس.';
+	@override String get invalidRepeat => 'N باید حداقل ۲ باشد.';
+	@override String get loadError => 'خواندن یادآوری‌ها ممکن نشد.';
+	@override String get saveError => 'ذخیرهٔ یادآوری ممکن نشد.';
+	@override String get missingItem => 'این یادآوری دیگر نیست.';
+	@override late final _Translations$calendar$repeatRule$fa repeatRule = _Translations$calendar$repeatRule$fa._(_root);
+	@override late final _Translations$calendar$weekday$fa weekday = _Translations$calendar$weekday$fa._(_root);
 }
 
 // Path: home
@@ -87,8 +120,28 @@ class _Translations$home$fa extends Translations$home$en {
 	// Translations
 	@override String get payAndReceive => 'بده و بستان';
 	@override String get offlineBlurb => 'قسط‌ها، طلب‌ها و یادآوری‌ها — همه روی همین دستگاه.';
-	@override String get emptyTitle => 'خانه به‌زودی زنده می‌شود';
-	@override String get emptyBody => 'این هفته و «چه‌کسی چقدر» در فازهای بعدی این‌جا نمایش داده می‌شود.';
+	@override String get emptyTitle => 'هفته‌ای آرام';
+	@override String get emptyBody => 'تا هفت روز آینده سررسیدی نیست.';
+	@override String get loadError => 'خواندن دادهٔ محلی ممکن نشد.';
+	@override String get dueThisWeek => 'این هفته';
+	@override String get overdue => 'معوق';
+	@override String get whoOwes => 'چه‌کسی چقدر';
+	@override String get emptyBalances => 'ماندهٔ بازی نیست.';
+	@override String iOwe({required Object amount}) => 'بدهی ${amount}';
+	@override String theyOwe({required Object amount}) => 'طلب ${amount}';
+	@override String get fabPay => 'بدهی';
+	@override String get fabReceive => 'طلب';
+	@override String get settings => 'تنظیمات';
+	@override String get reportTitle => 'این ماه';
+	@override String paidOut({required Object amount}) => 'پرداخت‌شده ${amount}';
+	@override String paidIn({required Object amount}) => 'دریافت‌شده ${amount}';
+	@override String stillOwe({required Object amount}) => 'ماندهٔ بدهی ${amount}';
+	@override String dueByEnd({required Object amount}) => 'سررسید تا آخر ماه ${amount}';
+	@override String get capPaidOut => 'پرداخت';
+	@override String get capPaidIn => 'دریافت';
+	@override String get capStillOwe => 'ماندهٔ بدهی';
+	@override String get capDueByEnd => 'سررسید این ماه';
+	@override String get greeting => 'بده‌بستان';
 }
 
 // Path: money
@@ -99,8 +152,99 @@ class _Translations$money$fa extends Translations$money$en {
 
 	// Translations
 	@override String get title => 'حساب';
-	@override String get emptyTitle => 'بده‌بستان‌های تو این‌جا می‌آیند';
-	@override String get emptyBody => 'بدهی و طلب، اقساط و پرداخت‌ها را در فاز بعدی اضافه می‌کنیم.';
+	@override String get emptyTitle => 'هنوز بده‌بستانی نیست';
+	@override String get emptyBody => 'با چند ضربه بدهی یا طلب اضافه کن.';
+	@override String get emptyFilter => 'با این فیلتر چیزی پیدا نشد.';
+	@override String get add => 'افزودن';
+	@override String get fabPay => 'بدهی';
+	@override String get fabReceive => 'طلب';
+	@override String get filterAll => 'همه';
+	@override String get filterPay => 'بدهی';
+	@override String get filterReceive => 'طلب';
+	@override String get hideSettled => 'تسویه‌شده‌ها پنهان';
+	@override String get showSettled => 'تسویه‌شده‌ها را نشان بده';
+	@override String get remaining => 'مانده';
+	@override String get total => 'جمع';
+	@override String get paid => 'پرداخت‌شده';
+	@override String get due => 'سررسید';
+	@override String get party => 'طرف‌حساب';
+	@override String get titleField => 'عنوان';
+	@override String get amount => 'مبلغ';
+	@override String get note => 'یادداشت';
+	@override String get optional => 'اختیاری';
+	@override String get schedule => 'زمان‌بندی';
+	@override String get oneTime => 'یک‌جا';
+	@override String get installment => 'قسطی';
+	@override String get periods => 'تعداد قسط';
+	@override String get installmentAmount => 'مبلغ هر قسط';
+	@override String computedTotal({required Object amount}) => 'جمع ${amount}';
+	@override String get startDate => 'شروع';
+	@override String get dueDate => 'سررسید';
+	@override String get firstDue => 'اولین سررسید';
+	@override String get newParty => 'طرف‌حساب جدید';
+	@override String get existingParty => 'طرف‌حساب موجود';
+	@override String get partyName => 'نام';
+	@override String get phone => 'شماره تلفن';
+	@override String get nationalCode => 'کد ملی';
+	@override String get birthDate => 'تاریخ تولد';
+	@override String get cardNumber => 'شماره کارت';
+	@override String get sheba => 'شماره شبا';
+	@override String get callAction => 'تماس';
+	@override String get copyAction => 'کپی';
+	@override String get copied => 'کپی شد.';
+	@override String get callFailed => 'برقراری تماس ممکن نشد.';
+	@override String get save => 'ذخیره';
+	@override String get edit => 'ویرایش';
+	@override String get recordPayment => 'ثبت پرداخت';
+	@override String get paymentAmount => 'مبلغ پرداخت';
+	@override String get payments => 'پرداخت‌ها';
+	@override String get noPayments => 'هنوز پرداختی ثبت نشده.';
+	@override String get payCta => 'ثبت پرداخت';
+	@override String get receiveCta => 'ثبت دریافت';
+	@override String get invalidAmount => 'مبلغ معتبر وارد کن.';
+	@override String get payTooLarge => 'مبلغ از مانده بیشتر است.';
+	@override String get missingTitle => 'عنوان را بنویس.';
+	@override String get missingParty => 'طرف‌حساب را انتخاب یا اضافه کن.';
+	@override String get missingItem => 'این حساب پیدا نشد.';
+	@override String get alreadySettled => 'این حساب تسویه شده.';
+	@override String get loadError => 'خواندن دادهٔ محلی ممکن نشد.';
+	@override String get saveError => 'ذخیره ممکن نشد.';
+	@override String get newTitle => 'حساب جدید';
+	@override String get editTitle => 'ویرایش حساب';
+	@override String periodsProgress({required Object paid, required Object total}) => '${paid} از ${total}';
+	@override late final _Translations$money$status$fa status = _Translations$money$status$fa._(_root);
+	@override late final _Translations$money$direction$fa direction = _Translations$money$direction$fa._(_root);
+	@override late final _Translations$money$partyKind$fa partyKind = _Translations$money$partyKind$fa._(_root);
+	@override String get parties => 'طرف‌حساب‌ها';
+	@override String get searchParty => 'جستجوی طرف‌حساب';
+	@override String get emptyParties => 'هنوز طرف‌حسابی نیست';
+	@override String get emptyPartiesBody => 'شخص، فروشگاه یا بانکی که باهاش حساب داری را اضافه کن.';
+	@override String get emptyPartyFilter => 'طرف‌حسابی با این جستجو پیدا نشد.';
+	@override String get partyInUse => 'این طرف‌حساب هنوز حساب دارد. اول حساب‌ها را بردار.';
+	@override String get missingPartyItem => 'این طرف‌حساب پیدا نشد.';
+	@override String get delete => 'حذف حساب';
+	@override String get deleteConfirm => 'این حساب و پرداخت‌هایش حذف می‌شود. یادداشت‌های وصل‌شده می‌مانند.';
+	@override String get deleteParty => 'حذف طرف‌حساب';
+	@override String get deletePartyConfirm => 'این طرف‌حساب حذف شود؟ اول باید حساب‌هایش را برداری.';
+	@override String get newPartyTitle => 'طرف‌حساب تازه';
+	@override String get editPartyTitle => 'ویرایش طرف‌حساب';
+	@override String get linkedAccounts => 'حساب‌ها';
+	@override String get noLinkedAccounts => 'هنوز حسابی با این طرف‌حساب نیست.';
+	@override String get netBalance => 'مانده حساب';
+	@override String get statement => 'صورت‌حساب';
+	@override String get balance => 'مانده';
+	@override String get emptyLedger => 'هنوز تراکنشی نیست.';
+	@override String get share => 'اشتراک‌گذاری';
+	@override String get shareStatement => 'اشتراک صورت‌حساب';
+	@override String shareSubject({required Object name}) => 'صورت‌حساب: ${name}';
+	@override String get shareFailed => 'باز کردن صفحهٔ اشتراک‌گذاری ممکن نشد.';
+	@override String get dueTitle => 'سررسید امروز';
+	@override String get dueSoonTitle => 'سررسید فردا';
+	@override String dueBody({required Object title}) => '${title}';
+	@override String get scheduleTitle => 'زمان‌بندی اقساط';
+	@override String installmentRow({required Object index}) => 'قسط ${index}';
+	@override String remainingAmount({required Object amount}) => 'مانده ${amount}';
+	@override late final _Translations$money$installmentState$fa installmentState = _Translations$money$installmentState$fa._(_root);
 }
 
 // Path: notes
@@ -111,8 +255,80 @@ class _Translations$notes$fa extends Translations$notes$en {
 
 	// Translations
 	@override String get title => 'یادداشت';
-	@override String get emptyTitle => 'یادداشت‌ها';
-	@override String get emptyBody => 'عنوان، متن، برچسب و سنجاق‌کردن در فاز یادداشت‌ها می‌آید.';
+	@override String get fab => 'یادداشت';
+	@override String get emptyTitle => 'هنوز یادداشتی نیست';
+	@override String get emptyBody => 'یک فکر، شماره شبا، یا حرفی دربارهٔ کسی را سنجاق کن.';
+	@override String get emptyFilter => 'چیزی پیدا نشد.';
+	@override String get search => 'جستجوی یادداشت';
+	@override String get newTitle => 'یادداشت تازه';
+	@override String get editTitle => 'ویرایش یادداشت';
+	@override String get titleField => 'عنوان';
+	@override String get bodyField => 'متن';
+	@override String get tagsField => 'برچسب‌ها';
+	@override String get tagsHint => 'با ویرگول جدا کن';
+	@override String get pinned => 'سنجاق‌شده';
+	@override String get checklist => 'چک‌لیست';
+	@override String get addItem => 'افزودن مورد';
+	@override String get removeItem => 'حذف مورد';
+	@override String get checklistItemHint => 'مورد فهرست';
+	@override String get party => 'طرف حساب';
+	@override String get money => 'حساب';
+	@override String get none => 'هیچ‌کدام';
+	@override String get save => 'ذخیره';
+	@override String get edit => 'ویرایش';
+	@override String get delete => 'حذف';
+	@override String get deleteConfirm => 'این یادداشت حذف شود؟';
+	@override String get openMoney => 'باز کردن حساب';
+	@override String get missingTitle => 'عنوان را بنویس.';
+	@override String get loadError => 'خواندن یادداشت‌ها ممکن نشد.';
+	@override String get saveError => 'ذخیرهٔ یادداشت ممکن نشد.';
+	@override String get missingItem => 'این یادداشت دیگر نیست.';
+	@override String get allTags => 'همهٔ برچسب‌ها';
+	@override String get searchParty => 'جستجوی طرف حساب';
+	@override String get searchMoney => 'جستجوی حساب';
+}
+
+// Path: settings
+class _Translations$settings$fa extends Translations$settings$en {
+	_Translations$settings$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'تنظیمات';
+	@override String get theme => 'پوسته';
+	@override String get language => 'زبان';
+	@override String get calendar => 'گاه‌شماری';
+	@override String get calendarHint => 'اول و آخر ماه و هفته با این گاه‌شماری حساب می‌شود — نه با زبان برنامه.';
+	@override String get jalali => 'هجری شمسی';
+	@override String get gregorian => 'میلادی';
+	@override String get currency => 'واحد پول';
+	@override String get currencyHint => 'ریال ده برابر تومان نشان داده می‌شود. دلار فقط برچسب است.';
+	@override String get backup => 'پشتیبان';
+	@override String get backupHint => 'حساب، تقویم، یادداشت و همین تنظیمات روی همین دستگاه می‌ماند. به‌روزرسانی برنامه داده را نگه می‌دارد؛ حذف برنامه نه.';
+	@override String get exportBackup => 'خروجی پشتیبان';
+	@override String get importBackup => 'بازگردانی پشتیبان';
+	@override String get backupSaved => 'پشتیبان ذخیره شد.';
+	@override String get backupRestored => 'پشتیبان بازگردانی شد.';
+	@override String get backupCancelled => 'لغو شد.';
+	@override String get backupFailed => 'پشتیبان کامل نشد.';
+	@override String get backupFileName => 'bedeh-bestan-backup.json';
+	@override String get about => 'درباره';
+	@override String version({required Object version}) => 'نسخه ${version}';
+	@override String get privacy => 'حریم خصوصی';
+	@override String get privacyBody => 'همه‌چیز روی همین گوشی می‌ماند. حساب کاربری، ابر و ردیابی نداریم.';
+}
+
+// Path: app.currency
+class _Translations$app$currency$fa extends Translations$app$currency$en {
+	_Translations$app$currency$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get toman => 'تومان';
+	@override String get rial => 'ریال';
+	@override String get usd => 'دلار';
 }
 
 // Path: app.nav
@@ -176,6 +392,89 @@ class _Translations$app$actions$fa extends Translations$app$actions$en {
 	@override String get close => 'بستن';
 	@override String get save => 'ذخیره';
 	@override String get add => 'افزودن';
+	@override String get search => 'جستجو';
+	@override String get back => 'بازگشت';
+	@override String get delete => 'حذف';
+}
+
+// Path: calendar.repeatRule
+class _Translations$calendar$repeatRule$fa extends Translations$calendar$repeatRule$en {
+	_Translations$calendar$repeatRule$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get none => 'تکرار نمی‌شود';
+	@override String get daily => 'روزانه';
+	@override String get weekly => 'هفتگی';
+	@override String get monthly => 'ماهانه';
+	@override String get yearly => 'سالانه';
+	@override String get everyNDays => 'هر N روز';
+}
+
+// Path: calendar.weekday
+class _Translations$calendar$weekday$fa extends Translations$calendar$weekday$en {
+	_Translations$calendar$weekday$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get sat => 'ش';
+	@override String get sun => 'ی';
+	@override String get mon => 'د';
+	@override String get tue => 'س';
+	@override String get wed => 'چ';
+	@override String get thu => 'پ';
+	@override String get fri => 'ج';
+}
+
+// Path: money.status
+class _Translations$money$status$fa extends Translations$money$status$en {
+	_Translations$money$status$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get upcoming => 'آینده';
+	@override String get dueToday => 'سررسید امروز';
+	@override String get overdue => 'معوق';
+	@override String get settled => 'تسویه';
+}
+
+// Path: money.direction
+class _Translations$money$direction$fa extends Translations$money$direction$en {
+	_Translations$money$direction$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get pay => 'بدهی';
+	@override String get receive => 'طلب';
+}
+
+// Path: money.partyKind
+class _Translations$money$partyKind$fa extends Translations$money$partyKind$en {
+	_Translations$money$partyKind$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get person => 'شخص';
+	@override String get bank => 'بانک';
+	@override String get shop => 'فروشگاه';
+	@override String get custom => 'سایر';
+}
+
+// Path: money.installmentState
+class _Translations$money$installmentState$fa extends Translations$money$installmentState$en {
+	_Translations$money$installmentState$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get paid => 'پرداخت‌شده';
+	@override String get due => 'سررسید';
+	@override String get upcoming => 'آینده';
 }
 
 /// The flat map containing all translations for locale <fa>.
@@ -189,7 +488,9 @@ extension on TranslationsFa {
 			'app.appName' => 'بده‌بستان',
 			'app.subtitle' => 'قسط، طلب، یادآوری',
 			'app.latinName' => 'BedeBestan',
-			'app.currency' => 'تومان',
+			'app.currency.toman' => 'تومان',
+			'app.currency.rial' => 'ریال',
+			'app.currency.usd' => 'دلار',
 			'app.comingSoon' => 'به‌زودی',
 			'app.emptyTitle' => 'موردی وجود ندارد',
 			'app.nav.home' => 'خانه',
@@ -210,19 +511,236 @@ extension on TranslationsFa {
 			'app.actions.close' => 'بستن',
 			'app.actions.save' => 'ذخیره',
 			'app.actions.add' => 'افزودن',
+			'app.actions.search' => 'جستجو',
+			'app.actions.back' => 'بازگشت',
+			'app.actions.delete' => 'حذف',
 			'calendar.title' => 'تقویم',
-			'calendar.emptyTitle' => 'تقویم و یادآوری‌ها',
-			'calendar.emptyBody' => 'نمای ماه شمسی و فهرست رویدادها در فاز تقویم اضافه می‌شود.',
+			'calendar.fab' => 'یادآوری',
+			'calendar.emptyTitle' => 'این ماه یادآوری نیست',
+			'calendar.emptyBody' => 'یک یادآوری بگذار تا روی ماه و در فهرست روز دیده شود.',
+			'calendar.emptyDay' => 'این روز خالی است.',
+			'calendar.agenda' => 'این روز',
+			'calendar.monthAgenda' => 'این ماه',
+			'calendar.today' => 'امروز',
+			'calendar.todayHeading' => ({required Object weekday, required Object date}) => '${weekday}، ${date}',
+			'calendar.showMonth' => 'نمای ماه',
+			'calendar.hideMonth' => 'بستن ماه',
+			'calendar.addForDay' => 'برای این روز',
+			'calendar.newTitle' => 'یادآوری تازه',
+			'calendar.editTitle' => 'ویرایش یادآوری',
+			'calendar.titleField' => 'عنوان',
+			'calendar.bodyField' => 'یادداشت',
+			'calendar.date' => 'تاریخ',
+			'calendar.time' => 'ساعت',
+			'calendar.allDay' => 'تمام‌روز',
+			'calendar.repeat' => 'تکرار',
+			'calendar.everyN' => 'هر N روز',
+			'calendar.notifyOnTime' => 'اعلان سر ساعت',
+			'calendar.notifyDayBefore' => 'اعلان یک روز قبل',
+			'calendar.notificationDayBefore' => ({required Object title}) => 'فردا: ${title}',
+			'calendar.save' => 'ذخیره',
+			'calendar.edit' => 'ویرایش',
+			'calendar.delete' => 'حذف',
+			'calendar.deleteConfirm' => 'این یادآوری حذف شود؟',
+			'calendar.missingTitle' => 'عنوان را بنویس.',
+			'calendar.invalidRepeat' => 'N باید حداقل ۲ باشد.',
+			'calendar.loadError' => 'خواندن یادآوری‌ها ممکن نشد.',
+			'calendar.saveError' => 'ذخیرهٔ یادآوری ممکن نشد.',
+			'calendar.missingItem' => 'این یادآوری دیگر نیست.',
+			'calendar.repeatRule.none' => 'تکرار نمی‌شود',
+			'calendar.repeatRule.daily' => 'روزانه',
+			'calendar.repeatRule.weekly' => 'هفتگی',
+			'calendar.repeatRule.monthly' => 'ماهانه',
+			'calendar.repeatRule.yearly' => 'سالانه',
+			'calendar.repeatRule.everyNDays' => 'هر N روز',
+			'calendar.weekday.sat' => 'ش',
+			'calendar.weekday.sun' => 'ی',
+			'calendar.weekday.mon' => 'د',
+			'calendar.weekday.tue' => 'س',
+			'calendar.weekday.wed' => 'چ',
+			'calendar.weekday.thu' => 'پ',
+			'calendar.weekday.fri' => 'ج',
 			'home.payAndReceive' => 'بده و بستان',
 			'home.offlineBlurb' => 'قسط‌ها، طلب‌ها و یادآوری‌ها — همه روی همین دستگاه.',
-			'home.emptyTitle' => 'خانه به‌زودی زنده می‌شود',
-			'home.emptyBody' => 'این هفته و «چه‌کسی چقدر» در فازهای بعدی این‌جا نمایش داده می‌شود.',
+			'home.emptyTitle' => 'هفته‌ای آرام',
+			'home.emptyBody' => 'تا هفت روز آینده سررسیدی نیست.',
+			'home.loadError' => 'خواندن دادهٔ محلی ممکن نشد.',
+			'home.dueThisWeek' => 'این هفته',
+			'home.overdue' => 'معوق',
+			'home.whoOwes' => 'چه‌کسی چقدر',
+			'home.emptyBalances' => 'ماندهٔ بازی نیست.',
+			'home.iOwe' => ({required Object amount}) => 'بدهی ${amount}',
+			'home.theyOwe' => ({required Object amount}) => 'طلب ${amount}',
+			'home.fabPay' => 'بدهی',
+			'home.fabReceive' => 'طلب',
+			'home.settings' => 'تنظیمات',
+			'home.reportTitle' => 'این ماه',
+			'home.paidOut' => ({required Object amount}) => 'پرداخت‌شده ${amount}',
+			'home.paidIn' => ({required Object amount}) => 'دریافت‌شده ${amount}',
+			'home.stillOwe' => ({required Object amount}) => 'ماندهٔ بدهی ${amount}',
+			'home.dueByEnd' => ({required Object amount}) => 'سررسید تا آخر ماه ${amount}',
+			'home.capPaidOut' => 'پرداخت',
+			'home.capPaidIn' => 'دریافت',
+			'home.capStillOwe' => 'ماندهٔ بدهی',
+			'home.capDueByEnd' => 'سررسید این ماه',
+			'home.greeting' => 'بده‌بستان',
 			'money.title' => 'حساب',
-			'money.emptyTitle' => 'بده‌بستان‌های تو این‌جا می‌آیند',
-			'money.emptyBody' => 'بدهی و طلب، اقساط و پرداخت‌ها را در فاز بعدی اضافه می‌کنیم.',
+			'money.emptyTitle' => 'هنوز بده‌بستانی نیست',
+			'money.emptyBody' => 'با چند ضربه بدهی یا طلب اضافه کن.',
+			'money.emptyFilter' => 'با این فیلتر چیزی پیدا نشد.',
+			'money.add' => 'افزودن',
+			'money.fabPay' => 'بدهی',
+			'money.fabReceive' => 'طلب',
+			'money.filterAll' => 'همه',
+			'money.filterPay' => 'بدهی',
+			'money.filterReceive' => 'طلب',
+			'money.hideSettled' => 'تسویه‌شده‌ها پنهان',
+			'money.showSettled' => 'تسویه‌شده‌ها را نشان بده',
+			'money.remaining' => 'مانده',
+			'money.total' => 'جمع',
+			'money.paid' => 'پرداخت‌شده',
+			'money.due' => 'سررسید',
+			'money.party' => 'طرف‌حساب',
+			'money.titleField' => 'عنوان',
+			'money.amount' => 'مبلغ',
+			'money.note' => 'یادداشت',
+			'money.optional' => 'اختیاری',
+			'money.schedule' => 'زمان‌بندی',
+			'money.oneTime' => 'یک‌جا',
+			'money.installment' => 'قسطی',
+			'money.periods' => 'تعداد قسط',
+			'money.installmentAmount' => 'مبلغ هر قسط',
+			'money.computedTotal' => ({required Object amount}) => 'جمع ${amount}',
+			'money.startDate' => 'شروع',
+			'money.dueDate' => 'سررسید',
+			'money.firstDue' => 'اولین سررسید',
+			'money.newParty' => 'طرف‌حساب جدید',
+			'money.existingParty' => 'طرف‌حساب موجود',
+			'money.partyName' => 'نام',
+			'money.phone' => 'شماره تلفن',
+			'money.nationalCode' => 'کد ملی',
+			'money.birthDate' => 'تاریخ تولد',
+			'money.cardNumber' => 'شماره کارت',
+			'money.sheba' => 'شماره شبا',
+			'money.callAction' => 'تماس',
+			'money.copyAction' => 'کپی',
+			'money.copied' => 'کپی شد.',
+			'money.callFailed' => 'برقراری تماس ممکن نشد.',
+			'money.save' => 'ذخیره',
+			'money.edit' => 'ویرایش',
+			'money.recordPayment' => 'ثبت پرداخت',
+			'money.paymentAmount' => 'مبلغ پرداخت',
+			'money.payments' => 'پرداخت‌ها',
+			'money.noPayments' => 'هنوز پرداختی ثبت نشده.',
+			'money.payCta' => 'ثبت پرداخت',
+			'money.receiveCta' => 'ثبت دریافت',
+			'money.invalidAmount' => 'مبلغ معتبر وارد کن.',
+			'money.payTooLarge' => 'مبلغ از مانده بیشتر است.',
+			'money.missingTitle' => 'عنوان را بنویس.',
+			'money.missingParty' => 'طرف‌حساب را انتخاب یا اضافه کن.',
+			'money.missingItem' => 'این حساب پیدا نشد.',
+			'money.alreadySettled' => 'این حساب تسویه شده.',
+			'money.loadError' => 'خواندن دادهٔ محلی ممکن نشد.',
+			'money.saveError' => 'ذخیره ممکن نشد.',
+			'money.newTitle' => 'حساب جدید',
+			'money.editTitle' => 'ویرایش حساب',
+			'money.periodsProgress' => ({required Object paid, required Object total}) => '${paid} از ${total}',
+			'money.status.upcoming' => 'آینده',
+			'money.status.dueToday' => 'سررسید امروز',
+			'money.status.overdue' => 'معوق',
+			'money.status.settled' => 'تسویه',
+			'money.direction.pay' => 'بدهی',
+			'money.direction.receive' => 'طلب',
+			'money.partyKind.person' => 'شخص',
+			'money.partyKind.bank' => 'بانک',
+			'money.partyKind.shop' => 'فروشگاه',
+			'money.partyKind.custom' => 'سایر',
+			'money.parties' => 'طرف‌حساب‌ها',
+			'money.searchParty' => 'جستجوی طرف‌حساب',
+			'money.emptyParties' => 'هنوز طرف‌حسابی نیست',
+			'money.emptyPartiesBody' => 'شخص، فروشگاه یا بانکی که باهاش حساب داری را اضافه کن.',
+			'money.emptyPartyFilter' => 'طرف‌حسابی با این جستجو پیدا نشد.',
+			'money.partyInUse' => 'این طرف‌حساب هنوز حساب دارد. اول حساب‌ها را بردار.',
+			'money.missingPartyItem' => 'این طرف‌حساب پیدا نشد.',
+			'money.delete' => 'حذف حساب',
+			'money.deleteConfirm' => 'این حساب و پرداخت‌هایش حذف می‌شود. یادداشت‌های وصل‌شده می‌مانند.',
+			'money.deleteParty' => 'حذف طرف‌حساب',
+			'money.deletePartyConfirm' => 'این طرف‌حساب حذف شود؟ اول باید حساب‌هایش را برداری.',
+			'money.newPartyTitle' => 'طرف‌حساب تازه',
+			'money.editPartyTitle' => 'ویرایش طرف‌حساب',
+			'money.linkedAccounts' => 'حساب‌ها',
+			'money.noLinkedAccounts' => 'هنوز حسابی با این طرف‌حساب نیست.',
+			'money.netBalance' => 'مانده حساب',
+			'money.statement' => 'صورت‌حساب',
+			'money.balance' => 'مانده',
+			'money.emptyLedger' => 'هنوز تراکنشی نیست.',
+			'money.share' => 'اشتراک‌گذاری',
+			'money.shareStatement' => 'اشتراک صورت‌حساب',
+			'money.shareSubject' => ({required Object name}) => 'صورت‌حساب: ${name}',
+			'money.shareFailed' => 'باز کردن صفحهٔ اشتراک‌گذاری ممکن نشد.',
+			'money.dueTitle' => 'سررسید امروز',
+			'money.dueSoonTitle' => 'سررسید فردا',
+			'money.dueBody' => ({required Object title}) => '${title}',
+			'money.scheduleTitle' => 'زمان‌بندی اقساط',
+			'money.installmentRow' => ({required Object index}) => 'قسط ${index}',
+			'money.remainingAmount' => ({required Object amount}) => 'مانده ${amount}',
+			'money.installmentState.paid' => 'پرداخت‌شده',
+			'money.installmentState.due' => 'سررسید',
+			'money.installmentState.upcoming' => 'آینده',
 			'notes.title' => 'یادداشت',
-			'notes.emptyTitle' => 'یادداشت‌ها',
-			'notes.emptyBody' => 'عنوان، متن، برچسب و سنجاق‌کردن در فاز یادداشت‌ها می‌آید.',
+			'notes.fab' => 'یادداشت',
+			'notes.emptyTitle' => 'هنوز یادداشتی نیست',
+			'notes.emptyBody' => 'یک فکر، شماره شبا، یا حرفی دربارهٔ کسی را سنجاق کن.',
+			'notes.emptyFilter' => 'چیزی پیدا نشد.',
+			'notes.search' => 'جستجوی یادداشت',
+			'notes.newTitle' => 'یادداشت تازه',
+			'notes.editTitle' => 'ویرایش یادداشت',
+			'notes.titleField' => 'عنوان',
+			'notes.bodyField' => 'متن',
+			'notes.tagsField' => 'برچسب‌ها',
+			'notes.tagsHint' => 'با ویرگول جدا کن',
+			'notes.pinned' => 'سنجاق‌شده',
+			'notes.checklist' => 'چک‌لیست',
+			'notes.addItem' => 'افزودن مورد',
+			'notes.removeItem' => 'حذف مورد',
+			'notes.checklistItemHint' => 'مورد فهرست',
+			'notes.party' => 'طرف حساب',
+			'notes.money' => 'حساب',
+			'notes.none' => 'هیچ‌کدام',
+			'notes.save' => 'ذخیره',
+			'notes.edit' => 'ویرایش',
+			'notes.delete' => 'حذف',
+			'notes.deleteConfirm' => 'این یادداشت حذف شود؟',
+			'notes.openMoney' => 'باز کردن حساب',
+			'notes.missingTitle' => 'عنوان را بنویس.',
+			'notes.loadError' => 'خواندن یادداشت‌ها ممکن نشد.',
+			'notes.saveError' => 'ذخیرهٔ یادداشت ممکن نشد.',
+			'notes.missingItem' => 'این یادداشت دیگر نیست.',
+			'notes.allTags' => 'همهٔ برچسب‌ها',
+			'notes.searchParty' => 'جستجوی طرف حساب',
+			'notes.searchMoney' => 'جستجوی حساب',
+			'settings.title' => 'تنظیمات',
+			'settings.theme' => 'پوسته',
+			'settings.language' => 'زبان',
+			'settings.calendar' => 'گاه‌شماری',
+			'settings.calendarHint' => 'اول و آخر ماه و هفته با این گاه‌شماری حساب می‌شود — نه با زبان برنامه.',
+			'settings.jalali' => 'هجری شمسی',
+			'settings.gregorian' => 'میلادی',
+			'settings.currency' => 'واحد پول',
+			'settings.currencyHint' => 'ریال ده برابر تومان نشان داده می‌شود. دلار فقط برچسب است.',
+			'settings.backup' => 'پشتیبان',
+			'settings.backupHint' => 'حساب، تقویم، یادداشت و همین تنظیمات روی همین دستگاه می‌ماند. به‌روزرسانی برنامه داده را نگه می‌دارد؛ حذف برنامه نه.',
+			'settings.exportBackup' => 'خروجی پشتیبان',
+			'settings.importBackup' => 'بازگردانی پشتیبان',
+			'settings.backupSaved' => 'پشتیبان ذخیره شد.',
+			'settings.backupRestored' => 'پشتیبان بازگردانی شد.',
+			'settings.backupCancelled' => 'لغو شد.',
+			'settings.backupFailed' => 'پشتیبان کامل نشد.',
+			'settings.backupFileName' => 'bedeh-bestan-backup.json',
+			'settings.about' => 'درباره',
+			'settings.version' => ({required Object version}) => 'نسخه ${version}',
+			'settings.privacy' => 'حریم خصوصی',
+			'settings.privacyBody' => 'همه‌چیز روی همین گوشی می‌ماند. حساب کاربری، ابر و ردیابی نداریم.',
 			_ => null,
 		};
 	}

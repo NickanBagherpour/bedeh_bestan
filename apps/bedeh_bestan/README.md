@@ -6,6 +6,6 @@ See the [repo README](../../README.md) for setup, `melos` scripts, and docs.
 
 ```bash
 # from repo root
-melos run dev          # Linux desktop
+melos run dev:linux    # Linux desktop
 melos run dev:web      # Chrome
 ```

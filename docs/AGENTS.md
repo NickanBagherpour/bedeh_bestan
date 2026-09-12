@@ -9,21 +9,24 @@ packages share foundation. **Do not copy MMS business logic.**
 | Task | Read | Then |
 |---|---|---|
 | Understand repo | `architecture/00-overview.md` | Explore `features/` + `packages/` |
+| Local DB / seed | `architecture/04-local-data.md` | `packages/local_db` |
 | New feature | `architecture/03-feature-anatomy.md`, `prompts/new-feature.md` | Package under `features/<name>/` |
 | Routing / shell | `architecture/00-overview.md` (routing bullet) | Paths only in `AppRoutes` |
 | Theme / i18n / RTL | `architecture/08-i18n-theming.md` | en + fa in the same change |
 | Next product work | `project/bedeh-bestan/PHASES.md` | One phase at a time |
+| Concrete task / bug | `prompts/backlog.md` → one linked spec | `prompts/new-chat.md` for chat opener |
 
 ## Layout
 
 ```
 apps/bedeh_bestan/     composition root (main, router, AppShell)
 features/              one Dart package per destination
-  home/ money/ calendar/ notes/
+  home/ money/ calendar/ notes/ settings/
 packages/
   core/                routes, settings, storage, Jalali, Toman helpers
   ui_kit/              theme + Kit* widgets
   translations/        slang (scans whole repo for *.i18n.json)
+  local_db/            Drift + seed
 ```
 
 ## Non-negotiable

@@ -5,8 +5,12 @@ import 'package:core/core.dart'
         initialAppSettingsProvider,
         loadAppSettings,
         sharedPreferencesProvider;
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:local_db/local_db.dart'
+    show appDatabaseProvider, seedDemoData;
+import 'package:local_db/memory.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:translations/translations.dart'
     show TranslationProvider, useAppDefaultLocale;
@@ -18,6 +22,8 @@ void main() {
     SharedPreferences.setMockInitialValues(<String, Object>{});
     final preferences = await SharedPreferences.getInstance();
     final storage = AppStorage(preferences: preferences);
+    final database = openMemoryDatabase();
+    await seedDemoData(database);
     await useAppDefaultLocale();
 
     await tester.pumpWidget(
@@ -27,16 +33,44 @@ void main() {
           appStorageProvider.overrideWithValue(storage),
           initialAppSettingsProvider
               .overrideWithValue(loadAppSettings(storage: storage)),
+          appDatabaseProvider.overrideWithValue(database),
         ],
         child: TranslationProvider(child: const BedeBestanApp()),
       ),
     );
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 400));
 
     expect(find.text('خانه'), findsWidgets);
     expect(find.text('حساب'), findsOneWidget);
     expect(find.text('تقویم'), findsOneWidget);
     expect(find.text('یادداشت'), findsOneWidget);
+    expect(find.text('این ماه'), findsOneWidget);
+    expect(find.byTooltip('تنظیمات'), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.calendar_month_outlined));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.textContaining('شهریور'), findsWidgets);
+    expect(find.text('یادآوری'), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.sticky_note_2_outlined));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('شبا بانک ملی'), findsOneWidget);
+
+    await tester.tap(find.text('خانه'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    await tester.tap(find.byTooltip('تنظیمات'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('گاه‌شماری'), findsWidgets);
+
+    await database.close();
+    await tester.pump(const Duration(milliseconds: 50));
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(milliseconds: 50));
   });
 }

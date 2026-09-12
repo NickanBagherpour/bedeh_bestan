@@ -17,9 +17,10 @@ Read **only** what the task needs. Do not load the whole `docs/` tree.
 | i18n / theme / RTL | [docs/architecture/08-i18n-theming.md](docs/architecture/08-i18n-theming.md) |
 | Routing | `packages/core/lib/src/router/app_routes.dart` |
 | Phases | [docs/project/bedeh-bestan/PHASES.md](docs/project/bedeh-bestan/PHASES.md) |
+| Backlog task | [docs/prompts/backlog.md](docs/prompts/backlog.md) · [new-chat template](docs/prompts/new-chat.md) |
 
 ## Current features
 
-`features/home` · `features/money` · `features/calendar` · `features/notes`
+`features/home` · `features/money` · `features/calendar` · `features/notes` · `features/settings`
 
-App root: `apps/bedeh_bestan/` · Routes: `packages/core/lib/src/router/app_routes.dart`
+App root: `apps/bedeh_bestan/` · DB: `packages/local_db/` · Routes: `packages/core/lib/src/router/app_routes.dart`
