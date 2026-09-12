@@ -1,6 +1,21 @@
-import 'package:local_db/local_db.dart' show MoneyDirection, MoneyItem, MoneyStatus;
+import 'package:local_db/local_db.dart'
+    show MoneyDirection, MoneyItem, MoneySchedule, MoneyStatus;
 
 enum MoneyListFilter { all, pay, receive }
+
+/// Suggested payment prefill (stored Toman) for an installment item.
+///
+/// Returns the per-installment amount, capped at the remaining balance so the
+/// final قسط never over-fills. `null` for one-time items, settled items, or
+/// installment items without a stored installment amount (no forced prefill).
+int? installmentPrefillAmount(MoneyItem item) {
+  if (item.schedule != MoneySchedule.installment) return null;
+  if (item.isSettled) return null;
+  final each = item.installmentAmount;
+  if (each == null || each <= 0) return null;
+  final remaining = item.remainingAmount;
+  return each < remaining ? each : remaining;
+}
 
 int moneyStatusRank(MoneyStatus status) {
   return switch (status) {

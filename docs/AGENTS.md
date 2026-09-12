@@ -14,6 +14,7 @@ packages share foundation. **Do not copy MMS business logic.**
 | Routing / shell | `architecture/00-overview.md` (routing bullet) | Paths only in `AppRoutes` |
 | Theme / i18n / RTL | `architecture/08-i18n-theming.md` | en + fa in the same change |
 | Next product work | `project/bedeh-bestan/PHASES.md` | One phase at a time |
+| Concrete task / bug | `prompts/backlog.md` → one linked spec | `prompts/new-chat.md` for chat opener |
 
 ## Layout
 

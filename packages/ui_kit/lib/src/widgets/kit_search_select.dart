@@ -33,26 +33,30 @@ class KitSearchSelect<T> extends StatelessWidget {
     final theme = Theme.of(context);
     final selected = value;
     final text = selected == null ? '' : labelOf(selected);
+    final isEmpty = text.isEmpty;
     return InkWell(
       onTap: enabled ? () => _open(context) : null,
       borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
       child: InputDecorator(
         decoration: InputDecoration(
           labelText: label,
+          // Keep the label floated so it never sits on top of the empty-state
+          // placeholder (`hintText`) — this is what caused the overlap.
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          hintText: noneLabel,
           enabled: enabled,
           suffixIcon: const Icon(Icons.search_rounded),
         ),
-        isEmpty: text.isEmpty,
-        child: Text(
-          text.isEmpty ? (noneLabel ?? '') : text,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: text.isEmpty
-              ? theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                )
-              : theme.textTheme.bodyLarge,
-        ),
+        // Drives `hintText` visibility: shown only while nothing is selected.
+        isEmpty: isEmpty,
+        child: isEmpty
+            ? null
+            : Text(
+                text,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodyLarge,
+              ),
       ),
     );
   }

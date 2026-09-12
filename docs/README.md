@@ -11,4 +11,6 @@ Entry: [../AGENTS.md](../AGENTS.md) (agents) · [../README.md](../README.md) (hu
 | [architecture/08-i18n-theming.md](architecture/08-i18n-theming.md) | slang, RTL, theme |
 | [architecture/10-coding-conventions.md](architecture/10-coding-conventions.md) | Naming + `show` imports |
 | [project/bedeh-bestan/PHASES.md](project/bedeh-bestan/PHASES.md) | What to build next |
+| [prompts/backlog.md](prompts/backlog.md) | Agent task queue (one spec per chat) |
+| [prompts/new-chat.md](prompts/new-chat.md) | Copy-paste Cursor chat opener |
 | [prompts/new-feature.md](prompts/new-feature.md) | Scaffold checklist |

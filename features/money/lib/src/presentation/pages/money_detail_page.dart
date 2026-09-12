@@ -6,6 +6,7 @@ import 'package:core/core.dart'
         GroupedAmountFormatter,
         appSettingsProvider,
         formatLongDate,
+        groupAmount,
         overlayAppBar,
         parseStoredAmount,
         popOrGo,
@@ -13,7 +14,8 @@ import 'package:core/core.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:local_db/local_db.dart' show MoneyDirection, MoneySchedule, MoneyStatus;
+import 'package:local_db/local_db.dart'
+    show MoneyDirection, MoneyItem, MoneySchedule, MoneyStatus;
 import 'package:translations/translations.dart'
     show Translations, TranslationsLookup;
 import 'package:ui_kit/ui_kit.dart'
@@ -27,6 +29,7 @@ import 'package:ui_kit/ui_kit.dart'
         showKitConfirmDialog;
 
 import '../../application/controllers/money_detail_controller.dart';
+import '../../application/money_query.dart';
 import '../../application/state/money_detail_state.dart';
 import '../money_style.dart';
 import '../widgets/money_status_chip.dart';
@@ -43,6 +46,10 @@ class MoneyDetailPage extends ConsumerStatefulWidget {
 class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
   final _amount = TextEditingController();
 
+  /// Remaining balance we last pre-filled the payment field for. Prevents
+  /// re-filling on unrelated rebuilds while still refreshing after each قسط.
+  int? _prefilledForRemaining;
+
   @override
   void dispose() {
     _amount.dispose();
@@ -57,6 +64,11 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
     final calendar = ref.watch(appSettingsProvider).resolvedCalendar;
     final currency = ref.watch(appSettingsProvider).currency;
     final persian = Localizations.localeOf(context).languageCode == 'fa';
+
+    final item = state.item;
+    if (item != null) {
+      _syncPrefill(item, currency, persian);
+    }
 
     return Scaffold(
       appBar: overlayAppBar(
@@ -286,6 +298,30 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
     );
   }
 
+  /// Pre-fills the payment field with the suggested قسط amount for unsettled
+  /// installment items, refreshing after each successful payment. One-time and
+  /// settled items are left untouched so the user is never forced a value.
+  void _syncPrefill(MoneyItem item, AppCurrency currency, bool persian) {
+    final suggested = installmentPrefillAmount(item);
+    if (suggested == null) {
+      _prefilledForRemaining = null;
+      return;
+    }
+    if (_prefilledForRemaining == item.remainingAmount) return;
+    _prefilledForRemaining = item.remainingAmount;
+    final text = groupAmount(
+      currency.toDisplay(suggested),
+      persianDigits: persian,
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _amount.value = TextEditingValue(
+        text: text,
+        selection: TextSelection.collapsed(offset: text.length),
+      );
+    });
+  }
+
   Future<void> _delete(BuildContext context, Translations t) async {
     final ok = await showKitConfirmDialog(
       context: context,
@@ -332,7 +368,9 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
       return;
     }
     AppHaptics.confirm();
-    _amount.clear();
+    // Re-fill for the next قسط (or leave settled items with the section hidden).
+    // The stream emits the new remaining balance, which drives `_syncPrefill`.
+    _prefilledForRemaining = null;
   }
 }
 
