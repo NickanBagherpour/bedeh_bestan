@@ -19,4 +19,6 @@ final class NotesRepository {
   Future<void> deleteNote(String id) => _database.deleteNote(id);
 
   String nextId() => newEntityId('note');
+
+  String nextChecklistId() => newEntityId('chk');
 }

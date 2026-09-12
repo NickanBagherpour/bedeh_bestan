@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:local_db/local_db.dart' show MoneyItem, Note, Party;
+import 'package:local_db/local_db.dart'
+    show ChecklistItem, MoneyItem, Note, Party;
 
 import '../../data/repositories/notes_repository_provider.dart';
 import '../state/notes_state.dart';
@@ -82,6 +83,7 @@ final class NotesController extends Notifier<NotesState> {
       body: draft.body.trim(),
       tags: draft.tags,
       pinned: draft.pinned,
+      checklist: _cleanChecklist(draft.checklist),
       partyId: _blankToNull(draft.partyId),
       moneyItemId: _blankToNull(draft.moneyItemId),
       createdAt: existing?.createdAt ?? now,
@@ -102,6 +104,36 @@ final class NotesController extends Notifier<NotesState> {
   Future<void> deleteNote(String id) {
     return ref.read(notesRepositoryProvider).deleteNote(id);
   }
+
+  /// Flips the checked state of one checklist item and persists the note.
+  Future<void> toggleChecklistItem(String noteId, String itemId) async {
+    final repo = ref.read(notesRepositoryProvider);
+    final existing = await repo.getNote(noteId);
+    if (existing == null) return;
+    var changed = false;
+    final checklist = [
+      for (final item in existing.checklist)
+        if (item.id == itemId)
+          () {
+            changed = true;
+            return item.copyWith(checked: !item.checked);
+          }()
+        else
+          item,
+    ];
+    if (!changed) return;
+    await repo.upsertNote(
+      existing.copyWith(checklist: checklist, updatedAt: DateTime.now()),
+    );
+  }
+}
+
+List<ChecklistItem> _cleanChecklist(List<ChecklistItem> items) {
+  return [
+    for (final item in items)
+      if (item.text.trim().isNotEmpty)
+        item.copyWith(text: item.text.trim()),
+  ];
 }
 
 String? _blankToNull(String? value) {

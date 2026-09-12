@@ -238,6 +238,10 @@ class _Translations$notes$fa extends Translations$notes$en {
 	@override String get tagsField => 'برچسب‌ها';
 	@override String get tagsHint => 'با ویرگول جدا کن';
 	@override String get pinned => 'سنجاق‌شده';
+	@override String get checklist => 'چک‌لیست';
+	@override String get addItem => 'افزودن مورد';
+	@override String get removeItem => 'حذف مورد';
+	@override String get checklistItemHint => 'مورد فهرست';
 	@override String get party => 'طرف حساب';
 	@override String get money => 'حساب';
 	@override String get none => 'هیچ‌کدام';
@@ -624,6 +628,10 @@ extension on TranslationsFa {
 			'notes.tagsField' => 'برچسب‌ها',
 			'notes.tagsHint' => 'با ویرگول جدا کن',
 			'notes.pinned' => 'سنجاق‌شده',
+			'notes.checklist' => 'چک‌لیست',
+			'notes.addItem' => 'افزودن مورد',
+			'notes.removeItem' => 'حذف مورد',
+			'notes.checklistItemHint' => 'مورد فهرست',
 			'notes.party' => 'طرف حساب',
 			'notes.money' => 'حساب',
 			'notes.none' => 'هیچ‌کدام',

@@ -7,6 +7,7 @@ final class Note {
     required this.pinned,
     required this.createdAt,
     required this.updatedAt,
+    this.checklist = const [],
     this.partyId,
     this.moneyItemId,
   });
@@ -17,6 +18,7 @@ final class Note {
     String? body,
     List<String>? tags,
     bool? pinned,
+    List<ChecklistItem>? checklist,
     String? partyId,
     String? moneyItemId,
     DateTime? createdAt,
@@ -30,6 +32,7 @@ final class Note {
       body: body ?? this.body,
       tags: tags ?? this.tags,
       pinned: pinned ?? this.pinned,
+      checklist: checklist ?? this.checklist,
       partyId: clearPartyId ? null : (partyId ?? this.partyId),
       moneyItemId: clearMoneyItemId ? null : (moneyItemId ?? this.moneyItemId),
       createdAt: createdAt ?? this.createdAt,
@@ -42,8 +45,45 @@ final class Note {
   final String body;
   final List<String> tags;
   final bool pinned;
+
+  /// Ordered checklist items. Empty when the note has no checklist.
+  final List<ChecklistItem> checklist;
   final String? partyId;
   final String? moneyItemId;
   final DateTime createdAt;
   final DateTime updatedAt;
+
+  /// Number of checked items over total, e.g. for a compact `2/5` progress.
+  int get checklistDone {
+    var done = 0;
+    for (final item in checklist) {
+      if (item.checked) done++;
+    }
+    return done;
+  }
+}
+
+/// A single checklist row on a [Note]: stable [id], [text], and [checked] state.
+final class ChecklistItem {
+  const ChecklistItem({
+    required this.id,
+    required this.text,
+    required this.checked,
+  });
+
+  final String id;
+  final String text;
+  final bool checked;
+
+  ChecklistItem copyWith({
+    String? id,
+    String? text,
+    bool? checked,
+  }) {
+    return ChecklistItem(
+      id: id ?? this.id,
+      text: text ?? this.text,
+      checked: checked ?? this.checked,
+    );
+  }
 }

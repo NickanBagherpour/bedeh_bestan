@@ -11,6 +11,8 @@ class NoteTile extends StatelessWidget {
     required this.meta,
     required this.onTap,
     required this.onPin,
+    this.checklistDone = 0,
+    this.checklistTotal = 0,
   });
 
   final String title;
@@ -20,6 +22,8 @@ class NoteTile extends StatelessWidget {
   final String? meta;
   final VoidCallback onTap;
   final VoidCallback onPin;
+  final int checklistDone;
+  final int checklistTotal;
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +86,26 @@ class NoteTile extends StatelessWidget {
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
+                  ),
+                ],
+                if (checklistTotal > 0) ...[
+                  const SizedBox(height: AppSpacing.xxs),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.checklist_rounded,
+                        size: 14,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: AppSpacing.xxs),
+                      Text(
+                        '$checklistDone/$checklistTotal',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ],

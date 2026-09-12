@@ -2,7 +2,7 @@ import 'package:core/core.dart' show AppRoutes, overlayAppBar;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:local_db/local_db.dart' show MoneyItem, Party;
+import 'package:local_db/local_db.dart' show ChecklistItem, MoneyItem, Party;
 import 'package:translations/translations.dart' show Translations;
 import 'package:ui_kit/ui_kit.dart'
     show AppHaptics, AppSpacing, KitError, KitLoading, KitSearchSelect;
@@ -10,6 +10,7 @@ import 'package:ui_kit/ui_kit.dart'
 import '../../application/controllers/notes_controller.dart';
 import '../../application/note_query.dart';
 import '../../application/state/notes_state.dart';
+import '../../data/repositories/notes_repository_provider.dart';
 
 class NoteFormPage extends ConsumerStatefulWidget {
   const NoteFormPage({super.key, this.noteId});
@@ -24,6 +25,7 @@ class _NoteFormPageState extends ConsumerState<NoteFormPage> {
   final _title = TextEditingController();
   final _body = TextEditingController();
   final _tags = TextEditingController();
+  final List<_ChecklistRow> _checklist = [];
   bool _pinned = false;
   String? _partyId;
   String? _moneyItemId;
@@ -37,6 +39,9 @@ class _NoteFormPageState extends ConsumerState<NoteFormPage> {
     _title.dispose();
     _body.dispose();
     _tags.dispose();
+    for (final row in _checklist) {
+      row.controller.dispose();
+    }
     super.dispose();
   }
 
@@ -58,6 +63,16 @@ class _NoteFormPageState extends ConsumerState<NoteFormPage> {
             _pinned = note.pinned;
             _partyId = note.partyId;
             _moneyItemId = note.moneyItemId;
+            _checklist
+              ..clear()
+              ..addAll([
+                for (final item in note.checklist)
+                  _ChecklistRow(
+                    id: item.id,
+                    controller: TextEditingController(text: item.text),
+                    checked: item.checked,
+                  ),
+              ]);
           });
         });
       }
@@ -132,6 +147,8 @@ class _NoteFormPageState extends ConsumerState<NoteFormPage> {
             onChanged: (value) => setState(() => _pinned = value),
           ),
           const SizedBox(height: AppSpacing.sm),
+          ..._checklistSection(t),
+          const SizedBox(height: AppSpacing.sm),
           KitSearchSelect<Party>(
             label: t.notes.party,
             searchHint: t.notes.searchParty,
@@ -183,6 +200,88 @@ class _NoteFormPageState extends ConsumerState<NoteFormPage> {
     );
   }
 
+  List<Widget> _checklistSection(Translations t) {
+    final theme = Theme.of(context);
+    return [
+      Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: Text(
+          t.notes.checklist,
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+      const SizedBox(height: AppSpacing.xs),
+      for (final row in _checklist)
+        Padding(
+          key: ValueKey(row.id),
+          padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+          child: Row(
+            children: [
+              Checkbox(
+                value: row.checked,
+                onChanged: (value) =>
+                    setState(() => row.checked = value ?? false),
+              ),
+              Expanded(
+                child: TextField(
+                  controller: row.controller,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    hintText: t.notes.checklistItemHint,
+                  ),
+                ),
+              ),
+              IconButton(
+                tooltip: t.notes.removeItem,
+                onPressed: () => _removeChecklistRow(row),
+                icon: const Icon(Icons.close_rounded),
+              ),
+            ],
+          ),
+        ),
+      Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: TextButton.icon(
+          onPressed: _addChecklistRow,
+          icon: const Icon(Icons.add_rounded),
+          label: Text(t.notes.addItem),
+        ),
+      ),
+    ];
+  }
+
+  void _addChecklistRow() {
+    final id = ref.read(notesRepositoryProvider).nextChecklistId();
+    setState(() {
+      _checklist.add(
+        _ChecklistRow(
+          id: id,
+          controller: TextEditingController(),
+          checked: false,
+        ),
+      );
+    });
+  }
+
+  void _removeChecklistRow(_ChecklistRow row) {
+    setState(() => _checklist.remove(row));
+    row.controller.dispose();
+  }
+
+  List<ChecklistItem> _collectChecklist() {
+    return [
+      for (final row in _checklist)
+        if (row.controller.text.trim().isNotEmpty)
+          ChecklistItem(
+            id: row.id,
+            text: row.controller.text.trim(),
+            checked: row.checked,
+          ),
+    ];
+  }
+
   Future<void> _save(Translations t) async {
     final title = _title.text.trim();
     if (title.isEmpty) {
@@ -200,6 +299,7 @@ class _NoteFormPageState extends ConsumerState<NoteFormPage> {
               body: _body.text,
               tags: parseTagInput(_tags.text),
               pinned: _pinned,
+              checklist: _collectChecklist(),
               partyId: _partyId,
               moneyItemId: _moneyItemId,
             ),
@@ -215,4 +315,16 @@ class _NoteFormPageState extends ConsumerState<NoteFormPage> {
       setState(() => _saving = false);
     }
   }
+}
+
+class _ChecklistRow {
+  _ChecklistRow({
+    required this.id,
+    required this.controller,
+    required this.checked,
+  });
+
+  final String id;
+  final TextEditingController controller;
+  bool checked;
 }

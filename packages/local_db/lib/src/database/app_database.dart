@@ -11,6 +11,7 @@ import '../models/note.dart';
 import '../models/party.dart';
 import '../models/reminder.dart';
 import 'backup.dart';
+import 'checklist.dart';
 import 'ids.dart';
 import 'party_exception.dart';
 import 'payment_exception.dart';
@@ -58,7 +59,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration {
@@ -359,6 +360,7 @@ class AppDatabase extends _$AppDatabase {
         title: Value(note.title),
         body: Value(note.body),
         tagsJson: Value(encodeTags(note.tags)),
+        checklistJson: Value(encodeChecklist(note.checklist)),
         pinned: Value(note.pinned),
         partyId: Value(_optionalFk(note.partyId)),
         moneyItemId: Value(_optionalFk(note.moneyItemId)),
@@ -481,6 +483,11 @@ class AppDatabase extends _$AppDatabase {
     );
     await _ensureColumn('notes', 'body', "TEXT NOT NULL DEFAULT ''");
     await _ensureColumn('notes', 'tags_json', "TEXT NOT NULL DEFAULT '[]'");
+    await _ensureColumn(
+      'notes',
+      'checklist_json',
+      "TEXT NOT NULL DEFAULT '[]'",
+    );
     await _ensureColumn('notes', 'pinned', 'INTEGER NOT NULL DEFAULT 0');
     await _ensureColumn('notes', 'party_id', 'TEXT NULL');
     await _ensureColumn('notes', 'money_item_id', 'TEXT NULL');
@@ -576,6 +583,7 @@ Note noteFromRow(NoteRow row) {
     title: row.title,
     body: row.body,
     tags: decodeTags(row.tagsJson),
+    checklist: decodeChecklist(row.checklistJson),
     pinned: row.pinned,
     partyId: row.partyId,
     moneyItemId: row.moneyItemId,

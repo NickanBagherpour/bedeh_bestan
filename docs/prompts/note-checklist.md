@@ -36,5 +36,3 @@ New strings in `features/notes/lib/src/translations/notes_en.i18n.json` + `notes
 ## Acceptance
 
 - [ ] Create, edit, toggle, delete checklist items; data reloads correctly.
-- [ ] Test: parsing, repository, or query-level test as appropriate.
-- [ ] `melos run analyze && melos run test` pass.

@@ -2398,6 +2398,18 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteRow> {
     requiredDuringInsert: false,
     defaultValue: const Constant('[]'),
   );
+  static const VerificationMeta _checklistJsonMeta = const VerificationMeta(
+    'checklistJson',
+  );
+  @override
+  late final GeneratedColumn<String> checklistJson = GeneratedColumn<String>(
+    'checklist_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
   static const VerificationMeta _pinnedMeta = const VerificationMeta('pinned');
   @override
   late final GeneratedColumn<bool> pinned = GeneratedColumn<bool>(
@@ -2467,6 +2479,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteRow> {
     title,
     body,
     tagsJson,
+    checklistJson,
     pinned,
     partyId,
     moneyItemId,
@@ -2508,6 +2521,15 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteRow> {
       context.handle(
         _tagsJsonMeta,
         tagsJson.isAcceptableOrUnknown(data['tags_json']!, _tagsJsonMeta),
+      );
+    }
+    if (data.containsKey('checklist_json')) {
+      context.handle(
+        _checklistJsonMeta,
+        checklistJson.isAcceptableOrUnknown(
+          data['checklist_json']!,
+          _checklistJsonMeta,
+        ),
       );
     }
     if (data.containsKey('pinned')) {
@@ -2572,6 +2594,10 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteRow> {
         DriftSqlType.string,
         data['${effectivePrefix}tags_json'],
       )!,
+      checklistJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}checklist_json'],
+      )!,
       pinned: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}pinned'],
@@ -2606,6 +2632,7 @@ class NoteRow extends DataClass implements Insertable<NoteRow> {
   final String title;
   final String body;
   final String tagsJson;
+  final String checklistJson;
   final bool pinned;
   final String? partyId;
   final String? moneyItemId;
@@ -2616,6 +2643,7 @@ class NoteRow extends DataClass implements Insertable<NoteRow> {
     required this.title,
     required this.body,
     required this.tagsJson,
+    required this.checklistJson,
     required this.pinned,
     this.partyId,
     this.moneyItemId,
@@ -2629,6 +2657,7 @@ class NoteRow extends DataClass implements Insertable<NoteRow> {
     map['title'] = Variable<String>(title);
     map['body'] = Variable<String>(body);
     map['tags_json'] = Variable<String>(tagsJson);
+    map['checklist_json'] = Variable<String>(checklistJson);
     map['pinned'] = Variable<bool>(pinned);
     if (!nullToAbsent || partyId != null) {
       map['party_id'] = Variable<String>(partyId);
@@ -2647,6 +2676,7 @@ class NoteRow extends DataClass implements Insertable<NoteRow> {
       title: Value(title),
       body: Value(body),
       tagsJson: Value(tagsJson),
+      checklistJson: Value(checklistJson),
       pinned: Value(pinned),
       partyId: partyId == null && nullToAbsent
           ? const Value.absent()
@@ -2669,6 +2699,7 @@ class NoteRow extends DataClass implements Insertable<NoteRow> {
       title: serializer.fromJson<String>(json['title']),
       body: serializer.fromJson<String>(json['body']),
       tagsJson: serializer.fromJson<String>(json['tagsJson']),
+      checklistJson: serializer.fromJson<String>(json['checklistJson']),
       pinned: serializer.fromJson<bool>(json['pinned']),
       partyId: serializer.fromJson<String?>(json['partyId']),
       moneyItemId: serializer.fromJson<String?>(json['moneyItemId']),
@@ -2684,6 +2715,7 @@ class NoteRow extends DataClass implements Insertable<NoteRow> {
       'title': serializer.toJson<String>(title),
       'body': serializer.toJson<String>(body),
       'tagsJson': serializer.toJson<String>(tagsJson),
+      'checklistJson': serializer.toJson<String>(checklistJson),
       'pinned': serializer.toJson<bool>(pinned),
       'partyId': serializer.toJson<String?>(partyId),
       'moneyItemId': serializer.toJson<String?>(moneyItemId),
@@ -2697,6 +2729,7 @@ class NoteRow extends DataClass implements Insertable<NoteRow> {
     String? title,
     String? body,
     String? tagsJson,
+    String? checklistJson,
     bool? pinned,
     Value<String?> partyId = const Value.absent(),
     Value<String?> moneyItemId = const Value.absent(),
@@ -2707,6 +2740,7 @@ class NoteRow extends DataClass implements Insertable<NoteRow> {
     title: title ?? this.title,
     body: body ?? this.body,
     tagsJson: tagsJson ?? this.tagsJson,
+    checklistJson: checklistJson ?? this.checklistJson,
     pinned: pinned ?? this.pinned,
     partyId: partyId.present ? partyId.value : this.partyId,
     moneyItemId: moneyItemId.present ? moneyItemId.value : this.moneyItemId,
@@ -2719,6 +2753,9 @@ class NoteRow extends DataClass implements Insertable<NoteRow> {
       title: data.title.present ? data.title.value : this.title,
       body: data.body.present ? data.body.value : this.body,
       tagsJson: data.tagsJson.present ? data.tagsJson.value : this.tagsJson,
+      checklistJson: data.checklistJson.present
+          ? data.checklistJson.value
+          : this.checklistJson,
       pinned: data.pinned.present ? data.pinned.value : this.pinned,
       partyId: data.partyId.present ? data.partyId.value : this.partyId,
       moneyItemId: data.moneyItemId.present
@@ -2736,6 +2773,7 @@ class NoteRow extends DataClass implements Insertable<NoteRow> {
           ..write('title: $title, ')
           ..write('body: $body, ')
           ..write('tagsJson: $tagsJson, ')
+          ..write('checklistJson: $checklistJson, ')
           ..write('pinned: $pinned, ')
           ..write('partyId: $partyId, ')
           ..write('moneyItemId: $moneyItemId, ')
@@ -2751,6 +2789,7 @@ class NoteRow extends DataClass implements Insertable<NoteRow> {
     title,
     body,
     tagsJson,
+    checklistJson,
     pinned,
     partyId,
     moneyItemId,
@@ -2765,6 +2804,7 @@ class NoteRow extends DataClass implements Insertable<NoteRow> {
           other.title == this.title &&
           other.body == this.body &&
           other.tagsJson == this.tagsJson &&
+          other.checklistJson == this.checklistJson &&
           other.pinned == this.pinned &&
           other.partyId == this.partyId &&
           other.moneyItemId == this.moneyItemId &&
@@ -2777,6 +2817,7 @@ class NotesCompanion extends UpdateCompanion<NoteRow> {
   final Value<String> title;
   final Value<String> body;
   final Value<String> tagsJson;
+  final Value<String> checklistJson;
   final Value<bool> pinned;
   final Value<String?> partyId;
   final Value<String?> moneyItemId;
@@ -2788,6 +2829,7 @@ class NotesCompanion extends UpdateCompanion<NoteRow> {
     this.title = const Value.absent(),
     this.body = const Value.absent(),
     this.tagsJson = const Value.absent(),
+    this.checklistJson = const Value.absent(),
     this.pinned = const Value.absent(),
     this.partyId = const Value.absent(),
     this.moneyItemId = const Value.absent(),
@@ -2800,6 +2842,7 @@ class NotesCompanion extends UpdateCompanion<NoteRow> {
     required String title,
     this.body = const Value.absent(),
     this.tagsJson = const Value.absent(),
+    this.checklistJson = const Value.absent(),
     this.pinned = const Value.absent(),
     this.partyId = const Value.absent(),
     this.moneyItemId = const Value.absent(),
@@ -2815,6 +2858,7 @@ class NotesCompanion extends UpdateCompanion<NoteRow> {
     Expression<String>? title,
     Expression<String>? body,
     Expression<String>? tagsJson,
+    Expression<String>? checklistJson,
     Expression<bool>? pinned,
     Expression<String>? partyId,
     Expression<String>? moneyItemId,
@@ -2827,6 +2871,7 @@ class NotesCompanion extends UpdateCompanion<NoteRow> {
       if (title != null) 'title': title,
       if (body != null) 'body': body,
       if (tagsJson != null) 'tags_json': tagsJson,
+      if (checklistJson != null) 'checklist_json': checklistJson,
       if (pinned != null) 'pinned': pinned,
       if (partyId != null) 'party_id': partyId,
       if (moneyItemId != null) 'money_item_id': moneyItemId,
@@ -2841,6 +2886,7 @@ class NotesCompanion extends UpdateCompanion<NoteRow> {
     Value<String>? title,
     Value<String>? body,
     Value<String>? tagsJson,
+    Value<String>? checklistJson,
     Value<bool>? pinned,
     Value<String?>? partyId,
     Value<String?>? moneyItemId,
@@ -2853,6 +2899,7 @@ class NotesCompanion extends UpdateCompanion<NoteRow> {
       title: title ?? this.title,
       body: body ?? this.body,
       tagsJson: tagsJson ?? this.tagsJson,
+      checklistJson: checklistJson ?? this.checklistJson,
       pinned: pinned ?? this.pinned,
       partyId: partyId ?? this.partyId,
       moneyItemId: moneyItemId ?? this.moneyItemId,
@@ -2876,6 +2923,9 @@ class NotesCompanion extends UpdateCompanion<NoteRow> {
     }
     if (tagsJson.present) {
       map['tags_json'] = Variable<String>(tagsJson.value);
+    }
+    if (checklistJson.present) {
+      map['checklist_json'] = Variable<String>(checklistJson.value);
     }
     if (pinned.present) {
       map['pinned'] = Variable<bool>(pinned.value);
@@ -2905,6 +2955,7 @@ class NotesCompanion extends UpdateCompanion<NoteRow> {
           ..write('title: $title, ')
           ..write('body: $body, ')
           ..write('tagsJson: $tagsJson, ')
+          ..write('checklistJson: $checklistJson, ')
           ..write('pinned: $pinned, ')
           ..write('partyId: $partyId, ')
           ..write('moneyItemId: $moneyItemId, ')
@@ -4942,6 +4993,7 @@ typedef $$NotesTableCreateCompanionBuilder =
       required String title,
       Value<String> body,
       Value<String> tagsJson,
+      Value<String> checklistJson,
       Value<bool> pinned,
       Value<String?> partyId,
       Value<String?> moneyItemId,
@@ -4955,6 +5007,7 @@ typedef $$NotesTableUpdateCompanionBuilder =
       Value<String> title,
       Value<String> body,
       Value<String> tagsJson,
+      Value<String> checklistJson,
       Value<bool> pinned,
       Value<String?> partyId,
       Value<String?> moneyItemId,
@@ -5027,6 +5080,11 @@ class $$NotesTableFilterComposer extends Composer<_$AppDatabase, $NotesTable> {
 
   ColumnFilters<String> get tagsJson => $composableBuilder(
     column: $table.tagsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get checklistJson => $composableBuilder(
+    column: $table.checklistJson,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5121,6 +5179,11 @@ class $$NotesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get checklistJson => $composableBuilder(
+    column: $table.checklistJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<bool> get pinned => $composableBuilder(
     column: $table.pinned,
     builder: (column) => ColumnOrderings(column),
@@ -5203,6 +5266,11 @@ class $$NotesTableAnnotationComposer
 
   GeneratedColumn<String> get tagsJson =>
       $composableBuilder(column: $table.tagsJson, builder: (column) => column);
+
+  GeneratedColumn<String> get checklistJson => $composableBuilder(
+    column: $table.checklistJson,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<bool> get pinned =>
       $composableBuilder(column: $table.pinned, builder: (column) => column);
@@ -5292,6 +5360,7 @@ class $$NotesTableTableManager
                 Value<String> title = const Value.absent(),
                 Value<String> body = const Value.absent(),
                 Value<String> tagsJson = const Value.absent(),
+                Value<String> checklistJson = const Value.absent(),
                 Value<bool> pinned = const Value.absent(),
                 Value<String?> partyId = const Value.absent(),
                 Value<String?> moneyItemId = const Value.absent(),
@@ -5303,6 +5372,7 @@ class $$NotesTableTableManager
                 title: title,
                 body: body,
                 tagsJson: tagsJson,
+                checklistJson: checklistJson,
                 pinned: pinned,
                 partyId: partyId,
                 moneyItemId: moneyItemId,
@@ -5316,6 +5386,7 @@ class $$NotesTableTableManager
                 required String title,
                 Value<String> body = const Value.absent(),
                 Value<String> tagsJson = const Value.absent(),
+                Value<String> checklistJson = const Value.absent(),
                 Value<bool> pinned = const Value.absent(),
                 Value<String?> partyId = const Value.absent(),
                 Value<String?> moneyItemId = const Value.absent(),
@@ -5327,6 +5398,7 @@ class $$NotesTableTableManager
                 title: title,
                 body: body,
                 tagsJson: tagsJson,
+                checklistJson: checklistJson,
                 pinned: pinned,
                 partyId: partyId,
                 moneyItemId: moneyItemId,

@@ -519,6 +519,18 @@ class Translations$notes$en {
 	/// en: 'Pinned'
 	String get pinned => 'Pinned';
 
+	/// en: 'Checklist'
+	String get checklist => 'Checklist';
+
+	/// en: 'Add item'
+	String get addItem => 'Add item';
+
+	/// en: 'Remove item'
+	String get removeItem => 'Remove item';
+
+	/// en: 'List item'
+	String get checklistItemHint => 'List item';
+
 	/// en: 'Person or shop'
 	String get party => 'Person or shop';
 
@@ -1072,6 +1084,10 @@ extension on Translations {
 			'notes.tagsField' => 'Tags',
 			'notes.tagsHint' => 'Comma-separated',
 			'notes.pinned' => 'Pinned',
+			'notes.checklist' => 'Checklist',
+			'notes.addItem' => 'Add item',
+			'notes.removeItem' => 'Remove item',
+			'notes.checklistItemHint' => 'List item',
 			'notes.party' => 'Person or shop',
 			'notes.money' => 'Account',
 			'notes.none' => 'None',

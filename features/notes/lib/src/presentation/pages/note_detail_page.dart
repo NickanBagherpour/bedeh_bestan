@@ -111,6 +111,54 @@ class NoteDetailPage extends ConsumerWidget {
             ],
           ),
         ),
+        if (note.checklist.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.md),
+          KitCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        t.notes.checklist,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '${note.checklistDone}/${note.checklist.length}',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+                for (final item in note.checklist)
+                  CheckboxListTile(
+                    key: ValueKey(item.id),
+                    contentPadding: EdgeInsets.zero,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    dense: true,
+                    value: item.checked,
+                    onChanged: (_) => ref
+                        .read(notesControllerProvider.notifier)
+                        .toggleChecklistItem(note.id, item.id),
+                    title: Text(
+                      item.text,
+                      style: item.checked
+                          ? theme.textTheme.bodyMedium?.copyWith(
+                              decoration: TextDecoration.lineThrough,
+                              color: theme.colorScheme.onSurfaceVariant,
+                            )
+                          : theme.textTheme.bodyMedium,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
         if (note.tags.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.md),
           Wrap(

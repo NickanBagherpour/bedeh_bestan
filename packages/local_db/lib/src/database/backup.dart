@@ -6,6 +6,7 @@ import '../models/money_payment.dart';
 import '../models/note.dart';
 import '../models/party.dart';
 import '../models/reminder.dart';
+import 'checklist.dart';
 import 'tags.dart';
 
 const libraryBackupFormat = 'bedeh_bestan.backup';
@@ -255,6 +256,7 @@ Map<String, Object?> _noteJson(Note row) => {
       'body': row.body,
       'tags': row.tags,
       'tagsJson': encodeTags(row.tags),
+      'checklist': [for (final item in row.checklist) checklistItemJson(item)],
       'pinned': row.pinned,
       'partyId': row.partyId,
       'moneyItemId': row.moneyItemId,
@@ -264,6 +266,7 @@ Map<String, Object?> _noteJson(Note row) => {
 
 Note _noteFrom(Map<String, Object?> json) {
   final tags = json['tags'];
+  final checklist = json['checklist'];
   return Note(
     id: json['id'] as String,
     title: json['title'] as String,
@@ -271,6 +274,9 @@ Note _noteFrom(Map<String, Object?> json) {
     tags: tags is List
         ? [for (final tag in tags) tag.toString()]
         : decodeTags(json['tagsJson'] as String? ?? '[]'),
+    checklist: checklist is List
+        ? decodeChecklist(jsonEncode(checklist))
+        : const [],
     pinned: json['pinned'] as bool? ?? false,
     partyId: _blankToNull(json['partyId'] as String?),
     moneyItemId: _blankToNull(json['moneyItemId'] as String?),

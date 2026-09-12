@@ -73,6 +73,7 @@ class Notes extends Table {
   TextColumn get title => text()();
   TextColumn get body => text().withDefault(const Constant(''))();
   TextColumn get tagsJson => text().withDefault(const Constant('[]'))();
+  TextColumn get checklistJson => text().withDefault(const Constant('[]'))();
   BoolColumn get pinned => boolean().withDefault(const Constant(false))();
   TextColumn get partyId => text().nullable().references(Parties, #id)();
   TextColumn get moneyItemId =>

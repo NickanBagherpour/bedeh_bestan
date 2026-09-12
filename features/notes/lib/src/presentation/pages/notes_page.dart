@@ -183,6 +183,8 @@ class NotesPage extends ConsumerWidget {
               tags: note.tags,
               pinned: note.pinned,
               meta: meta.isEmpty ? null : meta,
+              checklistDone: note.checklistDone,
+              checklistTotal: note.checklist.length,
               onTap: () => context.push(AppRoutes.notePath(note.id)),
               onPin: () {
                 AppHaptics.selection();

@@ -1,4 +1,5 @@
-import 'package:local_db/local_db.dart' show MoneyItem, Note, Party;
+import 'package:local_db/local_db.dart'
+    show ChecklistItem, MoneyItem, Note, Party;
 
 import '../note_query.dart';
 
@@ -72,6 +73,7 @@ final class NoteDraft {
     required this.body,
     required this.tags,
     required this.pinned,
+    this.checklist = const [],
     this.partyId,
     this.moneyItemId,
   });
@@ -81,6 +83,7 @@ final class NoteDraft {
   final String body;
   final List<String> tags;
   final bool pinned;
+  final List<ChecklistItem> checklist;
   final String? partyId;
   final String? moneyItemId;
 }
