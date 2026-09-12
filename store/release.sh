@@ -19,6 +19,7 @@
 #   --aab               Build release App Bundle (Google Play)
 #   --web               Build release web bundle
 #   --all               Build apk + aab + web
+#   --bazaar            After the AAB, sign it with Bazaar's bundlesigner (.bin)
 #   --no-build          Skip building (only bump + changelog + commit + tag)
 #
 # Flow control:
@@ -62,7 +63,7 @@ ok()   { printf '%s✓ %s%s\n'  "$GRN" "$*" "$RST"; }
 # Args
 # ---------------------------------------------------------------------------
 BUMP="patch"; VERSION=""; BUILD_NUM=""
-DO_APK=0; DO_AAB=0; DO_WEB=0; DO_BUILD=1
+DO_APK=0; DO_AAB=0; DO_WEB=0; DO_BUILD=1; DO_BAZAAR=0
 VERIFY=1; DO_TAG=1; ALLOW_DIRTY=0; PUSH=0; DRY_RUN=0
 usage() { sed -n '2,40p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0; }
 
@@ -75,6 +76,7 @@ while [[ $# -gt 0 ]]; do
     --aab)       DO_AAB=1; shift;;
     --web)       DO_WEB=1; shift;;
     --all)       DO_APK=1; DO_AAB=1; DO_WEB=1; shift;;
+    --bazaar)    DO_AAB=1; DO_BAZAAR=1; shift;;
     --no-build)  DO_BUILD=0; shift;;
     --no-verify) VERIFY=0; shift;;
     --no-tag)    DO_TAG=0; shift;;
@@ -264,6 +266,10 @@ if [[ $DO_BUILD -eq 1 ]]; then
     run "(cd '$APP_DIR' && '$FLUTTER' build appbundle --release)"
     run "cp '$AAB_OUT' '$BUILDS_DIR/bedebestan-$VERSION-$NEW_BUILD.aab'"
     ok "store/builds/bedebestan-$VERSION-$NEW_BUILD.aab"
+    if [[ $DO_BAZAAR -eq 1 ]]; then
+      step "Sign AAB for Cafe Bazaar (.bin)"
+      run "'$SCRIPT_DIR/bazaar_sign.sh' '$BUILDS_DIR/bedebestan-$VERSION-$NEW_BUILD.aab'"
+    fi
   fi
   if [[ $DO_WEB -eq 1 ]]; then
     step "Build Web"

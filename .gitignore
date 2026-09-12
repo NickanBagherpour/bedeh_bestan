@@ -33,3 +33,4 @@ store/builds/
 
 # Melos
 .melos_tool/
+store/bundlesigner-0.1.13.jar
