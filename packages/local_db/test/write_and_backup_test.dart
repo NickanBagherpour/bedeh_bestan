@@ -78,6 +78,54 @@ void main() {
     expect(await db.getReminder('rem-new'), isNotNull);
   });
 
+  test('party contact + card fields persist and round-trip', () async {
+    final party = Party(
+      id: 'party-contact',
+      name: 'نگار',
+      kind: PartyKind.person,
+      phone: '09121234567',
+      nationalCode: '0012345678',
+      birthDate: '1370/01/01',
+      cardNumber: '6037991234567890',
+      sheba: 'IR120170000000000000000001',
+      createdAt: now,
+      updatedAt: now,
+    );
+    await db.upsertParty(party);
+
+    final stored = await db.getParty('party-contact');
+    expect(stored?.phone, '09121234567');
+    expect(stored?.nationalCode, '0012345678');
+    expect(stored?.birthDate, '1370/01/01');
+    expect(stored?.cardNumber, '6037991234567890');
+    expect(stored?.sheba, 'IR120170000000000000000001');
+
+    final json = await db.exportBackupJson();
+    final clone = openMemoryDatabase();
+    addTearDown(clone.close);
+    await clone.importBackupJson(json);
+    final restored = await clone.getParty('party-contact');
+    expect(restored?.phone, '09121234567');
+    expect(restored?.cardNumber, '6037991234567890');
+    expect(restored?.sheba, 'IR120170000000000000000001');
+    expect(restored?.nationalCode, '0012345678');
+    expect(restored?.birthDate, '1370/01/01');
+  });
+
+  test('old backup without contact fields imports with null defaults', () {
+    final legacy = decodeLibraryDump(
+      '{"format":"bedeh_bestan.backup","formatVersion":1,"schemaVersion":3,'
+      '"parties":[{"id":"party-legacy","name":"مامان","kind":"person",'
+      '"createdAt":0,"updatedAt":0}]}',
+    );
+    final party = legacy.parties.single;
+    expect(party.phone, isNull);
+    expect(party.cardNumber, isNull);
+    expect(party.sheba, isNull);
+    expect(party.nationalCode, isNull);
+    expect(party.birthDate, isNull);
+  });
+
   test('backup round-trips user rows', () async {
     await db.upsertNote(
       Note(

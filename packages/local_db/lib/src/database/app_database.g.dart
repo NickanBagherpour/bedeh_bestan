@@ -44,6 +44,57 @@ class $PartiesTable extends Parties with TableInfo<$PartiesTable, PartyRow> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _phoneMeta = const VerificationMeta('phone');
+  @override
+  late final GeneratedColumn<String> phone = GeneratedColumn<String>(
+    'phone',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _nationalCodeMeta = const VerificationMeta(
+    'nationalCode',
+  );
+  @override
+  late final GeneratedColumn<String> nationalCode = GeneratedColumn<String>(
+    'national_code',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _birthDateMeta = const VerificationMeta(
+    'birthDate',
+  );
+  @override
+  late final GeneratedColumn<String> birthDate = GeneratedColumn<String>(
+    'birth_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _cardNumberMeta = const VerificationMeta(
+    'cardNumber',
+  );
+  @override
+  late final GeneratedColumn<String> cardNumber = GeneratedColumn<String>(
+    'card_number',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _shebaMeta = const VerificationMeta('sheba');
+  @override
+  late final GeneratedColumn<String> sheba = GeneratedColumn<String>(
+    'sheba',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -72,6 +123,11 @@ class $PartiesTable extends Parties with TableInfo<$PartiesTable, PartyRow> {
     name,
     kind,
     note,
+    phone,
+    nationalCode,
+    birthDate,
+    cardNumber,
+    sheba,
     createdAt,
     updatedAt,
   ];
@@ -112,6 +168,39 @@ class $PartiesTable extends Parties with TableInfo<$PartiesTable, PartyRow> {
       context.handle(
         _noteMeta,
         note.isAcceptableOrUnknown(data['note']!, _noteMeta),
+      );
+    }
+    if (data.containsKey('phone')) {
+      context.handle(
+        _phoneMeta,
+        phone.isAcceptableOrUnknown(data['phone']!, _phoneMeta),
+      );
+    }
+    if (data.containsKey('national_code')) {
+      context.handle(
+        _nationalCodeMeta,
+        nationalCode.isAcceptableOrUnknown(
+          data['national_code']!,
+          _nationalCodeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('birth_date')) {
+      context.handle(
+        _birthDateMeta,
+        birthDate.isAcceptableOrUnknown(data['birth_date']!, _birthDateMeta),
+      );
+    }
+    if (data.containsKey('card_number')) {
+      context.handle(
+        _cardNumberMeta,
+        cardNumber.isAcceptableOrUnknown(data['card_number']!, _cardNumberMeta),
+      );
+    }
+    if (data.containsKey('sheba')) {
+      context.handle(
+        _shebaMeta,
+        sheba.isAcceptableOrUnknown(data['sheba']!, _shebaMeta),
       );
     }
     if (data.containsKey('created_at')) {
@@ -155,6 +244,26 @@ class $PartiesTable extends Parties with TableInfo<$PartiesTable, PartyRow> {
         DriftSqlType.string,
         data['${effectivePrefix}note'],
       ),
+      phone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}phone'],
+      ),
+      nationalCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}national_code'],
+      ),
+      birthDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}birth_date'],
+      ),
+      cardNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}card_number'],
+      ),
+      sheba: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sheba'],
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -177,6 +286,11 @@ class PartyRow extends DataClass implements Insertable<PartyRow> {
   final String name;
   final String kind;
   final String? note;
+  final String? phone;
+  final String? nationalCode;
+  final String? birthDate;
+  final String? cardNumber;
+  final String? sheba;
   final DateTime createdAt;
   final DateTime updatedAt;
   const PartyRow({
@@ -184,6 +298,11 @@ class PartyRow extends DataClass implements Insertable<PartyRow> {
     required this.name,
     required this.kind,
     this.note,
+    this.phone,
+    this.nationalCode,
+    this.birthDate,
+    this.cardNumber,
+    this.sheba,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -196,6 +315,21 @@ class PartyRow extends DataClass implements Insertable<PartyRow> {
     if (!nullToAbsent || note != null) {
       map['note'] = Variable<String>(note);
     }
+    if (!nullToAbsent || phone != null) {
+      map['phone'] = Variable<String>(phone);
+    }
+    if (!nullToAbsent || nationalCode != null) {
+      map['national_code'] = Variable<String>(nationalCode);
+    }
+    if (!nullToAbsent || birthDate != null) {
+      map['birth_date'] = Variable<String>(birthDate);
+    }
+    if (!nullToAbsent || cardNumber != null) {
+      map['card_number'] = Variable<String>(cardNumber);
+    }
+    if (!nullToAbsent || sheba != null) {
+      map['sheba'] = Variable<String>(sheba);
+    }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
@@ -207,6 +341,21 @@ class PartyRow extends DataClass implements Insertable<PartyRow> {
       name: Value(name),
       kind: Value(kind),
       note: note == null && nullToAbsent ? const Value.absent() : Value(note),
+      phone: phone == null && nullToAbsent
+          ? const Value.absent()
+          : Value(phone),
+      nationalCode: nationalCode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nationalCode),
+      birthDate: birthDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(birthDate),
+      cardNumber: cardNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cardNumber),
+      sheba: sheba == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sheba),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );
@@ -222,6 +371,11 @@ class PartyRow extends DataClass implements Insertable<PartyRow> {
       name: serializer.fromJson<String>(json['name']),
       kind: serializer.fromJson<String>(json['kind']),
       note: serializer.fromJson<String?>(json['note']),
+      phone: serializer.fromJson<String?>(json['phone']),
+      nationalCode: serializer.fromJson<String?>(json['nationalCode']),
+      birthDate: serializer.fromJson<String?>(json['birthDate']),
+      cardNumber: serializer.fromJson<String?>(json['cardNumber']),
+      sheba: serializer.fromJson<String?>(json['sheba']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -234,6 +388,11 @@ class PartyRow extends DataClass implements Insertable<PartyRow> {
       'name': serializer.toJson<String>(name),
       'kind': serializer.toJson<String>(kind),
       'note': serializer.toJson<String?>(note),
+      'phone': serializer.toJson<String?>(phone),
+      'nationalCode': serializer.toJson<String?>(nationalCode),
+      'birthDate': serializer.toJson<String?>(birthDate),
+      'cardNumber': serializer.toJson<String?>(cardNumber),
+      'sheba': serializer.toJson<String?>(sheba),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
@@ -244,6 +403,11 @@ class PartyRow extends DataClass implements Insertable<PartyRow> {
     String? name,
     String? kind,
     Value<String?> note = const Value.absent(),
+    Value<String?> phone = const Value.absent(),
+    Value<String?> nationalCode = const Value.absent(),
+    Value<String?> birthDate = const Value.absent(),
+    Value<String?> cardNumber = const Value.absent(),
+    Value<String?> sheba = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
   }) => PartyRow(
@@ -251,6 +415,11 @@ class PartyRow extends DataClass implements Insertable<PartyRow> {
     name: name ?? this.name,
     kind: kind ?? this.kind,
     note: note.present ? note.value : this.note,
+    phone: phone.present ? phone.value : this.phone,
+    nationalCode: nationalCode.present ? nationalCode.value : this.nationalCode,
+    birthDate: birthDate.present ? birthDate.value : this.birthDate,
+    cardNumber: cardNumber.present ? cardNumber.value : this.cardNumber,
+    sheba: sheba.present ? sheba.value : this.sheba,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -260,6 +429,15 @@ class PartyRow extends DataClass implements Insertable<PartyRow> {
       name: data.name.present ? data.name.value : this.name,
       kind: data.kind.present ? data.kind.value : this.kind,
       note: data.note.present ? data.note.value : this.note,
+      phone: data.phone.present ? data.phone.value : this.phone,
+      nationalCode: data.nationalCode.present
+          ? data.nationalCode.value
+          : this.nationalCode,
+      birthDate: data.birthDate.present ? data.birthDate.value : this.birthDate,
+      cardNumber: data.cardNumber.present
+          ? data.cardNumber.value
+          : this.cardNumber,
+      sheba: data.sheba.present ? data.sheba.value : this.sheba,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -272,6 +450,11 @@ class PartyRow extends DataClass implements Insertable<PartyRow> {
           ..write('name: $name, ')
           ..write('kind: $kind, ')
           ..write('note: $note, ')
+          ..write('phone: $phone, ')
+          ..write('nationalCode: $nationalCode, ')
+          ..write('birthDate: $birthDate, ')
+          ..write('cardNumber: $cardNumber, ')
+          ..write('sheba: $sheba, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -279,7 +462,19 @@ class PartyRow extends DataClass implements Insertable<PartyRow> {
   }
 
   @override
-  int get hashCode => Object.hash(id, name, kind, note, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+    id,
+    name,
+    kind,
+    note,
+    phone,
+    nationalCode,
+    birthDate,
+    cardNumber,
+    sheba,
+    createdAt,
+    updatedAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -288,6 +483,11 @@ class PartyRow extends DataClass implements Insertable<PartyRow> {
           other.name == this.name &&
           other.kind == this.kind &&
           other.note == this.note &&
+          other.phone == this.phone &&
+          other.nationalCode == this.nationalCode &&
+          other.birthDate == this.birthDate &&
+          other.cardNumber == this.cardNumber &&
+          other.sheba == this.sheba &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -297,6 +497,11 @@ class PartiesCompanion extends UpdateCompanion<PartyRow> {
   final Value<String> name;
   final Value<String> kind;
   final Value<String?> note;
+  final Value<String?> phone;
+  final Value<String?> nationalCode;
+  final Value<String?> birthDate;
+  final Value<String?> cardNumber;
+  final Value<String?> sheba;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<int> rowid;
@@ -305,6 +510,11 @@ class PartiesCompanion extends UpdateCompanion<PartyRow> {
     this.name = const Value.absent(),
     this.kind = const Value.absent(),
     this.note = const Value.absent(),
+    this.phone = const Value.absent(),
+    this.nationalCode = const Value.absent(),
+    this.birthDate = const Value.absent(),
+    this.cardNumber = const Value.absent(),
+    this.sheba = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -314,6 +524,11 @@ class PartiesCompanion extends UpdateCompanion<PartyRow> {
     required String name,
     required String kind,
     this.note = const Value.absent(),
+    this.phone = const Value.absent(),
+    this.nationalCode = const Value.absent(),
+    this.birthDate = const Value.absent(),
+    this.cardNumber = const Value.absent(),
+    this.sheba = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
     this.rowid = const Value.absent(),
@@ -327,6 +542,11 @@ class PartiesCompanion extends UpdateCompanion<PartyRow> {
     Expression<String>? name,
     Expression<String>? kind,
     Expression<String>? note,
+    Expression<String>? phone,
+    Expression<String>? nationalCode,
+    Expression<String>? birthDate,
+    Expression<String>? cardNumber,
+    Expression<String>? sheba,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
@@ -336,6 +556,11 @@ class PartiesCompanion extends UpdateCompanion<PartyRow> {
       if (name != null) 'name': name,
       if (kind != null) 'kind': kind,
       if (note != null) 'note': note,
+      if (phone != null) 'phone': phone,
+      if (nationalCode != null) 'national_code': nationalCode,
+      if (birthDate != null) 'birth_date': birthDate,
+      if (cardNumber != null) 'card_number': cardNumber,
+      if (sheba != null) 'sheba': sheba,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
@@ -347,6 +572,11 @@ class PartiesCompanion extends UpdateCompanion<PartyRow> {
     Value<String>? name,
     Value<String>? kind,
     Value<String?>? note,
+    Value<String?>? phone,
+    Value<String?>? nationalCode,
+    Value<String?>? birthDate,
+    Value<String?>? cardNumber,
+    Value<String?>? sheba,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<int>? rowid,
@@ -356,6 +586,11 @@ class PartiesCompanion extends UpdateCompanion<PartyRow> {
       name: name ?? this.name,
       kind: kind ?? this.kind,
       note: note ?? this.note,
+      phone: phone ?? this.phone,
+      nationalCode: nationalCode ?? this.nationalCode,
+      birthDate: birthDate ?? this.birthDate,
+      cardNumber: cardNumber ?? this.cardNumber,
+      sheba: sheba ?? this.sheba,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
@@ -377,6 +612,21 @@ class PartiesCompanion extends UpdateCompanion<PartyRow> {
     if (note.present) {
       map['note'] = Variable<String>(note.value);
     }
+    if (phone.present) {
+      map['phone'] = Variable<String>(phone.value);
+    }
+    if (nationalCode.present) {
+      map['national_code'] = Variable<String>(nationalCode.value);
+    }
+    if (birthDate.present) {
+      map['birth_date'] = Variable<String>(birthDate.value);
+    }
+    if (cardNumber.present) {
+      map['card_number'] = Variable<String>(cardNumber.value);
+    }
+    if (sheba.present) {
+      map['sheba'] = Variable<String>(sheba.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -396,6 +646,11 @@ class PartiesCompanion extends UpdateCompanion<PartyRow> {
           ..write('name: $name, ')
           ..write('kind: $kind, ')
           ..write('note: $note, ')
+          ..write('phone: $phone, ')
+          ..write('nationalCode: $nationalCode, ')
+          ..write('birthDate: $birthDate, ')
+          ..write('cardNumber: $cardNumber, ')
+          ..write('sheba: $sheba, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
@@ -3202,6 +3457,11 @@ typedef $$PartiesTableCreateCompanionBuilder =
       required String name,
       required String kind,
       Value<String?> note,
+      Value<String?> phone,
+      Value<String?> nationalCode,
+      Value<String?> birthDate,
+      Value<String?> cardNumber,
+      Value<String?> sheba,
       required DateTime createdAt,
       required DateTime updatedAt,
       Value<int> rowid,
@@ -3212,6 +3472,11 @@ typedef $$PartiesTableUpdateCompanionBuilder =
       Value<String> name,
       Value<String> kind,
       Value<String?> note,
+      Value<String?> phone,
+      Value<String?> nationalCode,
+      Value<String?> birthDate,
+      Value<String?> cardNumber,
+      Value<String?> sheba,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<int> rowid,
@@ -3285,6 +3550,31 @@ class $$PartiesTableFilterComposer
 
   ColumnFilters<String> get note => $composableBuilder(
     column: $table.note,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get phone => $composableBuilder(
+    column: $table.phone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get nationalCode => $composableBuilder(
+    column: $table.nationalCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get birthDate => $composableBuilder(
+    column: $table.birthDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get cardNumber => $composableBuilder(
+    column: $table.cardNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sheba => $composableBuilder(
+    column: $table.sheba,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3378,6 +3668,31 @@ class $$PartiesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get phone => $composableBuilder(
+    column: $table.phone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get nationalCode => $composableBuilder(
+    column: $table.nationalCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get birthDate => $composableBuilder(
+    column: $table.birthDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get cardNumber => $composableBuilder(
+    column: $table.cardNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get sheba => $composableBuilder(
+    column: $table.sheba,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -3409,6 +3724,25 @@ class $$PartiesTableAnnotationComposer
 
   GeneratedColumn<String> get note =>
       $composableBuilder(column: $table.note, builder: (column) => column);
+
+  GeneratedColumn<String> get phone =>
+      $composableBuilder(column: $table.phone, builder: (column) => column);
+
+  GeneratedColumn<String> get nationalCode => $composableBuilder(
+    column: $table.nationalCode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get birthDate =>
+      $composableBuilder(column: $table.birthDate, builder: (column) => column);
+
+  GeneratedColumn<String> get cardNumber => $composableBuilder(
+    column: $table.cardNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get sheba =>
+      $composableBuilder(column: $table.sheba, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -3499,6 +3833,11 @@ class $$PartiesTableTableManager
                 Value<String> name = const Value.absent(),
                 Value<String> kind = const Value.absent(),
                 Value<String?> note = const Value.absent(),
+                Value<String?> phone = const Value.absent(),
+                Value<String?> nationalCode = const Value.absent(),
+                Value<String?> birthDate = const Value.absent(),
+                Value<String?> cardNumber = const Value.absent(),
+                Value<String?> sheba = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -3507,6 +3846,11 @@ class $$PartiesTableTableManager
                 name: name,
                 kind: kind,
                 note: note,
+                phone: phone,
+                nationalCode: nationalCode,
+                birthDate: birthDate,
+                cardNumber: cardNumber,
+                sheba: sheba,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -3517,6 +3861,11 @@ class $$PartiesTableTableManager
                 required String name,
                 required String kind,
                 Value<String?> note = const Value.absent(),
+                Value<String?> phone = const Value.absent(),
+                Value<String?> nationalCode = const Value.absent(),
+                Value<String?> birthDate = const Value.absent(),
+                Value<String?> cardNumber = const Value.absent(),
+                Value<String?> sheba = const Value.absent(),
                 required DateTime createdAt,
                 required DateTime updatedAt,
                 Value<int> rowid = const Value.absent(),
@@ -3525,6 +3874,11 @@ class $$PartiesTableTableManager
                 name: name,
                 kind: kind,
                 note: note,
+                phone: phone,
+                nationalCode: nationalCode,
+                birthDate: birthDate,
+                cardNumber: cardNumber,
+                sheba: sheba,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,

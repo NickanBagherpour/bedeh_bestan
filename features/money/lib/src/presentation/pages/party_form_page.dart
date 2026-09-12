@@ -21,6 +21,11 @@ class PartyFormPage extends ConsumerStatefulWidget {
 
 class _PartyFormPageState extends ConsumerState<PartyFormPage> {
   final _name = TextEditingController();
+  final _phone = TextEditingController();
+  final _nationalCode = TextEditingController();
+  final _birthDate = TextEditingController();
+  final _cardNumber = TextEditingController();
+  final _sheba = TextEditingController();
   final _note = TextEditingController();
   PartyKind _kind = PartyKind.person;
   bool _loaded = false;
@@ -31,6 +36,11 @@ class _PartyFormPageState extends ConsumerState<PartyFormPage> {
   @override
   void dispose() {
     _name.dispose();
+    _phone.dispose();
+    _nationalCode.dispose();
+    _birthDate.dispose();
+    _cardNumber.dispose();
+    _sheba.dispose();
     _note.dispose();
     super.dispose();
   }
@@ -39,6 +49,11 @@ class _PartyFormPageState extends ConsumerState<PartyFormPage> {
     if (_loaded) return;
     _loaded = true;
     _name.text = party.name;
+    _phone.text = party.phone ?? '';
+    _nationalCode.text = party.nationalCode ?? '';
+    _birthDate.text = party.birthDate ?? '';
+    _cardNumber.text = party.cardNumber ?? '';
+    _sheba.text = party.sheba ?? '';
     _note.text = party.note ?? '';
     _kind = party.kind;
   }
@@ -112,6 +127,55 @@ class _PartyFormPageState extends ConsumerState<PartyFormPage> {
           ),
           const SizedBox(height: AppSpacing.md),
           TextField(
+            controller: _phone,
+            keyboardType: TextInputType.phone,
+            textDirection: TextDirection.ltr,
+            decoration: InputDecoration(
+              labelText: t.money.phone,
+              hintText: t.money.optional,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          TextField(
+            controller: _cardNumber,
+            keyboardType: TextInputType.number,
+            textDirection: TextDirection.ltr,
+            decoration: InputDecoration(
+              labelText: t.money.cardNumber,
+              hintText: t.money.optional,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          TextField(
+            controller: _sheba,
+            keyboardType: TextInputType.text,
+            textDirection: TextDirection.ltr,
+            decoration: InputDecoration(
+              labelText: t.money.sheba,
+              hintText: t.money.optional,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          TextField(
+            controller: _nationalCode,
+            keyboardType: TextInputType.number,
+            textDirection: TextDirection.ltr,
+            decoration: InputDecoration(
+              labelText: t.money.nationalCode,
+              hintText: t.money.optional,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          TextField(
+            controller: _birthDate,
+            keyboardType: TextInputType.datetime,
+            decoration: InputDecoration(
+              labelText: t.money.birthDate,
+              hintText: t.money.optional,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          TextField(
             controller: _note,
             maxLines: 3,
             decoration: InputDecoration(
@@ -151,6 +215,11 @@ class _PartyFormPageState extends ConsumerState<PartyFormPage> {
                 name: name,
                 kind: _kind,
                 note: _note.text,
+                phone: _phone.text,
+                nationalCode: _nationalCode.text,
+                birthDate: _birthDate.text,
+                cardNumber: _cardNumber.text,
+                sheba: _sheba.text,
               );
       if (!mounted) return;
       AppHaptics.confirm();

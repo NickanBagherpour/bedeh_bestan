@@ -1,7 +1,87 @@
 import 'package:local_db/local_db.dart'
-    show MoneyDirection, MoneyItem, MoneySchedule, MoneyStatus;
+    show MoneyDirection, MoneyItem, MoneyPayment, MoneySchedule, MoneyStatus;
 
 enum MoneyListFilter { all, pay, receive }
+
+/// +1 for طلب (receivable, they owe me), -1 for بدهی (I owe them).
+///
+/// Used so a party's balance is a single signed number: positive means the
+/// party owes me, negative means I owe the party.
+int directionSign(MoneyDirection direction) =>
+    direction == MoneyDirection.receive ? 1 : -1;
+
+/// Net position for a party across [items], in stored Toman.
+///
+/// Sum of outstanding طلب minus outstanding بدهی. Positive → the party owes me,
+/// negative → I owe the party, zero → settled. Pure; unit-tested.
+int partyNetBalance(Iterable<MoneyItem> items) {
+  var net = 0;
+  for (final item in items) {
+    net += directionSign(item.direction) * item.remainingAmount;
+  }
+  return net;
+}
+
+/// One chronological row of a party's running-balance ledger.
+final class PartyLedgerEntry {
+  const PartyLedgerEntry({
+    required this.payment,
+    required this.direction,
+    required this.balanceAfter,
+  });
+
+  /// The payment / receipt this row represents.
+  final MoneyPayment payment;
+
+  /// Direction of the account the payment belongs to (drives its color).
+  final MoneyDirection direction;
+
+  /// Signed net position (stored Toman) right after this entry, using the same
+  /// sign convention as [partyNetBalance]. The last entry equals the current
+  /// [partyNetBalance] of the same accounts.
+  final int balanceAfter;
+}
+
+/// Chronological running-balance ledger for a party.
+///
+/// Only payments belonging to one of [items] are included, sorted by `paidAt`
+/// (ties broken by id for stability). The balance starts from the accounts'
+/// original totals and each payment moves it toward the current net, so the
+/// final entry equals [partyNetBalance]. Pure; unit-tested.
+List<PartyLedgerEntry> partyLedger({
+  required List<MoneyItem> items,
+  required List<MoneyPayment> payments,
+}) {
+  final byItem = {for (final item in items) item.id: item};
+  final relevant = [
+    for (final payment in payments)
+      if (byItem.containsKey(payment.moneyItemId)) payment,
+  ]..sort((a, b) {
+      final byDate = a.paidAt.compareTo(b.paidAt);
+      return byDate != 0 ? byDate : a.id.compareTo(b.id);
+    });
+
+  var running = 0;
+  for (final item in items) {
+    running += directionSign(item.direction) * item.totalAmount;
+  }
+
+  final entries = <PartyLedgerEntry>[];
+  for (final payment in relevant) {
+    final item = byItem[payment.moneyItemId]!;
+    // A payment reduces the outstanding on its account, moving the party's net
+    // toward zero from whichever side that account sits on.
+    running -= directionSign(item.direction) * payment.amount;
+    entries.add(
+      PartyLedgerEntry(
+        payment: payment,
+        direction: item.direction,
+        balanceAfter: running,
+      ),
+    );
+  }
+  return entries;
+}
 
 /// Suggested payment prefill (stored Toman) for an installment item.
 ///

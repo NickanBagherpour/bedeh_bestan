@@ -135,6 +135,11 @@ Map<String, Object?> _partyJson(Party row) => {
       'name': row.name,
       'kind': row.kind.name,
       'note': row.note,
+      'phone': row.phone,
+      'nationalCode': row.nationalCode,
+      'birthDate': row.birthDate,
+      'cardNumber': row.cardNumber,
+      'sheba': row.sheba,
       'createdAt': _millis(row.createdAt),
       'updatedAt': _millis(row.updatedAt),
     };
@@ -145,6 +150,11 @@ Party _partyFrom(Map<String, Object?> json) {
     name: json['name'] as String,
     kind: enumByName(PartyKind.values, json['kind'] as String? ?? '', PartyKind.custom),
     note: _blankToNull(json['note'] as String?),
+    phone: _blankToNull(json['phone'] as String?),
+    nationalCode: _blankToNull(json['nationalCode'] as String?),
+    birthDate: _blankToNull(json['birthDate'] as String?),
+    cardNumber: _blankToNull(json['cardNumber'] as String?),
+    sheba: _blankToNull(json['sheba'] as String?),
     createdAt: _time(json['createdAt']),
     updatedAt: _time(json['updatedAt']),
   );

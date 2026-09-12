@@ -10,6 +10,8 @@ final class MoneyRepository {
 
   Stream<List<Party>> watchParties() => _database.watchParties();
 
+  Stream<List<MoneyPayment>> watchPayments() => _database.watchPayments();
+
   Stream<List<MoneyPayment>> watchPaymentsFor(String moneyItemId) {
     return _database.watchPaymentsFor(moneyItemId);
   }

@@ -365,6 +365,33 @@ class Translations$money$en {
 	/// en: 'Name'
 	String get partyName => 'Name';
 
+	/// en: 'Phone'
+	String get phone => 'Phone';
+
+	/// en: 'National code'
+	String get nationalCode => 'National code';
+
+	/// en: 'Birth date'
+	String get birthDate => 'Birth date';
+
+	/// en: 'Card number'
+	String get cardNumber => 'Card number';
+
+	/// en: 'IBAN (Sheba)'
+	String get sheba => 'IBAN (Sheba)';
+
+	/// en: 'Call'
+	String get callAction => 'Call';
+
+	/// en: 'Copy'
+	String get copyAction => 'Copy';
+
+	/// en: 'Copied.'
+	String get copied => 'Copied.';
+
+	/// en: 'Could not start a call.'
+	String get callFailed => 'Could not start a call.';
+
 	/// en: 'Save'
 	String get save => 'Save';
 
@@ -470,6 +497,30 @@ class Translations$money$en {
 
 	/// en: 'No accounts with this party yet.'
 	String get noLinkedAccounts => 'No accounts with this party yet.';
+
+	/// en: 'Net balance'
+	String get netBalance => 'Net balance';
+
+	/// en: 'Statement'
+	String get statement => 'Statement';
+
+	/// en: 'Balance'
+	String get balance => 'Balance';
+
+	/// en: 'No transactions yet.'
+	String get emptyLedger => 'No transactions yet.';
+
+	/// en: 'Share'
+	String get share => 'Share';
+
+	/// en: 'Share statement'
+	String get shareStatement => 'Share statement';
+
+	/// en: 'Statement: $name'
+	String shareSubject({required Object name}) => 'Statement: ${name}';
+
+	/// en: 'Could not open the share sheet.'
+	String get shareFailed => 'Could not open the share sheet.';
 }
 
 // Path: notes
@@ -1027,6 +1078,15 @@ extension on Translations {
 			'money.newParty' => 'New party',
 			'money.existingParty' => 'Existing party',
 			'money.partyName' => 'Name',
+			'money.phone' => 'Phone',
+			'money.nationalCode' => 'National code',
+			'money.birthDate' => 'Birth date',
+			'money.cardNumber' => 'Card number',
+			'money.sheba' => 'IBAN (Sheba)',
+			'money.callAction' => 'Call',
+			'money.copyAction' => 'Copy',
+			'money.copied' => 'Copied.',
+			'money.callFailed' => 'Could not start a call.',
 			'money.save' => 'Save',
 			'money.edit' => 'Edit',
 			'money.recordPayment' => 'Record payment',
@@ -1071,6 +1131,14 @@ extension on Translations {
 			'money.editPartyTitle' => 'Edit party',
 			'money.linkedAccounts' => 'Accounts',
 			'money.noLinkedAccounts' => 'No accounts with this party yet.',
+			'money.netBalance' => 'Net balance',
+			'money.statement' => 'Statement',
+			'money.balance' => 'Balance',
+			'money.emptyLedger' => 'No transactions yet.',
+			'money.share' => 'Share',
+			'money.shareStatement' => 'Share statement',
+			'money.shareSubject' => ({required Object name}) => 'Statement: ${name}',
+			'money.shareFailed' => 'Could not open the share sheet.',
 			'notes.title' => 'Notes',
 			'notes.fab' => 'Note',
 			'notes.emptyTitle' => 'No notes yet',

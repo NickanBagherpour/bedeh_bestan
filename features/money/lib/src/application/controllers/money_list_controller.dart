@@ -80,27 +80,37 @@ final class MoneyListController extends Notifier<MoneyListState> {
     required PartyKind kind,
     String? id,
     String? note,
+    String? phone,
+    String? nationalCode,
+    String? birthDate,
+    String? cardNumber,
+    String? sheba,
   }) async {
     final repo = ref.read(moneyRepositoryProvider);
     final now = DateTime.now();
     final existing = id == null ? null : await repo.getParty(id);
-    final String? resolvedNote;
-    if (note == null) {
-      resolvedNote = existing?.note;
-    } else {
-      final trimmed = note.trim();
-      resolvedNote = trimmed.isEmpty ? null : trimmed;
-    }
     final party = Party(
       id: id ?? repo.nextId('party'),
       name: name.trim(),
       kind: kind,
       createdAt: existing?.createdAt ?? now,
       updatedAt: now,
-      note: resolvedNote,
+      note: _resolveField(note, existing?.note),
+      phone: _resolveField(phone, existing?.phone),
+      nationalCode: _resolveField(nationalCode, existing?.nationalCode),
+      birthDate: _resolveField(birthDate, existing?.birthDate),
+      cardNumber: _resolveField(cardNumber, existing?.cardNumber),
+      sheba: _resolveField(sheba, existing?.sheba),
     );
     await repo.upsertParty(party);
     return party;
+  }
+
+  /// `null` keeps the previous value; anything else is trimmed to null-if-blank.
+  String? _resolveField(String? next, String? previous) {
+    if (next == null) return previous;
+    final trimmed = next.trim();
+    return trimmed.isEmpty ? null : trimmed;
   }
 
   Future<String?> deleteParty(String id) async {

@@ -59,7 +59,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration {
@@ -162,6 +162,11 @@ class AppDatabase extends _$AppDatabase {
         name: Value(party.name),
         kind: Value(party.kind.name),
         note: Value(party.note),
+        phone: Value(party.phone),
+        nationalCode: Value(party.nationalCode),
+        birthDate: Value(party.birthDate),
+        cardNumber: Value(party.cardNumber),
+        sheba: Value(party.sheba),
         createdAt: Value(party.createdAt),
         updatedAt: Value(party.updatedAt),
       ),
@@ -446,6 +451,11 @@ class AppDatabase extends _$AppDatabase {
 
   Future<void> _ensureColumns() async {
     await _ensureColumn('parties', 'note', 'TEXT NULL');
+    await _ensureColumn('parties', 'phone', 'TEXT NULL');
+    await _ensureColumn('parties', 'national_code', 'TEXT NULL');
+    await _ensureColumn('parties', 'birth_date', 'TEXT NULL');
+    await _ensureColumn('parties', 'card_number', 'TEXT NULL');
+    await _ensureColumn('parties', 'sheba', 'TEXT NULL');
     await _ensureColumn('money_items', 'paid_amount', 'INTEGER NOT NULL DEFAULT 0');
     await _ensureColumn(
       'money_items',
@@ -517,6 +527,11 @@ Party partyFromRow(PartyRow row) {
     name: row.name,
     kind: enumByName(PartyKind.values, row.kind, PartyKind.custom),
     note: row.note,
+    phone: row.phone,
+    nationalCode: row.nationalCode,
+    birthDate: row.birthDate,
+    cardNumber: row.cardNumber,
+    sheba: row.sheba,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   );

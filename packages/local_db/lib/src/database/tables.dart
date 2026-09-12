@@ -6,6 +6,11 @@ class Parties extends Table {
   TextColumn get name => text()();
   TextColumn get kind => text()();
   TextColumn get note => text().nullable()();
+  TextColumn get phone => text().nullable()();
+  TextColumn get nationalCode => text().nullable()();
+  TextColumn get birthDate => text().nullable()();
+  TextColumn get cardNumber => text().nullable()();
+  TextColumn get sheba => text().nullable()();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
 

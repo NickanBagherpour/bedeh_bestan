@@ -179,6 +179,15 @@ class _Translations$money$fa extends Translations$money$en {
 	@override String get newParty => 'طرف‌حساب جدید';
 	@override String get existingParty => 'طرف‌حساب موجود';
 	@override String get partyName => 'نام';
+	@override String get phone => 'شماره تلفن';
+	@override String get nationalCode => 'کد ملی';
+	@override String get birthDate => 'تاریخ تولد';
+	@override String get cardNumber => 'شماره کارت';
+	@override String get sheba => 'شماره شبا';
+	@override String get callAction => 'تماس';
+	@override String get copyAction => 'کپی';
+	@override String get copied => 'کپی شد.';
+	@override String get callFailed => 'برقراری تماس ممکن نشد.';
 	@override String get save => 'ذخیره';
 	@override String get edit => 'ویرایش';
 	@override String get recordPayment => 'ثبت پرداخت';
@@ -216,6 +225,14 @@ class _Translations$money$fa extends Translations$money$en {
 	@override String get editPartyTitle => 'ویرایش طرف‌حساب';
 	@override String get linkedAccounts => 'حساب‌ها';
 	@override String get noLinkedAccounts => 'هنوز حسابی با این طرف‌حساب نیست.';
+	@override String get netBalance => 'مانده حساب';
+	@override String get statement => 'صورت‌حساب';
+	@override String get balance => 'مانده';
+	@override String get emptyLedger => 'هنوز تراکنشی نیست.';
+	@override String get share => 'اشتراک‌گذاری';
+	@override String get shareStatement => 'اشتراک صورت‌حساب';
+	@override String shareSubject({required Object name}) => 'صورت‌حساب: ${name}';
+	@override String get shareFailed => 'باز کردن صفحهٔ اشتراک‌گذاری ممکن نشد.';
 }
 
 // Path: notes
@@ -571,6 +588,15 @@ extension on TranslationsFa {
 			'money.newParty' => 'طرف‌حساب جدید',
 			'money.existingParty' => 'طرف‌حساب موجود',
 			'money.partyName' => 'نام',
+			'money.phone' => 'شماره تلفن',
+			'money.nationalCode' => 'کد ملی',
+			'money.birthDate' => 'تاریخ تولد',
+			'money.cardNumber' => 'شماره کارت',
+			'money.sheba' => 'شماره شبا',
+			'money.callAction' => 'تماس',
+			'money.copyAction' => 'کپی',
+			'money.copied' => 'کپی شد.',
+			'money.callFailed' => 'برقراری تماس ممکن نشد.',
 			'money.save' => 'ذخیره',
 			'money.edit' => 'ویرایش',
 			'money.recordPayment' => 'ثبت پرداخت',
@@ -615,6 +641,14 @@ extension on TranslationsFa {
 			'money.editPartyTitle' => 'ویرایش طرف‌حساب',
 			'money.linkedAccounts' => 'حساب‌ها',
 			'money.noLinkedAccounts' => 'هنوز حسابی با این طرف‌حساب نیست.',
+			'money.netBalance' => 'مانده حساب',
+			'money.statement' => 'صورت‌حساب',
+			'money.balance' => 'مانده',
+			'money.emptyLedger' => 'هنوز تراکنشی نیست.',
+			'money.share' => 'اشتراک‌گذاری',
+			'money.shareStatement' => 'اشتراک صورت‌حساب',
+			'money.shareSubject' => ({required Object name}) => 'صورت‌حساب: ${name}',
+			'money.shareFailed' => 'باز کردن صفحهٔ اشتراک‌گذاری ممکن نشد.',
 			'notes.title' => 'یادداشت',
 			'notes.fab' => 'یادداشت',
 			'notes.emptyTitle' => 'هنوز یادداشتی نیست',
