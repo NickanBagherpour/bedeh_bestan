@@ -19,6 +19,7 @@ import 'package:ui_kit/ui_kit.dart'
         KitEmpty,
         KitError,
         KitLoading,
+        KitScrollHideFab,
         showKitConfirmDialog;
 
 import '../../application/controllers/money_list_controller.dart';
@@ -41,7 +42,7 @@ class MoneyPage extends ConsumerWidget {
     final now = DateTime.now();
     final visible = state.visible(now: now);
 
-    return Scaffold(
+    return KitScrollHideFab(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -57,7 +58,7 @@ class MoneyPage extends ConsumerWidget {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      fab: FloatingActionButton.extended(
         onPressed: () {
           AppHaptics.light();
           _pickDirection(context, t);

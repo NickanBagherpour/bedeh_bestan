@@ -6,7 +6,13 @@ import 'package:local_db/local_db.dart' show Note;
 import 'package:translations/translations.dart'
     show Translations, TranslationsLookup;
 import 'package:ui_kit/ui_kit.dart'
-    show AppHaptics, AppSpacing, KitEmpty, KitError, KitLoading;
+    show
+        AppHaptics,
+        AppSpacing,
+        KitEmpty,
+        KitError,
+        KitLoading,
+        KitScrollHideFab;
 
 import '../../application/controllers/notes_controller.dart';
 import '../../application/state/notes_state.dart';
@@ -21,13 +27,13 @@ class NotesPage extends ConsumerWidget {
     final state = ref.watch(notesControllerProvider);
     final visible = state.visible;
 
-    return Scaffold(
+    return KitScrollHideFab(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         title: Text(t.notes.title),
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      fab: FloatingActionButton.extended(
         onPressed: () {
           AppHaptics.light();
           context.push(AppRoutes.notesNew.path);

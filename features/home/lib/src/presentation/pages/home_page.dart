@@ -24,7 +24,8 @@ import 'package:ui_kit/ui_kit.dart'
         KitFadeIn,
         KitHeroHeader,
         KitIconBadge,
-        KitLoading;
+        KitLoading,
+        KitScrollHideFab;
 
 import '../../application/controllers/home_controller.dart';
 import '../../application/home_dashboard.dart';
@@ -45,9 +46,9 @@ class HomePage extends ConsumerWidget {
     final currency = ref.watch(appSettingsProvider).currency;
     final persian = Localizations.localeOf(context).languageCode == 'fa';
 
-    return Scaffold(
+    return KitScrollHideFab(
       backgroundColor: Colors.transparent,
-      floatingActionButton: FloatingActionButton.extended(
+      fab: FloatingActionButton.extended(
         onPressed: () {
           AppHaptics.light();
           _pickDirection(context, t);

@@ -19,5 +19,6 @@ export 'src/widgets/kit_hero_header.dart';
 export 'src/widgets/kit_icon_badge.dart';
 export 'src/widgets/kit_loading.dart';
 export 'src/widgets/kit_screen_background.dart';
+export 'src/widgets/kit_scroll_hide_fab.dart';
 export 'src/widgets/kit_search_select.dart';
 export 'src/widgets/kit_stat_tile.dart';

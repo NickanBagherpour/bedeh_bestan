@@ -19,7 +19,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:translations/translations.dart'
     show Translations, TranslationsLookup;
-import 'package:ui_kit/ui_kit.dart' show AppHaptics, AppSpacing, KitError, KitLoading;
+import 'package:ui_kit/ui_kit.dart'
+    show AppHaptics, AppSpacing, KitError, KitLoading, KitScrollHideFab;
 
 import '../../application/controllers/calendar_controller.dart';
 import '../../application/occurrences.dart';
@@ -99,13 +100,13 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
       return persian ? toPersianDigits(formatted) : formatted;
     }
 
-    return Scaffold(
+    return KitScrollHideFab(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         title: Text(t.calendar.title),
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      fab: FloatingActionButton.extended(
         onPressed: () => _openNew(context),
         icon: const Icon(Icons.notification_add_outlined),
         label: Text(t.calendar.fab),

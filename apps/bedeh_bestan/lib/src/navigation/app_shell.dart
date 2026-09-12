@@ -91,14 +91,19 @@ class AppShell extends StatelessWidget {
     final selectedIndex = _selectedIndex(context);
     final t = Translations.of(context);
 
-    return Scaffold(
-      extendBody: true,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: KitScreenBackground(child: SafeArea(bottom: false, child: child)),
-      bottomNavigationBar: _FloatingNavBar(
-        selectedIndex: selectedIndex,
-        onSelected: (index) => _onDestinationSelected(context, index),
-        labels: [for (final d in _destinations) d.labelOf(t)],
+    // The ambient aurora wraps the whole scaffold (which is transparent) so it
+    // shows behind both the body and the floating nav bar. `extendBody` stays
+    // off so each destination's FAB is inset above the nav bar instead of
+    // sliding underneath it.
+    return KitScreenBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(bottom: false, child: child),
+        bottomNavigationBar: _FloatingNavBar(
+          selectedIndex: selectedIndex,
+          onSelected: (index) => _onDestinationSelected(context, index),
+          labels: [for (final d in _destinations) d.labelOf(t)],
+        ),
       ),
     );
   }

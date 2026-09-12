@@ -49,6 +49,11 @@ class _KitScreenBackgroundState extends State<KitScreenBackground>
     final isDark = theme.brightness == Brightness.dark;
     return Stack(
       children: [
+        // Base scaffold color so the ambient layer is self-contained and can
+        // sit behind a transparent Scaffold (body + floating nav bar).
+        Positioned.fill(
+          child: ColoredBox(color: theme.scaffoldBackgroundColor),
+        ),
         Positioned.fill(
           child: RepaintBoundary(
             child: AnimatedBuilder(
