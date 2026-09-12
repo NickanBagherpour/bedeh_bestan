@@ -521,6 +521,26 @@ class Translations$money$en {
 
 	/// en: 'Could not open the share sheet.'
 	String get shareFailed => 'Could not open the share sheet.';
+
+	/// en: 'Due today'
+	String get dueTitle => 'Due today';
+
+	/// en: 'Due tomorrow'
+	String get dueSoonTitle => 'Due tomorrow';
+
+	/// en: '$title'
+	String dueBody({required Object title}) => '${title}';
+
+	/// en: 'Installment schedule'
+	String get scheduleTitle => 'Installment schedule';
+
+	/// en: 'Installment $index'
+	String installmentRow({required Object index}) => 'Installment ${index}';
+
+	/// en: 'Remaining $amount'
+	String remainingAmount({required Object amount}) => 'Remaining ${amount}';
+
+	late final Translations$money$installmentState$en installmentState = Translations$money$installmentState$en.internal(_root);
 }
 
 // Path: notes
@@ -943,6 +963,24 @@ class Translations$money$partyKind$en {
 	String get custom => 'Custom';
 }
 
+// Path: money.installmentState
+class Translations$money$installmentState$en {
+	Translations$money$installmentState$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Paid'
+	String get paid => 'Paid';
+
+	/// en: 'Due'
+	String get due => 'Due';
+
+	/// en: 'Upcoming'
+	String get upcoming => 'Upcoming';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -1139,6 +1177,15 @@ extension on Translations {
 			'money.shareStatement' => 'Share statement',
 			'money.shareSubject' => ({required Object name}) => 'Statement: ${name}',
 			'money.shareFailed' => 'Could not open the share sheet.',
+			'money.dueTitle' => 'Due today',
+			'money.dueSoonTitle' => 'Due tomorrow',
+			'money.dueBody' => ({required Object title}) => '${title}',
+			'money.scheduleTitle' => 'Installment schedule',
+			'money.installmentRow' => ({required Object index}) => 'Installment ${index}',
+			'money.remainingAmount' => ({required Object amount}) => 'Remaining ${amount}',
+			'money.installmentState.paid' => 'Paid',
+			'money.installmentState.due' => 'Due',
+			'money.installmentState.upcoming' => 'Upcoming',
 			'notes.title' => 'Notes',
 			'notes.fab' => 'Note',
 			'notes.emptyTitle' => 'No notes yet',

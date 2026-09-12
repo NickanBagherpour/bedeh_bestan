@@ -208,6 +208,16 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
             ],
           ),
         ),
+        if (item.schedule == MoneySchedule.installment)
+          ..._installmentSection(
+            context,
+            t,
+            theme,
+            item,
+            calendar,
+            persian,
+            currency,
+          ),
         if (!item.isSettled) ...[
           const SizedBox(height: AppSpacing.lg),
           Text(
@@ -296,6 +306,116 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
         ),
       ],
     );
+  }
+
+  /// Per-قسط schedule for installment items: a progress header plus one row per
+  /// قسط with its due date, amount, and paid / due / upcoming state.
+  List<Widget> _installmentSection(
+    BuildContext context,
+    Translations t,
+    ThemeData theme,
+    MoneyItem item,
+    CalendarType calendar,
+    bool persian,
+    AppCurrency currency,
+  ) {
+    final rows = installmentSchedule(item, calendar);
+    if (rows.isEmpty) return const [];
+    final progress = t.money.periodsProgress(
+      paid: _count(item.periodsPaid, persian),
+      total: _count(item.installmentCount ?? rows.length, persian),
+    );
+    final remaining = t.money.remainingAmount(
+      amount: formatItemMoney(
+        item.remainingAmount,
+        t: t,
+        currency: currency,
+        persianDigits: persian,
+      ),
+    );
+    return [
+      const SizedBox(height: AppSpacing.lg),
+      Row(
+        children: [
+          Expanded(
+            child: Text(
+              t.money.scheduleTitle,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+          Text(
+            progress,
+            style: theme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: AppSpacing.xxs),
+      Text(
+        remaining,
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      ),
+      const SizedBox(height: AppSpacing.sm),
+      for (final row in rows)
+        Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+          child: KitCard(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm,
+            ),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 88,
+                  child: Text(
+                    t.money.installmentRow(index: _count(row.index, persian)),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        persian
+                            ? toPersianDigits(
+                                formatLongDate(row.dueDate, calendar),
+                              )
+                            : formatLongDate(row.dueDate, calendar),
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                      Text(
+                        formatItemMoney(
+                          row.amount,
+                          t: t,
+                          currency: currency,
+                          persianDigits: persian,
+                        ),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                MoneyStatusChip(
+                  label: _installmentStateLabel(t, row.state),
+                  color: _installmentStateColor(row.state, theme.colorScheme),
+                ),
+              ],
+            ),
+          ),
+        ),
+    ];
   }
 
   /// Pre-fills the payment field with the suggested قسط amount for unsettled
@@ -399,6 +519,22 @@ String _statusLabel(Translations t, MoneyStatus status) {
     MoneyStatus.dueToday => t.money.status.dueToday,
     MoneyStatus.overdue => t.money.status.overdue,
     MoneyStatus.settled => t.money.status.settled,
+  };
+}
+
+String _installmentStateLabel(Translations t, InstallmentState state) {
+  return switch (state) {
+    InstallmentState.paid => t.money.installmentState.paid,
+    InstallmentState.due => t.money.installmentState.due,
+    InstallmentState.upcoming => t.money.installmentState.upcoming,
+  };
+}
+
+Color _installmentStateColor(InstallmentState state, ColorScheme scheme) {
+  return switch (state) {
+    InstallmentState.paid => AppColors.receive,
+    InstallmentState.due => AppColors.reminder,
+    InstallmentState.upcoming => scheme.onSurfaceVariant,
   };
 }
 

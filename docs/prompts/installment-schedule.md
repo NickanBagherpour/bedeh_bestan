@@ -38,7 +38,23 @@ New strings in `money_en.i18n.json` + `money_fa.i18n.json`; `melos run translati
 
 ## Acceptance
 
-- [ ] Installment item shows a correct per-قسط schedule with paid/due states.
-- [ ] Progress (paid/total + remaining) matches the ledger.
-- [ ] Schedule helper covered by a unit test in `features/money/test/`.
-- [ ] `melos run analyze && melos run test` pass.
+- [x] Installment item shows a correct per-قسط schedule with paid/due states.
+- [x] Progress (paid/total + remaining) matches the ledger.
+- [x] Schedule helper covered by a unit test in `features/money/test/`.
+- [x] `melos run analyze && melos run test` pass.
+
+## Implementation notes
+
+- Pure helper `installmentSchedule(item, calendar)` in
+  `features/money/lib/src/application/money_query.dart` returns one
+  `InstallmentRow` per قسط (`index`, `dueDate`, `amount`, `state`). Due dates
+  are `startDate` shifted by the period index via `core`'s `shiftCalendarMonths`
+  (honours the calendar setting). States: rows below `periodsPaid` are `paid`,
+  the first unpaid is `due`, the rest `upcoming`. Equal installments in v1
+  (`installmentAmount`, falling back to `totalAmount / count`).
+- `money_detail_page.dart` renders the schedule for installment items: a header
+  with progress (`۳/۱۲`) and remaining amount, then one card per قسط with due
+  date, amount, and a state chip.
+- New strings (`scheduleTitle`, `installmentRow`, `remainingAmount`,
+  `installmentState.*`) in `money_en/fa.i18n.json` (`melos run translations`).
+- Tests: `features/money/test/installment_schedule_test.dart`.

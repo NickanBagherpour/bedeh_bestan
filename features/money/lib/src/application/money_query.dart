@@ -1,3 +1,4 @@
+import 'package:core/core.dart' show CalendarType, shiftCalendarMonths;
 import 'package:local_db/local_db.dart'
     show MoneyDirection, MoneyItem, MoneyPayment, MoneySchedule, MoneyStatus;
 
@@ -95,6 +96,61 @@ int? installmentPrefillAmount(MoneyItem item) {
   if (each == null || each <= 0) return null;
   final remaining = item.remainingAmount;
   return each < remaining ? each : remaining;
+}
+
+/// State of one installment row relative to progress.
+enum InstallmentState { paid, due, upcoming }
+
+/// One row of an installment (قسطی) schedule.
+final class InstallmentRow {
+  const InstallmentRow({
+    required this.index,
+    required this.dueDate,
+    required this.amount,
+    required this.state,
+  });
+
+  /// 1-based قسط number.
+  final int index;
+
+  /// Due date of this قسط in the active calendar.
+  final DateTime dueDate;
+
+  /// Amount for this قسط, stored Toman (equal installments in v1).
+  final int amount;
+
+  final InstallmentState state;
+}
+
+/// Per-قسط schedule for an installment [item] in [calendar].
+///
+/// Row `i` (1-based) is due `startDate` shifted by `i-1` periods (equal monthly
+/// installments). The first `periodsPaid` rows are [InstallmentState.paid], the
+/// next unpaid one is [InstallmentState.due], and the rest are
+/// [InstallmentState.upcoming]. Empty for non-installment items or when the
+/// count is missing. Pure; unit-tested.
+List<InstallmentRow> installmentSchedule(MoneyItem item, CalendarType calendar) {
+  if (item.schedule != MoneySchedule.installment) return const [];
+  final count = item.installmentCount;
+  if (count == null || count <= 0) return const [];
+  final each = item.installmentAmount ?? (item.totalAmount / count).round();
+  final rows = <InstallmentRow>[];
+  for (var i = 0; i < count; i++) {
+    final state = i < item.periodsPaid
+        ? InstallmentState.paid
+        : (i == item.periodsPaid
+              ? InstallmentState.due
+              : InstallmentState.upcoming);
+    rows.add(
+      InstallmentRow(
+        index: i + 1,
+        dueDate: shiftCalendarMonths(item.startDate, i, calendar),
+        amount: each,
+        state: state,
+      ),
+    );
+  }
+  return rows;
 }
 
 int moneyStatusRank(MoneyStatus status) {

@@ -20,9 +20,9 @@ first — they close the biggest gaps against rivals while staying local-only.
 | P1 | todo | Party contact info + bank card (call / copy card) | [party-contact-card.md](party-contact-card.md) |
 | P1 | todo | Party net balance + running-balance ledger | [party-statement-balance.md](party-statement-balance.md) |
 | P2 | done | Shareable statement / report (text, then PDF) | [money-report-share.md](money-report-share.md) |
-| P2 | todo | Due-date notifications for money items | [money-due-notifications.md](money-due-notifications.md) |
+| P2 | done | Due-date notifications for money items | [money-due-notifications.md](money-due-notifications.md) |
 | P3 | todo | Attach receipt photo to a transaction | [transaction-receipt-photo.md](transaction-receipt-photo.md) |
-| P3 | todo | Installment (قسطی) schedule view | [installment-schedule.md](installment-schedule.md) |
+| P3 | done | Installment (قسطی) schedule view | [installment-schedule.md](installment-schedule.md) |
 
 **Positioning note (not a code task):** rivals lock backup and core features
 behind steep paywalls (reviewers cite «اشتراک ماهیانه ۳۰ هزار تومان» and

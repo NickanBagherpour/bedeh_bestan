@@ -2,6 +2,9 @@
 library;
 
 export 'src/branding/brand.dart';
+export 'src/notifications/notification_scheduler.dart';
+export 'src/notifications/notification_scheduler_provider.dart';
+export 'src/notifications/scheduled_notice.dart';
 export 'src/providers/app_settings.dart';
 export 'src/providers/app_settings_provider.dart';
 export 'src/responsive/breakpoints.dart';

@@ -11,7 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../navigation/app_shell.dart';
-import '../notifications/pending_reminder.dart';
+import '../notifications/pending_notification.dart';
 
 /// Single composition point for the app's routes.
 ///
@@ -37,11 +37,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     ],
   );
   ref.listen(
-    pendingReminderIdProvider,
+    pendingNotificationRouteProvider,
     (previous, next) {
       if (next == null || next.isEmpty) return;
-      router.push(AppRoutes.reminderPath(next));
-      ref.read(pendingReminderIdProvider.notifier).set(null);
+      router.push(next);
+      ref.read(pendingNotificationRouteProvider.notifier).set(null);
     },
     fireImmediately: true,
   );

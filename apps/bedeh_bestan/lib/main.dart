@@ -4,9 +4,8 @@ import 'package:core/core.dart'
         appStorageProvider,
         initialAppSettingsProvider,
         loadAppSettings,
+        notificationSchedulerProvider,
         sharedPreferencesProvider;
-import 'package:feature_calendar/calendar.dart'
-    show reminderNotificationClientProvider;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_db/local_db.dart'
@@ -21,8 +20,8 @@ import 'package:translations/translations.dart'
         useAppDefaultLocale;
 
 import 'src/app.dart';
-import 'src/notifications/pending_reminder.dart';
-import 'src/notifications/plugin_reminder_notifications.dart';
+import 'src/notifications/pending_notification.dart';
+import 'src/notifications/plugin_notifications.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,7 +44,7 @@ Future<void> main() async {
   );
 
   final tapSink = NotificationTapSink();
-  final notifications = PluginReminderNotifications(
+  final notifications = PluginNotifications(
     channelName: t.calendar.title,
     channelDescription: t.app.appName,
     onTap: tapSink.emit,
@@ -58,7 +57,7 @@ Future<void> main() async {
       appStorageProvider.overrideWithValue(storage),
       initialAppSettingsProvider.overrideWithValue(initialSettings),
       appDatabaseProvider.overrideWithValue(database),
-      reminderNotificationClientProvider.overrideWithValue(notifications),
+      notificationSchedulerProvider.overrideWithValue(notifications),
     ],
   );
   tapSink.attach(container);

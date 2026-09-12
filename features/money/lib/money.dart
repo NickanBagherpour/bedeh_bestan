@@ -1,6 +1,7 @@
 /// Money / accounts feature for BedeBestan.
 library;
 
+export 'src/application/notifications/money_notification_sync.dart';
 export 'src/presentation/pages/money_detail_page.dart';
 export 'src/presentation/pages/money_form_page.dart';
 export 'src/presentation/pages/money_page.dart';

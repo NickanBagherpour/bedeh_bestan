@@ -98,5 +98,16 @@
   "share": "اشتراک‌گذاری",
   "shareStatement": "اشتراک صورت‌حساب",
   "shareSubject": "صورت‌حساب: $name",
-  "shareFailed": "باز کردن صفحهٔ اشتراک‌گذاری ممکن نشد."
+  "shareFailed": "باز کردن صفحهٔ اشتراک‌گذاری ممکن نشد.",
+  "dueTitle": "سررسید امروز",
+  "dueSoonTitle": "سررسید فردا",
+  "dueBody": "$title",
+  "scheduleTitle": "زمان‌بندی اقساط",
+  "installmentRow": "قسط $index",
+  "remainingAmount": "مانده $amount",
+  "installmentState": {
+    "paid": "پرداخت‌شده",
+    "due": "سررسید",
+    "upcoming": "آینده"
+  }
 }

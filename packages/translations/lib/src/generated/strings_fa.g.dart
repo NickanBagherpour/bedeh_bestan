@@ -233,6 +233,13 @@ class _Translations$money$fa extends Translations$money$en {
 	@override String get shareStatement => 'اشتراک صورت‌حساب';
 	@override String shareSubject({required Object name}) => 'صورت‌حساب: ${name}';
 	@override String get shareFailed => 'باز کردن صفحهٔ اشتراک‌گذاری ممکن نشد.';
+	@override String get dueTitle => 'سررسید امروز';
+	@override String get dueSoonTitle => 'سررسید فردا';
+	@override String dueBody({required Object title}) => '${title}';
+	@override String get scheduleTitle => 'زمان‌بندی اقساط';
+	@override String installmentRow({required Object index}) => 'قسط ${index}';
+	@override String remainingAmount({required Object amount}) => 'مانده ${amount}';
+	@override late final _Translations$money$installmentState$fa installmentState = _Translations$money$installmentState$fa._(_root);
 }
 
 // Path: notes
@@ -453,6 +460,18 @@ class _Translations$money$partyKind$fa extends Translations$money$partyKind$en {
 	@override String get custom => 'سایر';
 }
 
+// Path: money.installmentState
+class _Translations$money$installmentState$fa extends Translations$money$installmentState$en {
+	_Translations$money$installmentState$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get paid => 'پرداخت‌شده';
+	@override String get due => 'سررسید';
+	@override String get upcoming => 'آینده';
+}
+
 /// The flat map containing all translations for locale <fa>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -649,6 +668,15 @@ extension on TranslationsFa {
 			'money.shareStatement' => 'اشتراک صورت‌حساب',
 			'money.shareSubject' => ({required Object name}) => 'صورت‌حساب: ${name}',
 			'money.shareFailed' => 'باز کردن صفحهٔ اشتراک‌گذاری ممکن نشد.',
+			'money.dueTitle' => 'سررسید امروز',
+			'money.dueSoonTitle' => 'سررسید فردا',
+			'money.dueBody' => ({required Object title}) => '${title}',
+			'money.scheduleTitle' => 'زمان‌بندی اقساط',
+			'money.installmentRow' => ({required Object index}) => 'قسط ${index}',
+			'money.remainingAmount' => ({required Object amount}) => 'مانده ${amount}',
+			'money.installmentState.paid' => 'پرداخت‌شده',
+			'money.installmentState.due' => 'سررسید',
+			'money.installmentState.upcoming' => 'آینده',
 			'notes.title' => 'یادداشت',
 			'notes.fab' => 'یادداشت',
 			'notes.emptyTitle' => 'هنوز یادداشتی نیست',

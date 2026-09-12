@@ -98,5 +98,16 @@
   "share": "Share",
   "shareStatement": "Share statement",
   "shareSubject": "Statement: $name",
-  "shareFailed": "Could not open the share sheet."
+  "shareFailed": "Could not open the share sheet.",
+  "dueTitle": "Due today",
+  "dueSoonTitle": "Due tomorrow",
+  "dueBody": "$title",
+  "scheduleTitle": "Installment schedule",
+  "installmentRow": "Installment $index",
+  "remainingAmount": "Remaining $amount",
+  "installmentState": {
+    "paid": "Paid",
+    "due": "Due",
+    "upcoming": "Upcoming"
+  }
 }
