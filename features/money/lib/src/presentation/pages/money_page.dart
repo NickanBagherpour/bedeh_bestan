@@ -261,6 +261,10 @@ class MoneyPage extends ConsumerWidget {
                 statusColor:
                     moneyStatusColor(status, Theme.of(context).colorScheme),
                 onTap: () => context.push(AppRoutes.moneyItemPath(item.id)),
+                partyLinkTooltip: t.money.partyLink,
+                onPartyTap: item.partyId.isEmpty
+                    ? null
+                    : () => context.push(AppRoutes.partyItemPath(item.partyId)),
               ),
             );
           },

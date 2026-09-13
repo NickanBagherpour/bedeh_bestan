@@ -87,4 +87,50 @@ void main() {
       isEmpty,
     );
   });
+
+  test('keeps the full list when there are 5 or fewer قسط‌ها', () {
+    final rows = installmentSchedule(
+      item(installmentCount: 5, installmentAmount: 1000, total: 5000),
+      CalendarType.gregorian,
+    );
+    expect(rows, hasLength(5));
+    expect(
+      visibleInstallmentRows(rows, expanded: false),
+      rows,
+    );
+  });
+
+  test('collapsed long schedule hides paid rows and caps unpaid at 5', () {
+    final rows = installmentSchedule(
+      item(paid: 3000, periodsPaid: 3),
+      CalendarType.gregorian,
+    );
+    expect(rows, hasLength(12));
+    final visible = visibleInstallmentRows(rows, expanded: false);
+    expect(visible, hasLength(5));
+    expect(visible.first.state, InstallmentState.due);
+    expect(
+      visible.skip(1).every((row) => row.state == InstallmentState.upcoming),
+      isTrue,
+    );
+    expect(visible.first.index, 4);
+    expect(visible.last.index, 8);
+  });
+
+  test('expanded long schedule returns every row', () {
+    final rows = installmentSchedule(item(), CalendarType.gregorian);
+    expect(visibleInstallmentRows(rows, expanded: true), rows);
+  });
+
+  test('settle amount is one قسط, capped at remaining', () {
+    final rows = installmentSchedule(
+      item(total: 2500, paid: 2000, periodsPaid: 2, installmentCount: 3),
+      CalendarType.gregorian,
+    );
+    final due = rows.firstWhere((row) => row.state == InstallmentState.due);
+    expect(due.amount, 1000);
+    expect(installmentRowSettleAmount(due, 500), 500);
+    expect(installmentRowSettleAmount(due, 1000), 1000);
+    expect(installmentRowSettleAmount(due, 0), 0);
+  });
 }

@@ -245,6 +245,14 @@ class _Translations$money$fa extends Translations$money$en {
 	@override String installmentRow({required Object index}) => 'قسط ${index}';
 	@override String remainingAmount({required Object amount}) => 'مانده ${amount}';
 	@override late final _Translations$money$installmentState$fa installmentState = _Translations$money$installmentState$fa._(_root);
+	@override String get scheduleShowAll => 'نمایش همه قسط‌ها';
+	@override String get scheduleCollapse => 'جمع‌کردن';
+	@override String schedulePaidSummary({required Object count}) => '${count} قسط پرداخت‌شده';
+	@override String get settleInstallment => 'تسویه';
+	@override String settleInstallmentConfirm({required Object index, required Object amount, required Object date}) => 'قسط ${index} به مبلغ ${amount} با سررسید ${date} ثبت شود؟';
+	@override String get viewParty => 'مشاهده طرف حساب';
+	@override String get partyLink => 'مشاهده طرف‌حساب';
+	@override String get jumpToPayment => 'برو به پرداخت';
 }
 
 // Path: notes
@@ -687,6 +695,14 @@ extension on TranslationsFa {
 			'money.installmentState.paid' => 'پرداخت‌شده',
 			'money.installmentState.due' => 'سررسید',
 			'money.installmentState.upcoming' => 'آینده',
+			'money.scheduleShowAll' => 'نمایش همه قسط‌ها',
+			'money.scheduleCollapse' => 'جمع‌کردن',
+			'money.schedulePaidSummary' => ({required Object count}) => '${count} قسط پرداخت‌شده',
+			'money.settleInstallment' => 'تسویه',
+			'money.settleInstallmentConfirm' => ({required Object index, required Object amount, required Object date}) => 'قسط ${index} به مبلغ ${amount} با سررسید ${date} ثبت شود؟',
+			'money.viewParty' => 'مشاهده طرف حساب',
+			'money.partyLink' => 'مشاهده طرف‌حساب',
+			'money.jumpToPayment' => 'برو به پرداخت',
 			'notes.title' => 'یادداشت',
 			'notes.fab' => 'یادداشت',
 			'notes.emptyTitle' => 'هنوز یادداشتی نیست',

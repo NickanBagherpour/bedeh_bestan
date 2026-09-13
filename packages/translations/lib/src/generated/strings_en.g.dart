@@ -556,6 +556,30 @@ class Translations$money$en {
 	String remainingAmount({required Object amount}) => 'Remaining ${amount}';
 
 	late final Translations$money$installmentState$en installmentState = Translations$money$installmentState$en.internal(_root);
+
+	/// en: 'Show all installments'
+	String get scheduleShowAll => 'Show all installments';
+
+	/// en: 'Collapse'
+	String get scheduleCollapse => 'Collapse';
+
+	/// en: '$count paid installments'
+	String schedulePaidSummary({required Object count}) => '${count} paid installments';
+
+	/// en: 'Settle'
+	String get settleInstallment => 'Settle';
+
+	/// en: 'Record installment $index ($amount) due $date?'
+	String settleInstallmentConfirm({required Object index, required Object amount, required Object date}) => 'Record installment ${index} (${amount}) due ${date}?';
+
+	/// en: 'View party'
+	String get viewParty => 'View party';
+
+	/// en: 'Open party'
+	String get partyLink => 'Open party';
+
+	/// en: 'Jump to payment'
+	String get jumpToPayment => 'Jump to payment';
 }
 
 // Path: notes
@@ -1206,6 +1230,14 @@ extension on Translations {
 			'money.installmentState.paid' => 'Paid',
 			'money.installmentState.due' => 'Due',
 			'money.installmentState.upcoming' => 'Upcoming',
+			'money.scheduleShowAll' => 'Show all installments',
+			'money.scheduleCollapse' => 'Collapse',
+			'money.schedulePaidSummary' => ({required Object count}) => '${count} paid installments',
+			'money.settleInstallment' => 'Settle',
+			'money.settleInstallmentConfirm' => ({required Object index, required Object amount, required Object date}) => 'Record installment ${index} (${amount}) due ${date}?',
+			'money.viewParty' => 'View party',
+			'money.partyLink' => 'Open party',
+			'money.jumpToPayment' => 'Jump to payment',
 			'notes.title' => 'Notes',
 			'notes.fab' => 'Note',
 			'notes.emptyTitle' => 'No notes yet',

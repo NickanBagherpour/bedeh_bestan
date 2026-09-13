@@ -17,12 +17,30 @@ first — they close the biggest gaps against rivals while staying local-only.
 
 | Priority | Status | Task | Spec |
 |----------|--------|------|------|
-| P1 | todo | Party contact info + bank card (call / copy card) | [party-contact-card.md](party-contact-card.md) |
+| P1 | done | Party contact info + bank card (call / copy card) | [party-contact-card.md](party-contact-card.md) |
 | P1 | todo | Party net balance + running-balance ledger | [party-statement-balance.md](party-statement-balance.md) |
 | P2 | done | Shareable statement / report (text, then PDF) | [money-report-share.md](money-report-share.md) |
 | P2 | done | Due-date notifications for money items | [money-due-notifications.md](money-due-notifications.md) |
 | P3 | todo | Attach receipt photo to a transaction | [transaction-receipt-photo.md](transaction-receipt-photo.md) |
 | P3 | done | Installment (قسطی) schedule view | [installment-schedule.md](installment-schedule.md) |
+
+## Money UX backlog (installments + party navigation)
+
+User-requested polish on top of the shipped قسطی schedule and party detail.
+Implement in this order when possible: collapse → row settle → party links → copy.
+
+| Priority | Status | Task | Spec |
+|----------|--------|------|------|
+| — | done | Collapse long schedule (summary + top 5 unpaid; expand all) | [installment-schedule-collapse.md](installment-schedule-collapse.md) |
+| — | done | Settle current قسط from schedule row (confirm → `recordPayment`) | [installment-row-settle.md](installment-row-settle.md) |
+| — | done | Link to party detail from money list / detail / edit form | [money-party-deep-link.md](money-party-deep-link.md) |
+| — | done | Copy icon for phone, کد ملی, birth date, note on party detail | [party-detail-copy-all.md](party-detail-copy-all.md) |
+| — | done | (Optional) Jump to payment field on long installment detail | [installment-scroll-to-pay.md](installment-scroll-to-pay.md) |
+
+**Assumptions (change in spec if you want different behaviour):**
+
+- Row **Settle** applies only to the **current due** قسط (not future قسط‌ها).
+- Collapse kicks in when there are **more than 5** installments total.
 
 **Positioning note (not a code task):** rivals lock backup and core features
 behind steep paywalls (reviewers cite «اشتراک ماهیانه ۳۰ هزار تومان» and

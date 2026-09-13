@@ -109,5 +109,13 @@
     "paid": "پرداخت‌شده",
     "due": "سررسید",
     "upcoming": "آینده"
-  }
+  },
+  "scheduleShowAll": "نمایش همه قسط‌ها",
+  "scheduleCollapse": "جمع‌کردن",
+  "schedulePaidSummary": "$count قسط پرداخت‌شده",
+  "settleInstallment": "تسویه",
+  "settleInstallmentConfirm": "قسط $index به مبلغ $amount با سررسید $date ثبت شود؟",
+  "viewParty": "مشاهده طرف حساب",
+  "partyLink": "مشاهده طرف‌حساب",
+  "jumpToPayment": "برو به پرداخت"
 }

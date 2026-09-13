@@ -220,7 +220,7 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
                   ),
               ],
             ),
-          ] else
+          ] else ...[
             KitSearchSelect<Party>(
               label: t.money.party,
               searchHint: t.money.searchParty,
@@ -233,6 +233,16 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
                 setState(() => _partyId = party.id);
               },
             ),
+            if (_isEdit && _partyId != null && _partyId!.isNotEmpty)
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: TextButton(
+                  onPressed: () =>
+                      context.push(AppRoutes.partyItemPath(_partyId!)),
+                  child: Text(t.money.viewParty),
+                ),
+              ),
+          ],
           const SizedBox(height: AppSpacing.md),
           TextField(
             controller: _title,

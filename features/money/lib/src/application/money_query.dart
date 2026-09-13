@@ -153,6 +153,40 @@ List<InstallmentRow> installmentSchedule(MoneyItem item, CalendarType calendar) 
   return rows;
 }
 
+/// Collapse the schedule UI when there are more than this many قسط rows.
+const installmentScheduleCollapseThreshold = 5;
+
+/// Rows to render in the installment schedule list.
+///
+/// When [expanded] is false and there are more than
+/// [installmentScheduleCollapseThreshold] rows, paid قسط‌ها are omitted (the
+/// UI shows a count summary) and at most the next 5 unpaid rows (due +
+/// upcoming) are returned. Smaller schedules and the expanded view return
+/// every row. Pure; unit-tested.
+List<InstallmentRow> visibleInstallmentRows(
+  List<InstallmentRow> rows, {
+  required bool expanded,
+}) {
+  if (expanded || rows.length <= installmentScheduleCollapseThreshold) {
+    return rows;
+  }
+  final unpaid = <InstallmentRow>[];
+  for (final row in rows) {
+    if (row.state == InstallmentState.paid) continue;
+    unpaid.add(row);
+    if (unpaid.length == installmentScheduleCollapseThreshold) break;
+  }
+  return unpaid;
+}
+
+/// Amount to record when settling one schedule row (stored Toman).
+///
+/// One full قسط, capped at remaining so a last odd قسط never overpays.
+int installmentRowSettleAmount(InstallmentRow row, int remainingAmount) {
+  if (remainingAmount <= 0) return 0;
+  return row.amount < remainingAmount ? row.amount : remainingAmount;
+}
+
 int moneyStatusRank(MoneyStatus status) {
   return switch (status) {
     MoneyStatus.overdue => 0,

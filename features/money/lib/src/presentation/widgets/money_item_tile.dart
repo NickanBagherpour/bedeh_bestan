@@ -16,6 +16,8 @@ class MoneyItemTile extends StatelessWidget {
     required this.icon,
     required this.statusColor,
     required this.onTap,
+    this.onPartyTap,
+    this.partyLinkTooltip,
   });
 
   final String title;
@@ -27,6 +29,10 @@ class MoneyItemTile extends StatelessWidget {
   final IconData icon;
   final Color statusColor;
   final VoidCallback onTap;
+
+  /// Opens the party detail without triggering [onTap]. Null hides the link.
+  final VoidCallback? onPartyTap;
+  final String? partyLinkTooltip;
 
   @override
   Widget build(BuildContext context) {
@@ -59,13 +65,10 @@ class MoneyItemTile extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: AppSpacing.xxs),
-                Text(
-                  partyName,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
+                _PartySubtitle(
+                  partyName: partyName,
+                  onPartyTap: onPartyTap,
+                  tooltip: partyLinkTooltip,
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Row(
@@ -92,6 +95,62 @@ class MoneyItemTile extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Party name line with its own tap target so it does not steal the tile tap.
+class _PartySubtitle extends StatelessWidget {
+  const _PartySubtitle({
+    required this.partyName,
+    required this.onPartyTap,
+    required this.tooltip,
+  });
+
+  final String partyName;
+  final VoidCallback? onPartyTap;
+  final String? tooltip;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final style = theme.textTheme.bodyMedium?.copyWith(
+      color: onPartyTap == null
+          ? theme.colorScheme.onSurfaceVariant
+          : theme.colorScheme.primary,
+    );
+    final name = Text(
+      partyName,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: style,
+    );
+    if (onPartyTap == null) return name;
+    return Row(
+      children: [
+        Expanded(
+          child: Tooltip(
+            message: tooltip ?? '',
+            child: GestureDetector(
+              onTap: onPartyTap,
+              behavior: HitTestBehavior.opaque,
+              child: name,
+            ),
+          ),
+        ),
+        IconButton(
+          tooltip: tooltip,
+          visualDensity: VisualDensity.compact,
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints.tightFor(width: 36, height: 36),
+          iconSize: 20,
+          onPressed: onPartyTap,
+          icon: Icon(
+            Icons.person_outline_rounded,
+            color: theme.colorScheme.primary,
+          ),
+        ),
+      ],
     );
   }
 }

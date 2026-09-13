@@ -109,5 +109,13 @@
     "paid": "Paid",
     "due": "Due",
     "upcoming": "Upcoming"
-  }
+  },
+  "scheduleShowAll": "Show all installments",
+  "scheduleCollapse": "Collapse",
+  "schedulePaidSummary": "$count paid installments",
+  "settleInstallment": "Settle",
+  "settleInstallmentConfirm": "Record installment $index ($amount) due $date?",
+  "viewParty": "View party",
+  "partyLink": "Open party",
+  "jumpToPayment": "Jump to payment"
 }
