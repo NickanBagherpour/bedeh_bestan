@@ -20,5 +20,13 @@
   "about": "About",
   "version": "Version $version",
   "privacy": "Privacy",
-  "privacyBody": "Everything stays on this phone. No account, no cloud, no tracking."
+  "privacyBody": "Everything stays on this phone. No account, no cloud, no tracking.",
+  "reminders": "Due reminders",
+  "remindersHint": "Default for money items. You can override per item when editing.",
+  "reminderExactDay": "Due day only",
+  "reminderRange": "Before + due day",
+  "reminderDaysBefore": "Days before",
+  "reminderDay7": "7 days",
+  "reminderDay2": "2 days",
+  "reminderDay1": "1 day"
 }

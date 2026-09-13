@@ -102,6 +102,7 @@
   "dueTitle": "Due today",
   "dueSoonTitle": "Due tomorrow",
   "dueBody": "$title",
+  "dueBodyInstallment": "$title — installment $index",
   "scheduleTitle": "Installment schedule",
   "installmentRow": "Installment $index",
   "remainingAmount": "Remaining $amount",

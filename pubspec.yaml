@@ -22,6 +22,7 @@ workspace:
   - features/calendar
   - features/notes
   - features/settings
+  - features/profile
 
 melos:
   scripts:

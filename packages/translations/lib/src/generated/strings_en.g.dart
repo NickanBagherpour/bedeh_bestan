@@ -46,6 +46,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$home$en home = Translations$home$en.internal(_root);
 	late final Translations$money$en money = Translations$money$en.internal(_root);
 	late final Translations$notes$en notes = Translations$notes$en.internal(_root);
+	late final Translations$profile$en profile = Translations$profile$en.internal(_root);
 	late final Translations$settings$en settings = Translations$settings$en.internal(_root);
 }
 
@@ -218,6 +219,9 @@ class Translations$home$en {
 	/// en: 'This week'
 	String get dueThisWeek => 'This week';
 
+	/// en: 'This month'
+	String get dueThisMonth => 'This month';
+
 	/// en: 'Overdue'
 	String get overdue => 'Overdue';
 
@@ -242,6 +246,9 @@ class Translations$home$en {
 	/// en: 'Settings'
 	String get settings => 'Settings';
 
+	/// en: 'Profile'
+	String get profile => 'Profile';
+
 	/// en: 'This month'
 	String get reportTitle => 'This month';
 
@@ -257,17 +264,47 @@ class Translations$home$en {
 	/// en: 'Due by month end $amount'
 	String dueByEnd({required Object amount}) => 'Due by month end ${amount}';
 
-	/// en: 'Paid'
-	String get capPaidOut => 'Paid';
+	/// en: 'Settled out'
+	String get capPaidOut => 'Settled out';
 
-	/// en: 'Received'
-	String get capPaidIn => 'Received';
+	/// en: 'Settled in'
+	String get capPaidIn => 'Settled in';
+
+	/// en: 'To pay this month'
+	String get capDuePayMonth => 'To pay this month';
+
+	/// en: 'To collect this month'
+	String get capDueReceiveMonth => 'To collect this month';
+
+	/// en: 'Open debts'
+	String get capOpenPay => 'Open debts';
+
+	/// en: 'Open receivables'
+	String get capOpenReceive => 'Open receivables';
 
 	/// en: 'To pay'
 	String get capStillOwe => 'To pay';
 
 	/// en: 'Due this month'
 	String get capDueByEnd => 'Due this month';
+
+	/// en: '$count items'
+	String sectionCount({required Object count}) => '${count} items';
+
+	/// en: 'Pay'
+	String get quickPay => 'Pay';
+
+	/// en: 'Receive'
+	String get quickReceive => 'Receive';
+
+	/// en: 'Record payment?'
+	String get quickPayConfirmTitle => 'Record payment?';
+
+	/// en: 'Record receipt?'
+	String get quickReceiveConfirmTitle => 'Record receipt?';
+
+	/// en: '$title — $amount'
+	String quickPayConfirmBody({required Object title, required Object amount}) => '${title} — ${amount}';
 
 	/// en: 'Give and take'
 	String get greeting => 'Give and take';
@@ -546,6 +583,9 @@ class Translations$money$en {
 	/// en: '$title'
 	String dueBody({required Object title}) => '${title}';
 
+	/// en: '$title — installment $index'
+	String dueBodyInstallment({required Object title, required Object index}) => '${title} — installment ${index}';
+
 	/// en: 'Installment schedule'
 	String get scheduleTitle => 'Installment schedule';
 
@@ -687,6 +727,57 @@ class Translations$notes$en {
 	String get searchMoney => 'Search accounts';
 }
 
+// Path: profile
+class Translations$profile$en {
+	Translations$profile$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Profile'
+	String get title => 'Profile';
+
+	/// en: 'Assets'
+	String get assets => 'Assets';
+
+	/// en: 'Manual balances and net worth'
+	String get assetsHint => 'Manual balances and net worth';
+
+	/// en: 'Net position'
+	String get netWorth => 'Net position';
+
+	/// en: 'Total assets: $amount'
+	String assetsTotal({required Object amount}) => 'Total assets: ${amount}';
+
+	/// en: 'Open debts: $amount'
+	String openDebts({required Object amount}) => 'Open debts: ${amount}';
+
+	/// en: 'Open receivables: $amount'
+	String openReceivables({required Object amount}) => 'Open receivables: ${amount}';
+
+	/// en: 'No asset accounts yet.'
+	String get emptyAssets => 'No asset accounts yet.';
+
+	/// en: 'Add account'
+	String get addAsset => 'Add account';
+
+	/// en: 'Name'
+	String get assetName => 'Name';
+
+	/// en: 'Balance'
+	String get assetBalance => 'Balance';
+
+	/// en: 'Cash'
+	String get kindCash => 'Cash';
+
+	/// en: 'Bank'
+	String get kindBank => 'Bank';
+
+	/// en: 'Other'
+	String get kindOther => 'Other';
+}
+
 // Path: settings
 class Translations$settings$en {
 	Translations$settings$en.internal(this._root);
@@ -760,6 +851,30 @@ class Translations$settings$en {
 
 	/// en: 'Everything stays on this phone. No account, no cloud, no tracking.'
 	String get privacyBody => 'Everything stays on this phone. No account, no cloud, no tracking.';
+
+	/// en: 'Due reminders'
+	String get reminders => 'Due reminders';
+
+	/// en: 'Default for money items. You can override per item when editing.'
+	String get remindersHint => 'Default for money items. You can override per item when editing.';
+
+	/// en: 'Due day only'
+	String get reminderExactDay => 'Due day only';
+
+	/// en: 'Before + due day'
+	String get reminderRange => 'Before + due day';
+
+	/// en: 'Days before'
+	String get reminderDaysBefore => 'Days before';
+
+	/// en: '7 days'
+	String get reminderDay7 => '7 days';
+
+	/// en: '2 days'
+	String get reminderDay2 => '2 days';
+
+	/// en: '1 day'
+	String get reminderDay1 => '1 day';
 }
 
 // Path: app.currency
@@ -1109,6 +1224,7 @@ extension on Translations {
 			'home.emptyBody' => 'Nothing is due in the next seven days.',
 			'home.loadError' => 'Could not read local data.',
 			'home.dueThisWeek' => 'This week',
+			'home.dueThisMonth' => 'This month',
 			'home.overdue' => 'Overdue',
 			'home.whoOwes' => 'Who owes what',
 			'home.emptyBalances' => 'No open balances.',
@@ -1117,15 +1233,26 @@ extension on Translations {
 			'home.fabPay' => 'I owe',
 			'home.fabReceive' => 'Owed to me',
 			'home.settings' => 'Settings',
+			'home.profile' => 'Profile',
 			'home.reportTitle' => 'This month',
 			'home.paidOut' => ({required Object amount}) => 'Paid ${amount}',
 			'home.paidIn' => ({required Object amount}) => 'Received ${amount}',
 			'home.stillOwe' => ({required Object amount}) => 'Still to pay ${amount}',
 			'home.dueByEnd' => ({required Object amount}) => 'Due by month end ${amount}',
-			'home.capPaidOut' => 'Paid',
-			'home.capPaidIn' => 'Received',
+			'home.capPaidOut' => 'Settled out',
+			'home.capPaidIn' => 'Settled in',
+			'home.capDuePayMonth' => 'To pay this month',
+			'home.capDueReceiveMonth' => 'To collect this month',
+			'home.capOpenPay' => 'Open debts',
+			'home.capOpenReceive' => 'Open receivables',
 			'home.capStillOwe' => 'To pay',
 			'home.capDueByEnd' => 'Due this month',
+			'home.sectionCount' => ({required Object count}) => '${count} items',
+			'home.quickPay' => 'Pay',
+			'home.quickReceive' => 'Receive',
+			'home.quickPayConfirmTitle' => 'Record payment?',
+			'home.quickReceiveConfirmTitle' => 'Record receipt?',
+			'home.quickPayConfirmBody' => ({required Object title, required Object amount}) => '${title} — ${amount}',
 			'home.greeting' => 'Give and take',
 			'money.title' => 'Accounts',
 			'money.emptyTitle' => 'No give-and-take yet',
@@ -1224,6 +1351,7 @@ extension on Translations {
 			'money.dueTitle' => 'Due today',
 			'money.dueSoonTitle' => 'Due tomorrow',
 			'money.dueBody' => ({required Object title}) => '${title}',
+			'money.dueBodyInstallment' => ({required Object title, required Object index}) => '${title} — installment ${index}',
 			'money.scheduleTitle' => 'Installment schedule',
 			'money.installmentRow' => ({required Object index}) => 'Installment ${index}',
 			'money.remainingAmount' => ({required Object amount}) => 'Remaining ${amount}',
@@ -1270,6 +1398,20 @@ extension on Translations {
 			'notes.allTags' => 'All tags',
 			'notes.searchParty' => 'Search people',
 			'notes.searchMoney' => 'Search accounts',
+			'profile.title' => 'Profile',
+			'profile.assets' => 'Assets',
+			'profile.assetsHint' => 'Manual balances and net worth',
+			'profile.netWorth' => 'Net position',
+			'profile.assetsTotal' => ({required Object amount}) => 'Total assets: ${amount}',
+			'profile.openDebts' => ({required Object amount}) => 'Open debts: ${amount}',
+			'profile.openReceivables' => ({required Object amount}) => 'Open receivables: ${amount}',
+			'profile.emptyAssets' => 'No asset accounts yet.',
+			'profile.addAsset' => 'Add account',
+			'profile.assetName' => 'Name',
+			'profile.assetBalance' => 'Balance',
+			'profile.kindCash' => 'Cash',
+			'profile.kindBank' => 'Bank',
+			'profile.kindOther' => 'Other',
 			'settings.title' => 'Settings',
 			'settings.theme' => 'Theme',
 			'settings.language' => 'Language',
@@ -1292,6 +1434,14 @@ extension on Translations {
 			'settings.version' => ({required Object version}) => 'Version ${version}',
 			'settings.privacy' => 'Privacy',
 			'settings.privacyBody' => 'Everything stays on this phone. No account, no cloud, no tracking.',
+			'settings.reminders' => 'Due reminders',
+			'settings.remindersHint' => 'Default for money items. You can override per item when editing.',
+			'settings.reminderExactDay' => 'Due day only',
+			'settings.reminderRange' => 'Before + due day',
+			'settings.reminderDaysBefore' => 'Days before',
+			'settings.reminderDay7' => '7 days',
+			'settings.reminderDay2' => '2 days',
+			'settings.reminderDay1' => '1 day',
 			_ => null,
 		};
 	}

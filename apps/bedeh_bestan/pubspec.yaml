@@ -41,6 +41,8 @@ dependencies:
     path: ../../features/notes
   feature_settings:
     path: ../../features/settings
+  feature_profile:
+    path: ../../features/profile
 
 dev_dependencies:
   flutter_test:

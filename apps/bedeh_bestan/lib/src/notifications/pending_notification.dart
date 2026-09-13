@@ -1,4 +1,8 @@
+import 'dart:async' show unawaited;
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'notification_action_handler.dart';
 
 /// Bridges a notification tap (which happens before the provider container is
 /// ready) into Riverpod. The tapped notice's in-app route is queued until a
@@ -7,13 +11,13 @@ final class NotificationTapSink {
   ProviderContainer? _container;
   String? _queued;
 
-  void emit(String route) {
+  void emit(String route, {String? actionId}) {
     final container = _container;
     if (container == null) {
       _queued = route;
       return;
     }
-    container.read(pendingNotificationRouteProvider.notifier).set(route);
+    unawaited(handleNotificationPayload(container, route, actionId: actionId));
   }
 
   void attach(ProviderContainer container) {
@@ -21,7 +25,7 @@ final class NotificationTapSink {
     final queued = _queued;
     _queued = null;
     if (queued != null) {
-      container.read(pendingNotificationRouteProvider.notifier).set(queued);
+      unawaited(handleNotificationPayload(container, queued));
     }
   }
 }

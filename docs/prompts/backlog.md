@@ -42,6 +42,37 @@ Implement in this order when possible: collapse → row settle → party links �
 - Row **Settle** applies only to the **current due** قسط (not future قسط‌ها).
 - Collapse kicks in when there are **more than 5** installments total.
 
+## Home + reminders v2 (dashboard brainstorm)
+
+**Roadmap (order only):** [home-dashboard-roadmap.md](home-dashboard-roadmap.md)
+
+| Priority | Status | Task | Spec |
+|----------|--------|------|------|
+| A | todo | Collapsible home list sections (who owes, due lists) | [home-collapsible-sections.md](home-collapsible-sections.md) |
+| A | todo | Tap who-owes row → party detail | [home-balances-party-link.md](home-balances-party-link.md) |
+| B | todo | «This month» due list + item-focused period lists | [home-period-due-lists.md](home-period-due-lists.md) |
+| B | todo | Month snapshot: settled vs still due in period | [home-month-settled-remaining.md](home-month-settled-remaining.md) |
+| C | todo | Quick pay/receive on home due rows | [home-quick-pay.md](home-quick-pay.md) |
+| D0 | todo | Settings: reminder mode (exact day vs range) + custom offsets | [reminder-offset-settings.md](reminder-offset-settings.md) |
+| D0 | todo | Money form: per-item reminder override (default / exact / custom) | [money-item-reminder-override.md](money-item-reminder-override.md) |
+| D | todo | Per-قسط notices using reminder policy | [installment-due-notifications.md](installment-due-notifications.md) |
+| E | todo | Notification actions: mark paid, remind tomorrow | [money-notification-actions.md](money-notification-actions.md) |
+| P | todo | Profile hub nav (home entry; assets + settings links) | [profile-nav-hub.md](profile-nav-hub.md) |
+| F | todo | Manual asset accounts + net worth (under profile) | [manual-assets-net-worth.md](manual-assets-net-worth.md) |
+
+## Profile & future auth (placeholder)
+
+| Status | Task | Spec |
+|--------|------|------|
+| todo | Auth-gate profile routes when login exists | [future-profile-auth-gate.md](future-profile-auth-gate.md) |
+
+**Notes:**
+
+- **Pay from notification** is **Android-first** in v1; iOS may need opening the app
+  (see [money-notification-actions.md](money-notification-actions.md)).
+- **Assets** live under **Profile**, not a fifth tab ([profile-nav-hub.md](profile-nav-hub.md)).
+- Default reminder range: **7, 2, and due day** until user changes Settings.
+
 **Positioning note (not a code task):** rivals lock backup and core features
 behind steep paywalls (reviewers cite «اشتراک ماهیانه ۳۰ هزار تومان» and
 «۵۰۰ هزار تومان»). BedeBestan is fully local and already ships free

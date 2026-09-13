@@ -44,6 +44,7 @@ class TranslationsFa extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$home$fa home = _Translations$home$fa._(_root);
 	@override late final _Translations$money$fa money = _Translations$money$fa._(_root);
 	@override late final _Translations$notes$fa notes = _Translations$notes$fa._(_root);
+	@override late final _Translations$profile$fa profile = _Translations$profile$fa._(_root);
 	@override late final _Translations$settings$fa settings = _Translations$settings$fa._(_root);
 }
 
@@ -119,29 +120,41 @@ class _Translations$home$fa extends Translations$home$en {
 
 	// Translations
 	@override String get payAndReceive => 'بده و بستان';
-	@override String get offlineBlurb => 'قسط‌ها، طلب‌ها و یادآوری‌ها — همه روی همین دستگاه.';
-	@override String get emptyTitle => 'هفته‌ای آرام';
-	@override String get emptyBody => 'تا هفت روز آینده سررسیدی نیست.';
+	@override String get offlineBlurb => 'قسط، طلب و بدهی و یادآوری — همه روی این دستگاه.';
+	@override String get emptyTitle => 'هفته آرام';
+	@override String get emptyBody => 'در هفت روز آینده سررسیدی نیست.';
 	@override String get loadError => 'خواندن دادهٔ محلی ممکن نشد.';
 	@override String get dueThisWeek => 'این هفته';
-	@override String get overdue => 'معوق';
-	@override String get whoOwes => 'چه‌کسی چقدر';
-	@override String get emptyBalances => 'ماندهٔ بازی نیست.';
-	@override String iOwe({required Object amount}) => 'بدهی ${amount}';
-	@override String theyOwe({required Object amount}) => 'طلب ${amount}';
+	@override String get dueThisMonth => 'این ماه';
+	@override String get overdue => 'عقب‌مانده';
+	@override String get whoOwes => 'کی چقدر؟';
+	@override String get emptyBalances => 'بدهی یا طلب باز نیست.';
+	@override String iOwe({required Object amount}) => 'من بدهکارم ${amount}';
+	@override String theyOwe({required Object amount}) => 'طلب من ${amount}';
 	@override String get fabPay => 'بدهی';
 	@override String get fabReceive => 'طلب';
 	@override String get settings => 'تنظیمات';
+	@override String get profile => 'پروفایل';
 	@override String get reportTitle => 'این ماه';
-	@override String paidOut({required Object amount}) => 'پرداخت‌شده ${amount}';
-	@override String paidIn({required Object amount}) => 'دریافت‌شده ${amount}';
-	@override String stillOwe({required Object amount}) => 'ماندهٔ بدهی ${amount}';
-	@override String dueByEnd({required Object amount}) => 'سررسید تا آخر ماه ${amount}';
-	@override String get capPaidOut => 'پرداخت';
-	@override String get capPaidIn => 'دریافت';
-	@override String get capStillOwe => 'ماندهٔ بدهی';
+	@override String paidOut({required Object amount}) => 'پرداخت شده ${amount}';
+	@override String paidIn({required Object amount}) => 'دریافت شده ${amount}';
+	@override String stillOwe({required Object amount}) => 'مانده بدهی ${amount}';
+	@override String dueByEnd({required Object amount}) => 'تا آخر ماه ${amount}';
+	@override String get capPaidOut => 'تسویه پرداخت';
+	@override String get capPaidIn => 'تسویه دریافت';
+	@override String get capDuePayMonth => 'پرداخت تا آخر ماه';
+	@override String get capDueReceiveMonth => 'دریافت تا آخر ماه';
+	@override String get capOpenPay => 'بدهی باز';
+	@override String get capOpenReceive => 'طلب باز';
+	@override String get capStillOwe => 'مانده بدهی';
 	@override String get capDueByEnd => 'سررسید این ماه';
-	@override String get greeting => 'بده‌بستان';
+	@override String sectionCount({required Object count}) => '${count} مورد';
+	@override String get quickPay => 'پرداخت';
+	@override String get quickReceive => 'دریافت';
+	@override String get quickPayConfirmTitle => 'پرداخت ثبت شود؟';
+	@override String get quickReceiveConfirmTitle => 'دریافت ثبت شود؟';
+	@override String quickPayConfirmBody({required Object title, required Object amount}) => '${title} — ${amount}';
+	@override String get greeting => 'بده و بستان';
 }
 
 // Path: money
@@ -241,6 +254,7 @@ class _Translations$money$fa extends Translations$money$en {
 	@override String get dueTitle => 'سررسید امروز';
 	@override String get dueSoonTitle => 'سررسید فردا';
 	@override String dueBody({required Object title}) => '${title}';
+	@override String dueBodyInstallment({required Object title, required Object index}) => '${title} — قسط ${index}';
 	@override String get scheduleTitle => 'زمان‌بندی اقساط';
 	@override String installmentRow({required Object index}) => 'قسط ${index}';
 	@override String remainingAmount({required Object amount}) => 'مانده ${amount}';
@@ -296,6 +310,29 @@ class _Translations$notes$fa extends Translations$notes$en {
 	@override String get searchMoney => 'جستجوی حساب';
 }
 
+// Path: profile
+class _Translations$profile$fa extends Translations$profile$en {
+	_Translations$profile$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'پروفایل';
+	@override String get assets => 'دارایی‌ها';
+	@override String get assetsHint => 'موجودی دستی و وضعیت مالی';
+	@override String get netWorth => 'وضعیت خالص';
+	@override String assetsTotal({required Object amount}) => 'جمع دارایی: ${amount}';
+	@override String openDebts({required Object amount}) => 'بدهی باز: ${amount}';
+	@override String openReceivables({required Object amount}) => 'طلب باز: ${amount}';
+	@override String get emptyAssets => 'هنوز حساب دارایی ندارید.';
+	@override String get addAsset => 'افزودن حساب';
+	@override String get assetName => 'نام';
+	@override String get assetBalance => 'موجودی';
+	@override String get kindCash => 'نقد';
+	@override String get kindBank => 'بانک';
+	@override String get kindOther => 'سایر';
+}
+
 // Path: settings
 class _Translations$settings$fa extends Translations$settings$en {
 	_Translations$settings$fa._(TranslationsFa root) : this._root = root, super.internal(root);
@@ -325,6 +362,14 @@ class _Translations$settings$fa extends Translations$settings$en {
 	@override String version({required Object version}) => 'نسخه ${version}';
 	@override String get privacy => 'حریم خصوصی';
 	@override String get privacyBody => 'همه‌چیز روی همین گوشی می‌ماند. حساب کاربری، ابر و ردیابی نداریم.';
+	@override String get reminders => 'یادآوری سررسید';
+	@override String get remindersHint => 'پیش‌فرض برای حساب‌ها. در ویرایش هر مورد می‌توانید عوض کنید.';
+	@override String get reminderExactDay => 'فقط روز سررسید';
+	@override String get reminderRange => 'چند روز قبل + سررسید';
+	@override String get reminderDaysBefore => 'روزهای قبل';
+	@override String get reminderDay7 => '۷ روز';
+	@override String get reminderDay2 => '۲ روز';
+	@override String get reminderDay1 => '۱ روز';
 }
 
 // Path: app.currency
@@ -569,29 +614,41 @@ extension on TranslationsFa {
 			'calendar.weekday.thu' => 'پ',
 			'calendar.weekday.fri' => 'ج',
 			'home.payAndReceive' => 'بده و بستان',
-			'home.offlineBlurb' => 'قسط‌ها، طلب‌ها و یادآوری‌ها — همه روی همین دستگاه.',
-			'home.emptyTitle' => 'هفته‌ای آرام',
-			'home.emptyBody' => 'تا هفت روز آینده سررسیدی نیست.',
+			'home.offlineBlurb' => 'قسط، طلب و بدهی و یادآوری — همه روی این دستگاه.',
+			'home.emptyTitle' => 'هفته آرام',
+			'home.emptyBody' => 'در هفت روز آینده سررسیدی نیست.',
 			'home.loadError' => 'خواندن دادهٔ محلی ممکن نشد.',
 			'home.dueThisWeek' => 'این هفته',
-			'home.overdue' => 'معوق',
-			'home.whoOwes' => 'چه‌کسی چقدر',
-			'home.emptyBalances' => 'ماندهٔ بازی نیست.',
-			'home.iOwe' => ({required Object amount}) => 'بدهی ${amount}',
-			'home.theyOwe' => ({required Object amount}) => 'طلب ${amount}',
+			'home.dueThisMonth' => 'این ماه',
+			'home.overdue' => 'عقب‌مانده',
+			'home.whoOwes' => 'کی چقدر؟',
+			'home.emptyBalances' => 'بدهی یا طلب باز نیست.',
+			'home.iOwe' => ({required Object amount}) => 'من بدهکارم ${amount}',
+			'home.theyOwe' => ({required Object amount}) => 'طلب من ${amount}',
 			'home.fabPay' => 'بدهی',
 			'home.fabReceive' => 'طلب',
 			'home.settings' => 'تنظیمات',
+			'home.profile' => 'پروفایل',
 			'home.reportTitle' => 'این ماه',
-			'home.paidOut' => ({required Object amount}) => 'پرداخت‌شده ${amount}',
-			'home.paidIn' => ({required Object amount}) => 'دریافت‌شده ${amount}',
-			'home.stillOwe' => ({required Object amount}) => 'ماندهٔ بدهی ${amount}',
-			'home.dueByEnd' => ({required Object amount}) => 'سررسید تا آخر ماه ${amount}',
-			'home.capPaidOut' => 'پرداخت',
-			'home.capPaidIn' => 'دریافت',
-			'home.capStillOwe' => 'ماندهٔ بدهی',
+			'home.paidOut' => ({required Object amount}) => 'پرداخت شده ${amount}',
+			'home.paidIn' => ({required Object amount}) => 'دریافت شده ${amount}',
+			'home.stillOwe' => ({required Object amount}) => 'مانده بدهی ${amount}',
+			'home.dueByEnd' => ({required Object amount}) => 'تا آخر ماه ${amount}',
+			'home.capPaidOut' => 'تسویه پرداخت',
+			'home.capPaidIn' => 'تسویه دریافت',
+			'home.capDuePayMonth' => 'پرداخت تا آخر ماه',
+			'home.capDueReceiveMonth' => 'دریافت تا آخر ماه',
+			'home.capOpenPay' => 'بدهی باز',
+			'home.capOpenReceive' => 'طلب باز',
+			'home.capStillOwe' => 'مانده بدهی',
 			'home.capDueByEnd' => 'سررسید این ماه',
-			'home.greeting' => 'بده‌بستان',
+			'home.sectionCount' => ({required Object count}) => '${count} مورد',
+			'home.quickPay' => 'پرداخت',
+			'home.quickReceive' => 'دریافت',
+			'home.quickPayConfirmTitle' => 'پرداخت ثبت شود؟',
+			'home.quickReceiveConfirmTitle' => 'دریافت ثبت شود؟',
+			'home.quickPayConfirmBody' => ({required Object title, required Object amount}) => '${title} — ${amount}',
+			'home.greeting' => 'بده و بستان',
 			'money.title' => 'حساب',
 			'money.emptyTitle' => 'هنوز بده‌بستانی نیست',
 			'money.emptyBody' => 'با چند ضربه بدهی یا طلب اضافه کن.',
@@ -689,6 +746,7 @@ extension on TranslationsFa {
 			'money.dueTitle' => 'سررسید امروز',
 			'money.dueSoonTitle' => 'سررسید فردا',
 			'money.dueBody' => ({required Object title}) => '${title}',
+			'money.dueBodyInstallment' => ({required Object title, required Object index}) => '${title} — قسط ${index}',
 			'money.scheduleTitle' => 'زمان‌بندی اقساط',
 			'money.installmentRow' => ({required Object index}) => 'قسط ${index}',
 			'money.remainingAmount' => ({required Object amount}) => 'مانده ${amount}',
@@ -735,6 +793,20 @@ extension on TranslationsFa {
 			'notes.allTags' => 'همهٔ برچسب‌ها',
 			'notes.searchParty' => 'جستجوی طرف حساب',
 			'notes.searchMoney' => 'جستجوی حساب',
+			'profile.title' => 'پروفایل',
+			'profile.assets' => 'دارایی‌ها',
+			'profile.assetsHint' => 'موجودی دستی و وضعیت مالی',
+			'profile.netWorth' => 'وضعیت خالص',
+			'profile.assetsTotal' => ({required Object amount}) => 'جمع دارایی: ${amount}',
+			'profile.openDebts' => ({required Object amount}) => 'بدهی باز: ${amount}',
+			'profile.openReceivables' => ({required Object amount}) => 'طلب باز: ${amount}',
+			'profile.emptyAssets' => 'هنوز حساب دارایی ندارید.',
+			'profile.addAsset' => 'افزودن حساب',
+			'profile.assetName' => 'نام',
+			'profile.assetBalance' => 'موجودی',
+			'profile.kindCash' => 'نقد',
+			'profile.kindBank' => 'بانک',
+			'profile.kindOther' => 'سایر',
 			'settings.title' => 'تنظیمات',
 			'settings.theme' => 'پوسته',
 			'settings.language' => 'زبان',
@@ -757,6 +829,14 @@ extension on TranslationsFa {
 			'settings.version' => ({required Object version}) => 'نسخه ${version}',
 			'settings.privacy' => 'حریم خصوصی',
 			'settings.privacyBody' => 'همه‌چیز روی همین گوشی می‌ماند. حساب کاربری، ابر و ردیابی نداریم.',
+			'settings.reminders' => 'یادآوری سررسید',
+			'settings.remindersHint' => 'پیش‌فرض برای حساب‌ها. در ویرایش هر مورد می‌توانید عوض کنید.',
+			'settings.reminderExactDay' => 'فقط روز سررسید',
+			'settings.reminderRange' => 'چند روز قبل + سررسید',
+			'settings.reminderDaysBefore' => 'روزهای قبل',
+			'settings.reminderDay7' => '۷ روز',
+			'settings.reminderDay2' => '۲ روز',
+			'settings.reminderDay1' => '۱ روز',
 			_ => null,
 		};
 	}

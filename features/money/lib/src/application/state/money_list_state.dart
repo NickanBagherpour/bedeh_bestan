@@ -66,6 +66,8 @@ final class MoneyDraft {
     this.installmentCount,
     this.installmentAmount,
     this.note,
+    this.reminderPolicy = 'default',
+    this.reminderDaysBeforeJson = '[]',
   });
 
   final String? id;
@@ -79,4 +81,6 @@ final class MoneyDraft {
   final int? installmentCount;
   final int? installmentAmount;
   final String? note;
+  final String reminderPolicy;
+  final String reminderDaysBeforeJson;
 }

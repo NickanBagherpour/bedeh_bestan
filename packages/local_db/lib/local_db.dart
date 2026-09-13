@@ -8,6 +8,7 @@ export 'src/database/ids.dart';
 export 'src/database/party_exception.dart';
 export 'src/database/payment_exception.dart';
 export 'src/database/seed.dart';
+export 'src/models/asset_account.dart';
 export 'src/models/enums.dart';
 export 'src/models/library_snapshot.dart';
 export 'src/models/money_item.dart';

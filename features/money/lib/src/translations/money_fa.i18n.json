@@ -102,6 +102,7 @@
   "dueTitle": "سررسید امروز",
   "dueSoonTitle": "سررسید فردا",
   "dueBody": "$title",
+  "dueBodyInstallment": "$title — قسط $index",
   "scheduleTitle": "زمان‌بندی اقساط",
   "installmentRow": "قسط $index",
   "remainingAmount": "مانده $amount",

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../storage/app_storage.dart';
 import '../storage/storage_providers.dart';
+import '../reminders/reminder_schedule_policy.dart';
 import '../utils/calendar_type.dart';
 import '../utils/currency.dart';
 import 'app_settings.dart';
@@ -66,6 +67,22 @@ final class AppSettingsController extends Notifier<AppSettings> {
         .writeString(AppSettingsKeys.currency, currency.name);
   }
 
+  Future<void> setMoneyReminderMode(MoneyReminderMode mode) async {
+    state = state.copyWith(moneyReminderMode: mode);
+    await ref
+        .read(appStorageProvider)
+        .writeString(AppSettingsKeys.moneyReminderMode, mode.name);
+  }
+
+  Future<void> setMoneyReminderDaysBefore(List<int> days) async {
+    final sorted = [...days.where((d) => d > 0)]..sort();
+    state = state.copyWith(moneyReminderDaysBefore: sorted);
+    await ref.read(appStorageProvider).writeString(
+          AppSettingsKeys.moneyReminderDaysBefore,
+          encodeDaysBeforeJson(sorted),
+        );
+  }
+
   Future<void> reloadFromStorage() async {
     state = loadAppSettings(storage: ref.read(appStorageProvider));
   }
@@ -92,6 +109,18 @@ AppSettings loadAppSettings({required AppStorage storage}) {
           storage.readString(AppSettingsKeys.currency),
         ) ??
         defaultCurrencyForLocale(locale.languageCode),
+    moneyReminderMode: _enumByName(
+          MoneyReminderMode.values,
+          storage.readString(AppSettingsKeys.moneyReminderMode),
+        ) ??
+        MoneyReminderMode.range,
+    moneyReminderDaysBefore: decodeDaysBeforeJson(
+      storage.readString(AppSettingsKeys.moneyReminderDaysBefore),
+    ).isEmpty
+        ? ReminderSchedulePolicy.defaultDaysBefore
+        : decodeDaysBeforeJson(
+            storage.readString(AppSettingsKeys.moneyReminderDaysBefore),
+          ),
   );
 }
 

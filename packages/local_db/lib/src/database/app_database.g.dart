@@ -807,6 +807,30 @@ class $MoneyItemsTable extends MoneyItems
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _reminderPolicyMeta = const VerificationMeta(
+    'reminderPolicy',
+  );
+  @override
+  late final GeneratedColumn<String> reminderPolicy = GeneratedColumn<String>(
+    'reminder_policy',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('default'),
+  );
+  static const VerificationMeta _reminderDaysBeforeJsonMeta =
+      const VerificationMeta('reminderDaysBeforeJson');
+  @override
+  late final GeneratedColumn<String> reminderDaysBeforeJson =
+      GeneratedColumn<String>(
+        'reminder_days_before_json',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('[]'),
+      );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -844,6 +868,8 @@ class $MoneyItemsTable extends MoneyItems
     startDate,
     nextDueDate,
     note,
+    reminderPolicy,
+    reminderDaysBeforeJson,
     createdAt,
     updatedAt,
   ];
@@ -965,6 +991,24 @@ class $MoneyItemsTable extends MoneyItems
         note.isAcceptableOrUnknown(data['note']!, _noteMeta),
       );
     }
+    if (data.containsKey('reminder_policy')) {
+      context.handle(
+        _reminderPolicyMeta,
+        reminderPolicy.isAcceptableOrUnknown(
+          data['reminder_policy']!,
+          _reminderPolicyMeta,
+        ),
+      );
+    }
+    if (data.containsKey('reminder_days_before_json')) {
+      context.handle(
+        _reminderDaysBeforeJsonMeta,
+        reminderDaysBeforeJson.isAcceptableOrUnknown(
+          data['reminder_days_before_json']!,
+          _reminderDaysBeforeJsonMeta,
+        ),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -1042,6 +1086,14 @@ class $MoneyItemsTable extends MoneyItems
         DriftSqlType.string,
         data['${effectivePrefix}note'],
       ),
+      reminderPolicy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}reminder_policy'],
+      )!,
+      reminderDaysBeforeJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}reminder_days_before_json'],
+      )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -1073,6 +1125,8 @@ class MoneyItemRow extends DataClass implements Insertable<MoneyItemRow> {
   final DateTime startDate;
   final DateTime nextDueDate;
   final String? note;
+  final String reminderPolicy;
+  final String reminderDaysBeforeJson;
   final DateTime createdAt;
   final DateTime updatedAt;
   const MoneyItemRow({
@@ -1089,6 +1143,8 @@ class MoneyItemRow extends DataClass implements Insertable<MoneyItemRow> {
     required this.startDate,
     required this.nextDueDate,
     this.note,
+    required this.reminderPolicy,
+    required this.reminderDaysBeforeJson,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -1114,6 +1170,8 @@ class MoneyItemRow extends DataClass implements Insertable<MoneyItemRow> {
     if (!nullToAbsent || note != null) {
       map['note'] = Variable<String>(note);
     }
+    map['reminder_policy'] = Variable<String>(reminderPolicy);
+    map['reminder_days_before_json'] = Variable<String>(reminderDaysBeforeJson);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
@@ -1138,6 +1196,8 @@ class MoneyItemRow extends DataClass implements Insertable<MoneyItemRow> {
       startDate: Value(startDate),
       nextDueDate: Value(nextDueDate),
       note: note == null && nullToAbsent ? const Value.absent() : Value(note),
+      reminderPolicy: Value(reminderPolicy),
+      reminderDaysBeforeJson: Value(reminderDaysBeforeJson),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );
@@ -1162,6 +1222,10 @@ class MoneyItemRow extends DataClass implements Insertable<MoneyItemRow> {
       startDate: serializer.fromJson<DateTime>(json['startDate']),
       nextDueDate: serializer.fromJson<DateTime>(json['nextDueDate']),
       note: serializer.fromJson<String?>(json['note']),
+      reminderPolicy: serializer.fromJson<String>(json['reminderPolicy']),
+      reminderDaysBeforeJson: serializer.fromJson<String>(
+        json['reminderDaysBeforeJson'],
+      ),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -1183,6 +1247,10 @@ class MoneyItemRow extends DataClass implements Insertable<MoneyItemRow> {
       'startDate': serializer.toJson<DateTime>(startDate),
       'nextDueDate': serializer.toJson<DateTime>(nextDueDate),
       'note': serializer.toJson<String?>(note),
+      'reminderPolicy': serializer.toJson<String>(reminderPolicy),
+      'reminderDaysBeforeJson': serializer.toJson<String>(
+        reminderDaysBeforeJson,
+      ),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
@@ -1202,6 +1270,8 @@ class MoneyItemRow extends DataClass implements Insertable<MoneyItemRow> {
     DateTime? startDate,
     DateTime? nextDueDate,
     Value<String?> note = const Value.absent(),
+    String? reminderPolicy,
+    String? reminderDaysBeforeJson,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) => MoneyItemRow(
@@ -1222,6 +1292,9 @@ class MoneyItemRow extends DataClass implements Insertable<MoneyItemRow> {
     startDate: startDate ?? this.startDate,
     nextDueDate: nextDueDate ?? this.nextDueDate,
     note: note.present ? note.value : this.note,
+    reminderPolicy: reminderPolicy ?? this.reminderPolicy,
+    reminderDaysBeforeJson:
+        reminderDaysBeforeJson ?? this.reminderDaysBeforeJson,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -1252,6 +1325,12 @@ class MoneyItemRow extends DataClass implements Insertable<MoneyItemRow> {
           ? data.nextDueDate.value
           : this.nextDueDate,
       note: data.note.present ? data.note.value : this.note,
+      reminderPolicy: data.reminderPolicy.present
+          ? data.reminderPolicy.value
+          : this.reminderPolicy,
+      reminderDaysBeforeJson: data.reminderDaysBeforeJson.present
+          ? data.reminderDaysBeforeJson.value
+          : this.reminderDaysBeforeJson,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -1273,6 +1352,8 @@ class MoneyItemRow extends DataClass implements Insertable<MoneyItemRow> {
           ..write('startDate: $startDate, ')
           ..write('nextDueDate: $nextDueDate, ')
           ..write('note: $note, ')
+          ..write('reminderPolicy: $reminderPolicy, ')
+          ..write('reminderDaysBeforeJson: $reminderDaysBeforeJson, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -1294,6 +1375,8 @@ class MoneyItemRow extends DataClass implements Insertable<MoneyItemRow> {
     startDate,
     nextDueDate,
     note,
+    reminderPolicy,
+    reminderDaysBeforeJson,
     createdAt,
     updatedAt,
   );
@@ -1314,6 +1397,8 @@ class MoneyItemRow extends DataClass implements Insertable<MoneyItemRow> {
           other.startDate == this.startDate &&
           other.nextDueDate == this.nextDueDate &&
           other.note == this.note &&
+          other.reminderPolicy == this.reminderPolicy &&
+          other.reminderDaysBeforeJson == this.reminderDaysBeforeJson &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -1332,6 +1417,8 @@ class MoneyItemsCompanion extends UpdateCompanion<MoneyItemRow> {
   final Value<DateTime> startDate;
   final Value<DateTime> nextDueDate;
   final Value<String?> note;
+  final Value<String> reminderPolicy;
+  final Value<String> reminderDaysBeforeJson;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<int> rowid;
@@ -1349,6 +1436,8 @@ class MoneyItemsCompanion extends UpdateCompanion<MoneyItemRow> {
     this.startDate = const Value.absent(),
     this.nextDueDate = const Value.absent(),
     this.note = const Value.absent(),
+    this.reminderPolicy = const Value.absent(),
+    this.reminderDaysBeforeJson = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -1367,6 +1456,8 @@ class MoneyItemsCompanion extends UpdateCompanion<MoneyItemRow> {
     required DateTime startDate,
     required DateTime nextDueDate,
     this.note = const Value.absent(),
+    this.reminderPolicy = const Value.absent(),
+    this.reminderDaysBeforeJson = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
     this.rowid = const Value.absent(),
@@ -1394,6 +1485,8 @@ class MoneyItemsCompanion extends UpdateCompanion<MoneyItemRow> {
     Expression<DateTime>? startDate,
     Expression<DateTime>? nextDueDate,
     Expression<String>? note,
+    Expression<String>? reminderPolicy,
+    Expression<String>? reminderDaysBeforeJson,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
@@ -1412,6 +1505,9 @@ class MoneyItemsCompanion extends UpdateCompanion<MoneyItemRow> {
       if (startDate != null) 'start_date': startDate,
       if (nextDueDate != null) 'next_due_date': nextDueDate,
       if (note != null) 'note': note,
+      if (reminderPolicy != null) 'reminder_policy': reminderPolicy,
+      if (reminderDaysBeforeJson != null)
+        'reminder_days_before_json': reminderDaysBeforeJson,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
@@ -1432,6 +1528,8 @@ class MoneyItemsCompanion extends UpdateCompanion<MoneyItemRow> {
     Value<DateTime>? startDate,
     Value<DateTime>? nextDueDate,
     Value<String?>? note,
+    Value<String>? reminderPolicy,
+    Value<String>? reminderDaysBeforeJson,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<int>? rowid,
@@ -1450,6 +1548,9 @@ class MoneyItemsCompanion extends UpdateCompanion<MoneyItemRow> {
       startDate: startDate ?? this.startDate,
       nextDueDate: nextDueDate ?? this.nextDueDate,
       note: note ?? this.note,
+      reminderPolicy: reminderPolicy ?? this.reminderPolicy,
+      reminderDaysBeforeJson:
+          reminderDaysBeforeJson ?? this.reminderDaysBeforeJson,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
@@ -1498,6 +1599,14 @@ class MoneyItemsCompanion extends UpdateCompanion<MoneyItemRow> {
     if (note.present) {
       map['note'] = Variable<String>(note.value);
     }
+    if (reminderPolicy.present) {
+      map['reminder_policy'] = Variable<String>(reminderPolicy.value);
+    }
+    if (reminderDaysBeforeJson.present) {
+      map['reminder_days_before_json'] = Variable<String>(
+        reminderDaysBeforeJson.value,
+      );
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -1526,6 +1635,8 @@ class MoneyItemsCompanion extends UpdateCompanion<MoneyItemRow> {
           ..write('startDate: $startDate, ')
           ..write('nextDueDate: $nextDueDate, ')
           ..write('note: $note, ')
+          ..write('reminderPolicy: $reminderPolicy, ')
+          ..write('reminderDaysBeforeJson: $reminderDaysBeforeJson, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
@@ -3222,6 +3333,456 @@ class NotesCompanion extends UpdateCompanion<NoteRow> {
   }
 }
 
+class $AssetAccountsTable extends AssetAccounts
+    with TableInfo<$AssetAccountsTable, AssetAccountRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AssetAccountsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _kindMeta = const VerificationMeta('kind');
+  @override
+  late final GeneratedColumn<String> kind = GeneratedColumn<String>(
+    'kind',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _balanceMeta = const VerificationMeta(
+    'balance',
+  );
+  @override
+  late final GeneratedColumn<int> balance = GeneratedColumn<int>(
+    'balance',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _noteMeta = const VerificationMeta('note');
+  @override
+  late final GeneratedColumn<String> note = GeneratedColumn<String>(
+    'note',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    kind,
+    balance,
+    note,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'asset_accounts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AssetAccountRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('kind')) {
+      context.handle(
+        _kindMeta,
+        kind.isAcceptableOrUnknown(data['kind']!, _kindMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_kindMeta);
+    }
+    if (data.containsKey('balance')) {
+      context.handle(
+        _balanceMeta,
+        balance.isAcceptableOrUnknown(data['balance']!, _balanceMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_balanceMeta);
+    }
+    if (data.containsKey('note')) {
+      context.handle(
+        _noteMeta,
+        note.isAcceptableOrUnknown(data['note']!, _noteMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AssetAccountRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AssetAccountRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+      balance: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}balance'],
+      )!,
+      note: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}note'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $AssetAccountsTable createAlias(String alias) {
+    return $AssetAccountsTable(attachedDatabase, alias);
+  }
+}
+
+class AssetAccountRow extends DataClass implements Insertable<AssetAccountRow> {
+  final String id;
+  final String name;
+  final String kind;
+  final int balance;
+  final String? note;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const AssetAccountRow({
+    required this.id,
+    required this.name,
+    required this.kind,
+    required this.balance,
+    this.note,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['name'] = Variable<String>(name);
+    map['kind'] = Variable<String>(kind);
+    map['balance'] = Variable<int>(balance);
+    if (!nullToAbsent || note != null) {
+      map['note'] = Variable<String>(note);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  AssetAccountsCompanion toCompanion(bool nullToAbsent) {
+    return AssetAccountsCompanion(
+      id: Value(id),
+      name: Value(name),
+      kind: Value(kind),
+      balance: Value(balance),
+      note: note == null && nullToAbsent ? const Value.absent() : Value(note),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory AssetAccountRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AssetAccountRow(
+      id: serializer.fromJson<String>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      kind: serializer.fromJson<String>(json['kind']),
+      balance: serializer.fromJson<int>(json['balance']),
+      note: serializer.fromJson<String?>(json['note']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'name': serializer.toJson<String>(name),
+      'kind': serializer.toJson<String>(kind),
+      'balance': serializer.toJson<int>(balance),
+      'note': serializer.toJson<String?>(note),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  AssetAccountRow copyWith({
+    String? id,
+    String? name,
+    String? kind,
+    int? balance,
+    Value<String?> note = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => AssetAccountRow(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    kind: kind ?? this.kind,
+    balance: balance ?? this.balance,
+    note: note.present ? note.value : this.note,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  AssetAccountRow copyWithCompanion(AssetAccountsCompanion data) {
+    return AssetAccountRow(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      balance: data.balance.present ? data.balance.value : this.balance,
+      note: data.note.present ? data.note.value : this.note,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AssetAccountRow(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('kind: $kind, ')
+          ..write('balance: $balance, ')
+          ..write('note: $note, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, name, kind, balance, note, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AssetAccountRow &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.kind == this.kind &&
+          other.balance == this.balance &&
+          other.note == this.note &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class AssetAccountsCompanion extends UpdateCompanion<AssetAccountRow> {
+  final Value<String> id;
+  final Value<String> name;
+  final Value<String> kind;
+  final Value<int> balance;
+  final Value<String?> note;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const AssetAccountsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.balance = const Value.absent(),
+    this.note = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  AssetAccountsCompanion.insert({
+    required String id,
+    required String name,
+    required String kind,
+    required int balance,
+    this.note = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       name = Value(name),
+       kind = Value(kind),
+       balance = Value(balance),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<AssetAccountRow> custom({
+    Expression<String>? id,
+    Expression<String>? name,
+    Expression<String>? kind,
+    Expression<int>? balance,
+    Expression<String>? note,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (kind != null) 'kind': kind,
+      if (balance != null) 'balance': balance,
+      if (note != null) 'note': note,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  AssetAccountsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? name,
+    Value<String>? kind,
+    Value<int>? balance,
+    Value<String?>? note,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return AssetAccountsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      kind: kind ?? this.kind,
+      balance: balance ?? this.balance,
+      note: note ?? this.note,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (balance.present) {
+      map['balance'] = Variable<int>(balance.value);
+    }
+    if (note.present) {
+      map['note'] = Variable<String>(note.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AssetAccountsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('kind: $kind, ')
+          ..write('balance: $balance, ')
+          ..write('note: $note, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $MetaEntriesTable extends MetaEntries
     with TableInfo<$MetaEntriesTable, MetaRow> {
   @override
@@ -3436,6 +3997,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $MoneyPaymentsTable moneyPayments = $MoneyPaymentsTable(this);
   late final $RemindersTable reminders = $RemindersTable(this);
   late final $NotesTable notes = $NotesTable(this);
+  late final $AssetAccountsTable assetAccounts = $AssetAccountsTable(this);
   late final $MetaEntriesTable metaEntries = $MetaEntriesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
@@ -3447,6 +4009,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     moneyPayments,
     reminders,
     notes,
+    assetAccounts,
     metaEntries,
   ];
 }
@@ -3968,6 +4531,8 @@ typedef $$MoneyItemsTableCreateCompanionBuilder =
       required DateTime startDate,
       required DateTime nextDueDate,
       Value<String?> note,
+      Value<String> reminderPolicy,
+      Value<String> reminderDaysBeforeJson,
       required DateTime createdAt,
       required DateTime updatedAt,
       Value<int> rowid,
@@ -3987,6 +4552,8 @@ typedef $$MoneyItemsTableUpdateCompanionBuilder =
       Value<DateTime> startDate,
       Value<DateTime> nextDueDate,
       Value<String?> note,
+      Value<String> reminderPolicy,
+      Value<String> reminderDaysBeforeJson,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<int> rowid,
@@ -4117,6 +4684,16 @@ class $$MoneyItemsTableFilterComposer
 
   ColumnFilters<String> get note => $composableBuilder(
     column: $table.note,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get reminderPolicy => $composableBuilder(
+    column: $table.reminderPolicy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get reminderDaysBeforeJson => $composableBuilder(
+    column: $table.reminderDaysBeforeJson,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4273,6 +4850,16 @@ class $$MoneyItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get reminderPolicy => $composableBuilder(
+    column: $table.reminderPolicy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get reminderDaysBeforeJson => $composableBuilder(
+    column: $table.reminderDaysBeforeJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -4363,6 +4950,16 @@ class $$MoneyItemsTableAnnotationComposer
 
   GeneratedColumn<String> get note =>
       $composableBuilder(column: $table.note, builder: (column) => column);
+
+  GeneratedColumn<String> get reminderPolicy => $composableBuilder(
+    column: $table.reminderPolicy,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get reminderDaysBeforeJson => $composableBuilder(
+    column: $table.reminderDaysBeforeJson,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -4489,6 +5086,8 @@ class $$MoneyItemsTableTableManager
                 Value<DateTime> startDate = const Value.absent(),
                 Value<DateTime> nextDueDate = const Value.absent(),
                 Value<String?> note = const Value.absent(),
+                Value<String> reminderPolicy = const Value.absent(),
+                Value<String> reminderDaysBeforeJson = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -4506,6 +5105,8 @@ class $$MoneyItemsTableTableManager
                 startDate: startDate,
                 nextDueDate: nextDueDate,
                 note: note,
+                reminderPolicy: reminderPolicy,
+                reminderDaysBeforeJson: reminderDaysBeforeJson,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -4525,6 +5126,8 @@ class $$MoneyItemsTableTableManager
                 required DateTime startDate,
                 required DateTime nextDueDate,
                 Value<String?> note = const Value.absent(),
+                Value<String> reminderPolicy = const Value.absent(),
+                Value<String> reminderDaysBeforeJson = const Value.absent(),
                 required DateTime createdAt,
                 required DateTime updatedAt,
                 Value<int> rowid = const Value.absent(),
@@ -4542,6 +5145,8 @@ class $$MoneyItemsTableTableManager
                 startDate: startDate,
                 nextDueDate: nextDueDate,
                 note: note,
+                reminderPolicy: reminderPolicy,
+                reminderDaysBeforeJson: reminderDaysBeforeJson,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -5840,6 +6445,253 @@ typedef $$NotesTableProcessedTableManager =
       NoteRow,
       PrefetchHooks Function({bool partyId, bool moneyItemId})
     >;
+typedef $$AssetAccountsTableCreateCompanionBuilder =
+    AssetAccountsCompanion Function({
+      required String id,
+      required String name,
+      required String kind,
+      required int balance,
+      Value<String?> note,
+      required DateTime createdAt,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$AssetAccountsTableUpdateCompanionBuilder =
+    AssetAccountsCompanion Function({
+      Value<String> id,
+      Value<String> name,
+      Value<String> kind,
+      Value<int> balance,
+      Value<String?> note,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$AssetAccountsTableFilterComposer
+    extends Composer<_$AppDatabase, $AssetAccountsTable> {
+  $$AssetAccountsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get balance => $composableBuilder(
+    column: $table.balance,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$AssetAccountsTableOrderingComposer
+    extends Composer<_$AppDatabase, $AssetAccountsTable> {
+  $$AssetAccountsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get balance => $composableBuilder(
+    column: $table.balance,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$AssetAccountsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AssetAccountsTable> {
+  $$AssetAccountsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<int> get balance =>
+      $composableBuilder(column: $table.balance, builder: (column) => column);
+
+  GeneratedColumn<String> get note =>
+      $composableBuilder(column: $table.note, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$AssetAccountsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AssetAccountsTable,
+          AssetAccountRow,
+          $$AssetAccountsTableFilterComposer,
+          $$AssetAccountsTableOrderingComposer,
+          $$AssetAccountsTableAnnotationComposer,
+          $$AssetAccountsTableCreateCompanionBuilder,
+          $$AssetAccountsTableUpdateCompanionBuilder,
+          (
+            AssetAccountRow,
+            BaseReferences<_$AppDatabase, $AssetAccountsTable, AssetAccountRow>,
+          ),
+          AssetAccountRow,
+          PrefetchHooks Function()
+        > {
+  $$AssetAccountsTableTableManager(_$AppDatabase db, $AssetAccountsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AssetAccountsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AssetAccountsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AssetAccountsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> kind = const Value.absent(),
+                Value<int> balance = const Value.absent(),
+                Value<String?> note = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AssetAccountsCompanion(
+                id: id,
+                name: name,
+                kind: kind,
+                balance: balance,
+                note: note,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String name,
+                required String kind,
+                required int balance,
+                Value<String?> note = const Value.absent(),
+                required DateTime createdAt,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => AssetAccountsCompanion.insert(
+                id: id,
+                name: name,
+                kind: kind,
+                balance: balance,
+                note: note,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$AssetAccountsTable, AssetAccountRow>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $AssetAccountsTable,
+                    AssetAccountRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$AssetAccountsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AssetAccountsTable,
+      AssetAccountRow,
+      $$AssetAccountsTableFilterComposer,
+      $$AssetAccountsTableOrderingComposer,
+      $$AssetAccountsTableAnnotationComposer,
+      $$AssetAccountsTableCreateCompanionBuilder,
+      $$AssetAccountsTableUpdateCompanionBuilder,
+      (
+        AssetAccountRow,
+        BaseReferences<_$AppDatabase, $AssetAccountsTable, AssetAccountRow>,
+      ),
+      AssetAccountRow,
+      PrefetchHooks Function()
+    >;
 typedef $$MetaEntriesTableCreateCompanionBuilder =
     MetaEntriesCompanion Function({
       required String key,
@@ -5996,6 +6848,8 @@ class $AppDatabaseManager {
       $$RemindersTableTableManager(_db, _db.reminders);
   $$NotesTableTableManager get notes =>
       $$NotesTableTableManager(_db, _db.notes);
+  $$AssetAccountsTableTableManager get assetAccounts =>
+      $$AssetAccountsTableTableManager(_db, _db.assetAccounts);
   $$MetaEntriesTableTableManager get metaEntries =>
       $$MetaEntriesTableTableManager(_db, _db.metaEntries);
 }

@@ -17,6 +17,8 @@ final class MoneyItem {
     this.installmentAmount,
     this.periodsPaid = 0,
     this.note,
+    this.reminderPolicy = 'default',
+    this.reminderDaysBeforeJson = '[]',
   });
 
   final String id;
@@ -36,6 +38,8 @@ final class MoneyItem {
   final DateTime startDate;
   final DateTime nextDueDate;
   final String? note;
+  final String reminderPolicy;
+  final String reminderDaysBeforeJson;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -53,6 +57,19 @@ final class MoneyItem {
 
   bool get isSettled => remainingAmount <= 0;
 
+  /// One-tap payment amount: one قسط for installment, else full remaining.
+  int? suggestedQuickPaymentAmount() {
+    if (isSettled) return null;
+    if (schedule == MoneySchedule.installment) {
+      final count = installmentCount;
+      final each = installmentAmount ??
+          (count != null && count > 0 ? (totalAmount / count).round() : null);
+      if (each == null || each <= 0) return remainingAmount;
+      return each < remainingAmount ? each : remainingAmount;
+    }
+    return remainingAmount;
+  }
+
   MoneyItem copyWith({
     String? id,
     String? partyId,
@@ -67,6 +84,8 @@ final class MoneyItem {
     DateTime? startDate,
     DateTime? nextDueDate,
     String? note,
+    String? reminderPolicy,
+    String? reminderDaysBeforeJson,
     DateTime? createdAt,
     DateTime? updatedAt,
     bool clearNote = false,
@@ -91,6 +110,9 @@ final class MoneyItem {
       startDate: startDate ?? this.startDate,
       nextDueDate: nextDueDate ?? this.nextDueDate,
       note: clearNote ? null : (note ?? this.note),
+      reminderPolicy: reminderPolicy ?? this.reminderPolicy,
+      reminderDaysBeforeJson:
+          reminderDaysBeforeJson ?? this.reminderDaysBeforeJson,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

@@ -6,6 +6,7 @@ import 'package:core/core.dart'
         AppSettings,
         AppSettingsKeys,
         CalendarPreference,
+        MoneyReminderMode,
         appSettingsProvider,
         appStorageProvider;
 import 'package:flutter/material.dart' show ThemeMode;
@@ -45,6 +46,14 @@ final class SettingsController extends Notifier<AppSettings> {
 
   Future<void> setCurrency(AppCurrency currency) {
     return ref.read(appSettingsProvider.notifier).setCurrency(currency);
+  }
+
+  Future<void> setMoneyReminderMode(MoneyReminderMode mode) {
+    return ref.read(appSettingsProvider.notifier).setMoneyReminderMode(mode);
+  }
+
+  Future<void> setMoneyReminderDaysBefore(List<int> days) {
+    return ref.read(appSettingsProvider.notifier).setMoneyReminderDaysBefore(days);
   }
 
   Future<BackupActionResult> exportBackup({required String fileName}) async {

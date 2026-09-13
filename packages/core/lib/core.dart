@@ -7,6 +7,7 @@ export 'src/notifications/notification_scheduler_provider.dart';
 export 'src/notifications/scheduled_notice.dart';
 export 'src/providers/app_settings.dart';
 export 'src/providers/app_settings_provider.dart';
+export 'src/reminders/reminder_schedule_policy.dart';
 export 'src/responsive/breakpoints.dart';
 export 'src/router/app_routes.dart';
 export 'src/router/route_helpers.dart';

@@ -25,12 +25,14 @@ import 'package:ui_kit/ui_kit.dart'
         KitHeroHeader,
         KitIconBadge,
         KitLoading,
-        KitScrollHideFab;
+        KitScrollHideFab,
+        showKitConfirmDialog;
 
 import '../../application/controllers/home_controller.dart';
 import '../../application/home_dashboard.dart';
 import '../../application/state/home_state.dart';
 import '../widgets/home_balances_card.dart';
+import '../widgets/home_collapsible_section.dart';
 import '../widgets/home_due_list.dart';
 import '../widgets/home_report_card.dart';
 
@@ -69,13 +71,26 @@ class HomePage extends ConsumerWidget {
               title: t.app.appName,
               subtitle: t.app.subtitle,
               watermark: Icons.swap_horiz_rounded,
-              trailing: IconButton(
-                tooltip: t.home.settings,
-                onPressed: () {
-                  AppHaptics.selection();
-                  context.push(AppRoutes.settings.path);
-                },
-                icon: const Icon(Icons.settings_rounded, color: Colors.white),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    tooltip: t.home.profile,
+                    onPressed: () {
+                      AppHaptics.selection();
+                      context.push(AppRoutes.profile.path);
+                    },
+                    icon: const Icon(Icons.person_rounded, color: Colors.white),
+                  ),
+                  IconButton(
+                    tooltip: t.home.settings,
+                    onPressed: () {
+                      AppHaptics.selection();
+                      context.push(AppRoutes.settings.path);
+                    },
+                    icon: const Icon(Icons.settings_rounded, color: Colors.white),
+                  ),
+                ],
               ),
               footer: Row(
                 children: [
@@ -120,10 +135,9 @@ class HomePage extends ConsumerWidget {
               child: KitLoading(),
             )
           else
-            ..._dashboard(
-              context,
-              t,
-              state.dashboard!,
+            _HomeDashboardBody(
+              dashboard: state.dashboard!,
+              busyPaymentItemId: state.busyPaymentItemId,
               calendar: calendar,
               currency: currency,
               persian: persian,
@@ -132,113 +146,6 @@ class HomePage extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  List<Widget> _dashboard(
-    BuildContext context,
-    Translations t,
-    HomeDashboard dashboard, {
-    required CalendarType calendar,
-    required AppCurrency currency,
-    required bool persian,
-  }) {
-    String money(int amount) => formatStoredMoney(
-          amount,
-          currency: currency,
-          currencyLabel: switch (currency) {
-            AppCurrency.toman => t.app.currency.toman,
-            AppCurrency.rial => t.app.currency.rial,
-            AppCurrency.usd => t.app.currency.usd,
-          },
-          persianDigits: persian,
-        );
-    String due(HomeDueRow row) {
-      final formatted = formatLongDate(row.dueDate, calendar);
-      return persian ? toPersianDigits(formatted) : formatted;
-    }
-
-    String status(HomeDueRow row) {
-      return switch (row.status) {
-        MoneyStatus.upcoming => t.money.status.upcoming,
-        MoneyStatus.dueToday => t.money.status.dueToday,
-        MoneyStatus.overdue => t.money.status.overdue,
-        MoneyStatus.settled => t.money.status.settled,
-      };
-    }
-
-    Color accent(HomeDueRow row) {
-      return row.direction == MoneyDirection.pay
-          ? AppColors.pay
-          : AppColors.receive;
-    }
-
-    IconData iconOf(HomeDueRow row) {
-      return row.direction == MoneyDirection.pay
-          ? Icons.south_west_rounded
-          : Icons.north_east_rounded;
-    }
-
-    return [
-      KitFadeIn(
-        child: HomeReportCard(
-          title: t.home.reportTitle,
-          paidOutValue: money(dashboard.report.paidOut),
-          paidInValue: money(dashboard.report.paidIn),
-          stillOweValue: money(dashboard.report.remainingPay),
-          dueByEndValue: money(dashboard.report.dueByPeriodEnd),
-          paidOutCaption: t.home.capPaidOut,
-          paidInCaption: t.home.capPaidIn,
-          stillOweCaption: t.home.capStillOwe,
-          dueByEndCaption: t.home.capDueByEnd,
-        ),
-      ),
-      const SizedBox(height: AppSpacing.md),
-      if (dashboard.overdue.isNotEmpty) ...[
-        KitFadeIn(
-          delay: const Duration(milliseconds: 40),
-          child: HomeDueList(
-            title: t.home.overdue,
-            icon: Icons.warning_amber_rounded,
-            emptyLabel: t.home.emptyBody,
-            rows: dashboard.overdue,
-            amountOf: (row) => money(row.remainingAmount),
-            dueOf: due,
-            statusOf: status,
-            accentOf: accent,
-            iconOf: iconOf,
-            onTap: (row) => context.push(AppRoutes.moneyItemPath(row.id)),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.md),
-      ],
-      KitFadeIn(
-        delay: const Duration(milliseconds: 80),
-        child: HomeDueList(
-          title: t.home.dueThisWeek,
-          icon: Icons.event_available_rounded,
-          emptyLabel: t.home.emptyBody,
-          rows: dashboard.dueThisWeek,
-          amountOf: (row) => money(row.remainingAmount),
-          dueOf: due,
-          statusOf: status,
-          accentOf: accent,
-          iconOf: iconOf,
-          onTap: (row) => context.push(AppRoutes.moneyItemPath(row.id)),
-        ),
-      ),
-      const SizedBox(height: AppSpacing.md),
-      KitFadeIn(
-        delay: const Duration(milliseconds: 120),
-        child: HomeBalancesCard(
-          title: t.home.whoOwes,
-          emptyLabel: t.home.emptyBalances,
-          balances: dashboard.balances,
-          payLabelOf: (row) => t.home.iOwe(amount: money(row.payRemaining)),
-          receiveLabelOf: (row) =>
-              t.home.theyOwe(amount: money(row.receiveRemaining)),
-        ),
-      ),
-    ];
   }
 
   Future<void> _pickDirection(BuildContext context, Translations t) async {
@@ -296,7 +203,249 @@ class HomePage extends ConsumerWidget {
   }
 }
 
-/// A colorful direction choice row inside the add sheet.
+class _HomeDashboardBody extends ConsumerStatefulWidget {
+  const _HomeDashboardBody({
+    required this.dashboard,
+    required this.busyPaymentItemId,
+    required this.calendar,
+    required this.currency,
+    required this.persian,
+  });
+
+  final HomeDashboard dashboard;
+  final String? busyPaymentItemId;
+  final CalendarType calendar;
+  final AppCurrency currency;
+  final bool persian;
+
+  @override
+  ConsumerState<_HomeDashboardBody> createState() => _HomeDashboardBodyState();
+}
+
+class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
+  late bool _overdueExpanded;
+  late bool _weekExpanded;
+  late bool _monthExpanded;
+  late bool _balancesExpanded;
+
+  @override
+  void initState() {
+    super.initState();
+    _syncDefaults();
+  }
+
+  @override
+  void didUpdateWidget(covariant _HomeDashboardBody oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.dashboard.overdue.length != widget.dashboard.overdue.length ||
+        oldWidget.dashboard.dueThisWeek.length !=
+            widget.dashboard.dueThisWeek.length ||
+        oldWidget.dashboard.dueThisMonth.length !=
+            widget.dashboard.dueThisMonth.length ||
+        oldWidget.dashboard.balances.length != widget.dashboard.balances.length) {
+      _syncDefaults();
+    }
+  }
+
+  void _syncDefaults() {
+    final d = widget.dashboard;
+    _overdueExpanded = homeSectionExpandedByDefault(d.overdue.length);
+    _weekExpanded = homeSectionExpandedByDefault(d.dueThisWeek.length);
+    _monthExpanded = homeSectionExpandedByDefault(d.dueThisMonth.length);
+    _balancesExpanded = !homeBalancesCollapsedByDefault(d.balances.length);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final t = Translations.of(context);
+    final d = widget.dashboard;
+    String money(int amount) => formatStoredMoney(
+          amount,
+          currency: widget.currency,
+          currencyLabel: switch (widget.currency) {
+            AppCurrency.toman => t.app.currency.toman,
+            AppCurrency.rial => t.app.currency.rial,
+            AppCurrency.usd => t.app.currency.usd,
+          },
+          persianDigits: widget.persian,
+        );
+    String due(HomeDueRow row) {
+      final formatted = formatLongDate(row.dueDate, widget.calendar);
+      return widget.persian ? toPersianDigits(formatted) : formatted;
+    }
+
+    String status(HomeDueRow row) {
+      return switch (row.status) {
+        MoneyStatus.upcoming => t.money.status.upcoming,
+        MoneyStatus.dueToday => t.money.status.dueToday,
+        MoneyStatus.overdue => t.money.status.overdue,
+        MoneyStatus.settled => t.money.status.settled,
+      };
+    }
+
+    Color accent(HomeDueRow row) {
+      return row.direction == MoneyDirection.pay
+          ? AppColors.pay
+          : AppColors.receive;
+    }
+
+    IconData iconOf(HomeDueRow row) {
+      return row.direction == MoneyDirection.pay
+          ? Icons.south_west_rounded
+          : Icons.north_east_rounded;
+    }
+
+    final periodStart = formatLongDate(d.report.periodStart, widget.calendar);
+    final periodEnd = formatLongDate(d.report.periodEnd, widget.calendar);
+    final rangeLabel = widget.persian
+        ? '${toPersianDigits(periodStart)} – ${toPersianDigits(periodEnd)}'
+        : '$periodStart – $periodEnd';
+
+    Widget dueList(
+      List<HomeDueRow> rows, {
+      required bool enableQuickPay,
+    }) {
+      return HomeDueList(
+        rows: rows,
+        emptyLabel: t.home.emptyBody,
+        amountOf: (row) => money(row.remainingAmount),
+        dueOf: due,
+        statusOf: status,
+        accentOf: accent,
+        iconOf: iconOf,
+        onTap: (row) => context.push(AppRoutes.moneyItemPath(row.id)),
+        busyItemId: widget.busyPaymentItemId,
+        quickPayLabel: t.home.quickPay,
+        quickReceiveLabel: t.home.quickReceive,
+        onQuickPay: enableQuickPay ? (row) => _quickPay(context, t, row) : null,
+      );
+    }
+
+    return Column(
+      children: [
+      KitFadeIn(
+        child: HomeReportCard(
+          title: t.home.reportTitle,
+          periodRangeLabel: rangeLabel,
+          paidOutValue: money(d.report.paidOut),
+          paidInValue: money(d.report.paidIn),
+          duePayInMonthValue: money(d.report.duePayByPeriodEnd),
+          dueReceiveInMonthValue: money(d.report.dueReceiveByPeriodEnd),
+          openPayValue: money(d.report.remainingPay),
+          openReceiveValue: money(d.report.remainingReceive),
+          paidOutCaption: t.home.capPaidOut,
+          paidInCaption: t.home.capPaidIn,
+          duePayInMonthCaption: t.home.capDuePayMonth,
+          dueReceiveInMonthCaption: t.home.capDueReceiveMonth,
+          openPayCaption: t.home.capOpenPay,
+          openReceiveCaption: t.home.capOpenReceive,
+        ),
+      ),
+      const SizedBox(height: AppSpacing.md),
+      if (d.overdue.isNotEmpty) ...[
+        KitFadeIn(
+          delay: const Duration(milliseconds: 40),
+          child: HomeCollapsibleSection(
+            title: t.home.overdue,
+            icon: Icons.warning_amber_rounded,
+            summary: t.home.sectionCount(count: d.overdue.length),
+            expanded: _overdueExpanded,
+            onToggle: () => setState(() => _overdueExpanded = !_overdueExpanded),
+            child: dueList(d.overdue, enableQuickPay: true),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+      ],
+      KitFadeIn(
+        delay: const Duration(milliseconds: 80),
+        child: HomeCollapsibleSection(
+          title: t.home.dueThisWeek,
+          icon: Icons.event_available_rounded,
+          summary: t.home.sectionCount(count: d.dueThisWeek.length),
+          expanded: _weekExpanded,
+          onToggle: () => setState(() => _weekExpanded = !_weekExpanded),
+          child: dueList(d.dueThisWeek, enableQuickPay: true),
+        ),
+      ),
+      const SizedBox(height: AppSpacing.md),
+      KitFadeIn(
+        delay: const Duration(milliseconds: 100),
+        child: HomeCollapsibleSection(
+          title: t.home.dueThisMonth,
+          icon: Icons.calendar_month_rounded,
+          summary: t.home.sectionCount(count: d.dueThisMonth.length),
+          expanded: _monthExpanded,
+          onToggle: () => setState(() => _monthExpanded = !_monthExpanded),
+          child: dueList(d.dueThisMonth, enableQuickPay: true),
+        ),
+      ),
+      const SizedBox(height: AppSpacing.md),
+      KitFadeIn(
+        delay: const Duration(milliseconds: 120),
+        child: HomeCollapsibleSection(
+          title: t.home.whoOwes,
+          icon: Icons.groups_rounded,
+          summary: t.home.sectionCount(count: d.balances.length),
+          expanded: _balancesExpanded,
+          onToggle: () => setState(() => _balancesExpanded = !_balancesExpanded),
+          child: HomeBalancesCard(
+            balances: d.balances,
+            emptyLabel: t.home.emptyBalances,
+            payLabelOf: (row) => t.home.iOwe(amount: money(row.payRemaining)),
+            receiveLabelOf: (row) =>
+                t.home.theyOwe(amount: money(row.receiveRemaining)),
+            onPartyTap: (row) =>
+                context.push(AppRoutes.partyItemPath(row.partyId)),
+          ),
+        ),
+      ),
+      ],
+    );
+  }
+
+  Future<void> _quickPay(
+    BuildContext context,
+    Translations t,
+    HomeDueRow row,
+  ) async {
+    final repo = ref.read(homeControllerProvider.notifier);
+    final amountLabel = money(row.remainingAmount);
+    final ok = await showKitConfirmDialog(
+      context: context,
+      title: row.direction == MoneyDirection.pay
+          ? t.home.quickPayConfirmTitle
+          : t.home.quickReceiveConfirmTitle,
+      body: t.home.quickPayConfirmBody(
+        title: row.title,
+        amount: amountLabel,
+      ),
+      confirmLabel: t.app.actions.confirm,
+      cancelLabel: t.app.actions.cancel,
+    );
+    if (!ok || !context.mounted) return;
+    final errorKey = await repo.recordQuickPayment(row.id);
+    if (!context.mounted) return;
+    if (errorKey != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(t.message(errorKey, shouldTranslate: true))),
+      );
+      return;
+    }
+    AppHaptics.confirm();
+  }
+
+  String money(int amount) => formatStoredMoney(
+        amount,
+        currency: widget.currency,
+        currencyLabel: switch (widget.currency) {
+          AppCurrency.toman => Translations.of(context).app.currency.toman,
+          AppCurrency.rial => Translations.of(context).app.currency.rial,
+          AppCurrency.usd => Translations.of(context).app.currency.usd,
+        },
+        persianDigits: widget.persian,
+      );
+}
+
 class _DirectionOption extends StatelessWidget {
   const _DirectionOption({
     required this.icon,

@@ -1,69 +1,76 @@
 import 'package:core/core.dart'
-    show AppRoutes, ScheduledNotice, notificationId;
-import 'package:local_db/local_db.dart' show MoneyItem;
+    show
+        AppRoutes,
+        CalendarType,
+        ReminderSchedulePolicy,
+        ScheduledNotice,
+        decodeDaysBeforeJson,
+        moneyItemReminderPolicyFromStorage,
+        notificationId,
+        resolveMoneyReminderPolicy;
+import 'package:local_db/local_db.dart' show MoneyItem, MoneySchedule;
 
-/// Due-date notices for unsettled money items within [horizon].
-///
-/// Each unsettled item whose سررسید is still ahead gets a notice on the due
-/// date at 09:00 and, when [dayBefore] is on, one the previous morning. Settled
-/// items and past due dates are skipped so a paid بدهی/قسط never buzzes. Tapping
-/// opens the money item via [AppRoutes.moneyItemPath]. Pure; unit-tested.
-///
-/// Reminders carry no reference to a money item, so cross-source dedup is not
-/// possible; money notices live in their own group with a disjoint id space
-/// (see [notificationId]) and never collide with calendar reminders.
+import 'money_query.dart';
+
+/// Builds all money due notices using app + per-item reminder policy.
 List<ScheduledNotice> upcomingMoneyNotices({
   required List<MoneyItem> items,
   required DateTime now,
+  required ReminderSchedulePolicy appPolicy,
+  required CalendarType calendar,
   required String Function(MoneyItem item) dueTitle,
   required String Function(MoneyItem item) dueSoonTitle,
-  required String Function(MoneyItem item) body,
+  required String Function(MoneyItem item, {int? installmentIndex}) body,
   Duration horizon = const Duration(days: 90),
-  bool dayBefore = true,
 }) {
   final end = now.add(horizon);
   final out = <ScheduledNotice>[];
+
   for (final item in items) {
     if (item.isSettled) continue;
-    final due = DateTime(
-      item.nextDueDate.year,
-      item.nextDueDate.month,
-      item.nextDueDate.day,
-      9,
+    final policy = resolveMoneyReminderPolicy(
+      appDefault: appPolicy,
+      itemPolicy: moneyItemReminderPolicyFromStorage(item.reminderPolicy),
+      itemCustomDaysBefore: decodeDaysBeforeJson(item.reminderDaysBeforeJson),
     );
-    if (due.isAfter(end)) continue;
     final route = AppRoutes.moneyItemPath(item.id);
-    if (due.isAfter(now)) {
-      out.add(
-        ScheduledNotice(
-          id: notificationId(group: 'money', key: item.id, at: due, variant: 0),
-          at: due,
-          title: dueTitle(item),
-          body: body(item),
-          route: route,
-        ),
-      );
-    }
-    if (dayBefore) {
-      final earlier = due.subtract(const Duration(days: 1));
-      if (earlier.isAfter(now)) {
+
+    void addForDue(DateTime dueDate, {int? installmentIndex}) {
+      var variant = 0;
+      for (final at in policy.instantsForDueDate(dueDate, now)) {
+        if (at.isAfter(end)) continue;
+        final isDueDay = at.day == dueDate.day &&
+            at.month == dueDate.month &&
+            at.year == dueDate.year;
         out.add(
           ScheduledNotice(
             id: notificationId(
               group: 'money',
-              key: item.id,
-              at: earlier,
-              variant: 1,
+              key: '${item.id}:${installmentIndex ?? 'one'}',
+              at: at,
+              variant: variant++,
             ),
-            at: earlier,
-            title: dueSoonTitle(item),
-            body: body(item),
+            at: at,
+            title: isDueDay ? dueTitle(item) : dueSoonTitle(item),
+            body: body(item, installmentIndex: installmentIndex),
             route: route,
+            moneyItemId: item.id,
+            enablePaymentActions: isDueDay,
           ),
         );
       }
     }
+
+    if (item.schedule == MoneySchedule.installment) {
+      for (final row in installmentSchedule(item, calendar)) {
+        if (row.state == InstallmentState.paid) continue;
+        addForDue(row.dueDate, installmentIndex: row.index);
+      }
+    } else {
+      addForDue(item.nextDueDate);
+    }
   }
+
   out.sort((a, b) => a.at.compareTo(b.at));
   return out;
 }

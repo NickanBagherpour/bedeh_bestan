@@ -1,0 +1,16 @@
+{
+  "title": "Profile",
+  "assets": "Assets",
+  "assetsHint": "Manual balances and net worth",
+  "netWorth": "Net position",
+  "assetsTotal": "Total assets: $amount",
+  "openDebts": "Open debts: $amount",
+  "openReceivables": "Open receivables: $amount",
+  "emptyAssets": "No asset accounts yet.",
+  "addAsset": "Add account",
+  "assetName": "Name",
+  "assetBalance": "Balance",
+  "kindCash": "Cash",
+  "kindBank": "Bank",
+  "kindOther": "Other"
+}

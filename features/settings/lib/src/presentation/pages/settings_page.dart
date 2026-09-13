@@ -1,4 +1,5 @@
-import 'package:core/core.dart' show AppCurrency, AppRoutes, CalendarPreference, overlayAppBar;
+import 'package:core/core.dart'
+    show AppCurrency, AppRoutes, CalendarPreference, MoneyReminderMode, overlayAppBar;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -85,6 +86,55 @@ class SettingsPage extends ConsumerWidget {
                 AppCurrency.usd => t.app.currency.usd,
               },
               onChanged: controller.setCurrency,
+            ),
+          ),
+          SettingsSection(
+            title: t.settings.reminders,
+            footer: t.settings.remindersHint,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SettingsChoiceRow<MoneyReminderMode>(
+                  label: t.settings.reminders,
+                  value: settings.moneyReminderMode,
+                  options: MoneyReminderMode.values,
+                  labelFor: (mode) => switch (mode) {
+                    MoneyReminderMode.exactDay => t.settings.reminderExactDay,
+                    MoneyReminderMode.range => t.settings.reminderRange,
+                  },
+                  onChanged: controller.setMoneyReminderMode,
+                ),
+                if (settings.moneyReminderMode == MoneyReminderMode.range) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    t.settings.reminderDaysBefore,
+                    style: theme.textTheme.bodySmall,
+                  ),
+                  Wrap(
+                    spacing: AppSpacing.xs,
+                    children: [
+                      for (final day in [7, 2, 1])
+                        FilterChip(
+                          label: Text(switch (day) {
+                            7 => t.settings.reminderDay7,
+                            2 => t.settings.reminderDay2,
+                            _ => t.settings.reminderDay1,
+                          }),
+                          selected: settings.moneyReminderDaysBefore.contains(day),
+                          onSelected: (on) {
+                            final next = {...settings.moneyReminderDaysBefore};
+                            if (on) {
+                              next.add(day);
+                            } else {
+                              next.remove(day);
+                            }
+                            controller.setMoneyReminderDaysBefore(next.toList());
+                          },
+                        ),
+                    ],
+                  ),
+                ],
+              ],
             ),
           ),
           SettingsSection(

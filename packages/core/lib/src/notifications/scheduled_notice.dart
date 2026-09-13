@@ -9,6 +9,8 @@ final class ScheduledNotice {
     required this.title,
     required this.body,
     required this.route,
+    this.moneyItemId,
+    this.enablePaymentActions = false,
   });
 
   final int id;
@@ -16,4 +18,6 @@ final class ScheduledNotice {
   final String title;
   final String body;
   final String route;
+  final String? moneyItemId;
+  final bool enablePaymentActions;
 }

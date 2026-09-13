@@ -6,25 +6,35 @@ class HomeReportCard extends StatelessWidget {
   const HomeReportCard({
     super.key,
     required this.title,
+    required this.periodRangeLabel,
     required this.paidOutValue,
     required this.paidInValue,
-    required this.stillOweValue,
-    required this.dueByEndValue,
+    required this.duePayInMonthValue,
+    required this.dueReceiveInMonthValue,
+    required this.openPayValue,
+    required this.openReceiveValue,
     required this.paidOutCaption,
     required this.paidInCaption,
-    required this.stillOweCaption,
-    required this.dueByEndCaption,
+    required this.duePayInMonthCaption,
+    required this.dueReceiveInMonthCaption,
+    required this.openPayCaption,
+    required this.openReceiveCaption,
   });
 
   final String title;
+  final String periodRangeLabel;
   final String paidOutValue;
   final String paidInValue;
-  final String stillOweValue;
-  final String dueByEndValue;
+  final String duePayInMonthValue;
+  final String dueReceiveInMonthValue;
+  final String openPayValue;
+  final String openReceiveValue;
   final String paidOutCaption;
   final String paidInCaption;
-  final String stillOweCaption;
-  final String dueByEndCaption;
+  final String duePayInMonthCaption;
+  final String dueReceiveInMonthCaption;
+  final String openPayCaption;
+  final String openReceiveCaption;
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +51,23 @@ class HomeReportCard extends StatelessWidget {
                 color: theme.colorScheme.primary,
               ),
               const SizedBox(width: AppSpacing.xs),
-              Text(
-                title,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    Text(
+                      periodRangeLabel,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -76,19 +99,41 @@ class HomeReportCard extends StatelessWidget {
             children: [
               Expanded(
                 child: KitStatTile(
-                  icon: Icons.account_balance_wallet_rounded,
-                  color: AppColors.brand,
-                  value: stillOweValue,
-                  caption: stillOweCaption,
+                  icon: Icons.event_rounded,
+                  color: AppColors.reminder,
+                  value: duePayInMonthValue,
+                  caption: duePayInMonthCaption,
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: KitStatTile(
-                  icon: Icons.event_rounded,
-                  color: AppColors.reminder,
-                  value: dueByEndValue,
-                  caption: dueByEndCaption,
+                  icon: Icons.event_available_rounded,
+                  color: AppColors.receive,
+                  value: dueReceiveInMonthValue,
+                  caption: dueReceiveInMonthCaption,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Row(
+            children: [
+              Expanded(
+                child: KitStatTile(
+                  icon: Icons.account_balance_wallet_rounded,
+                  color: AppColors.brand,
+                  value: openPayValue,
+                  caption: openPayCaption,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: KitStatTile(
+                  icon: Icons.savings_outlined,
+                  color: AppColors.pay,
+                  value: openReceiveValue,
+                  caption: openReceiveCaption,
                 ),
               ),
             ],

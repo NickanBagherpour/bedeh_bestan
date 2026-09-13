@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../models/asset_account.dart';
 import '../models/enums.dart';
 import '../models/money_item.dart';
 import '../models/money_payment.dart';
@@ -21,6 +22,7 @@ final class LibraryDump {
     required this.payments,
     required this.reminders,
     required this.notes,
+    required this.assetAccounts,
     required this.meta,
   });
 
@@ -30,6 +32,7 @@ final class LibraryDump {
   final List<MoneyPayment> payments;
   final List<Reminder> reminders;
   final List<Note> notes;
+  final List<AssetAccount> assetAccounts;
   final Map<String, String> meta;
 }
 
@@ -55,6 +58,7 @@ String encodeLibraryDump(LibraryDump dump) {
     'payments': [for (final row in dump.payments) _paymentJson(row)],
     'reminders': [for (final row in dump.reminders) _reminderJson(row)],
     'notes': [for (final row in dump.notes) _noteJson(row)],
+    'assetAccounts': [for (final row in dump.assetAccounts) _assetJson(row)],
     'meta': dump.meta,
   });
 }
@@ -78,11 +82,14 @@ LibraryDump decodeLibraryDump(String raw) {
   final payments = _objectList(map['payments']).map(_paymentFrom).toList();
   final reminders = _objectList(map['reminders']).map(_reminderFrom).toList();
   final notes = _objectList(map['notes']).map(_noteFrom).toList();
+  final assets =
+      _objectList(map['assetAccounts']).map(_assetFrom).toList();
   if (parties.isEmpty &&
       moneyItems.isEmpty &&
       payments.isEmpty &&
       reminders.isEmpty &&
-      notes.isEmpty) {
+      notes.isEmpty &&
+      assets.isEmpty) {
     throw const BackupException(BackupFailure.empty);
   }
   return LibraryDump(
@@ -92,6 +99,7 @@ LibraryDump decodeLibraryDump(String raw) {
     payments: payments,
     reminders: reminders,
     notes: notes,
+    assetAccounts: assets,
     meta: _stringMap(map['meta']),
   );
 }
@@ -174,6 +182,8 @@ Map<String, Object?> _moneyJson(MoneyItem row) => {
       'startDate': _millis(row.startDate),
       'nextDueDate': _millis(row.nextDueDate),
       'note': row.note,
+      'reminderPolicy': row.reminderPolicy,
+      'reminderDaysBeforeJson': row.reminderDaysBeforeJson,
       'createdAt': _millis(row.createdAt),
       'updatedAt': _millis(row.updatedAt),
     };
@@ -200,6 +210,35 @@ MoneyItem _moneyFrom(Map<String, Object?> json) {
     periodsPaid: (json['periodsPaid'] as num?)?.toInt() ?? 0,
     startDate: _time(json['startDate']),
     nextDueDate: _time(json['nextDueDate']),
+    note: _blankToNull(json['note'] as String?),
+    reminderPolicy: json['reminderPolicy'] as String? ?? 'default',
+    reminderDaysBeforeJson:
+        json['reminderDaysBeforeJson'] as String? ?? '[]',
+    createdAt: _time(json['createdAt']),
+    updatedAt: _time(json['updatedAt']),
+  );
+}
+
+Map<String, Object?> _assetJson(AssetAccount row) => {
+      'id': row.id,
+      'name': row.name,
+      'kind': row.kind.name,
+      'balance': row.balance,
+      'note': row.note,
+      'createdAt': _millis(row.createdAt),
+      'updatedAt': _millis(row.updatedAt),
+    };
+
+AssetAccount _assetFrom(Map<String, Object?> json) {
+  return AssetAccount(
+    id: json['id'] as String,
+    name: json['name'] as String,
+    kind: enumByName(
+      AssetAccountKind.values,
+      json['kind'] as String? ?? '',
+      AssetAccountKind.other,
+    ),
+    balance: (json['balance'] as num).toInt(),
     note: _blankToNull(json['note'] as String?),
     createdAt: _time(json['createdAt']),
     updatedAt: _time(json['updatedAt']),

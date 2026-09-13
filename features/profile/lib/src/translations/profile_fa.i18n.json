@@ -1,0 +1,16 @@
+{
+  "title": "پروفایل",
+  "assets": "دارایی‌ها",
+  "assetsHint": "موجودی دستی و وضعیت مالی",
+  "netWorth": "وضعیت خالص",
+  "assetsTotal": "جمع دارایی: $amount",
+  "openDebts": "بدهی باز: $amount",
+  "openReceivables": "طلب باز: $amount",
+  "emptyAssets": "هنوز حساب دارایی ندارید.",
+  "addAsset": "افزودن حساب",
+  "assetName": "نام",
+  "assetBalance": "موجودی",
+  "kindCash": "نقد",
+  "kindBank": "بانک",
+  "kindOther": "سایر"
+}

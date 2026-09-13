@@ -17,7 +17,7 @@ final class PluginNotifications implements NotificationScheduler {
 
   final String channelName;
   final String channelDescription;
-  final void Function(String route)? onTap;
+  final void Function(String route, {String? actionId})? onTap;
 
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
@@ -133,16 +133,48 @@ final class PluginNotifications implements NotificationScheduler {
     _scheduled[group] = current;
   }
 
+  NotificationDetails _detailsFor(ScheduledNotice notice) {
+    if (!notice.enablePaymentActions) return _details;
+    return NotificationDetails(
+      android: AndroidNotificationDetails(
+        _channel.id,
+        _channel.name,
+        channelDescription: _channel.description,
+        importance: Importance.max,
+        priority: Priority.max,
+        playSound: true,
+        enableVibration: true,
+        audioAttributesUsage: AudioAttributesUsage.notificationEvent,
+        icon: _androidIcon,
+        actions: const [
+          AndroidNotificationAction(
+            'pay',
+            'Paid',
+            showsUserInterface: false,
+          ),
+          AndroidNotificationAction(
+            'snooze',
+            'Tomorrow',
+            showsUserInterface: false,
+          ),
+        ],
+      ),
+      iOS: _details.iOS,
+      macOS: _details.macOS,
+    );
+  }
+
   Future<bool> _schedule(ScheduledNotice notice) async {
     final when = tz.TZDateTime.from(notice.at, tz.local);
     final body = notice.body.isEmpty ? null : notice.body;
+    final details = _detailsFor(notice);
     try {
       await _plugin.zonedSchedule(
         id: notice.id,
         title: notice.title,
         body: body,
         scheduledDate: when,
-        notificationDetails: _details,
+        notificationDetails: details,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         payload: notice.route,
       );
@@ -154,7 +186,7 @@ final class PluginNotifications implements NotificationScheduler {
           title: notice.title,
           body: body,
           scheduledDate: when,
-          notificationDetails: _details,
+          notificationDetails: details,
           androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
           payload: notice.route,
         );
@@ -168,7 +200,7 @@ final class PluginNotifications implements NotificationScheduler {
   void _onResponse(NotificationResponse response) {
     final payload = response.payload;
     if (payload == null || payload.isEmpty) return;
-    onTap?.call(payload);
+    onTap?.call(payload, actionId: response.actionId);
   }
 
   void _setLocalLocation() {

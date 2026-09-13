@@ -156,7 +156,9 @@ void main() {
     expect(dashboard.report.paidOut, 1000);
     expect(dashboard.report.paidIn, 300);
     expect(dashboard.report.remainingPay, 6000);
-    expect(dashboard.report.dueByPeriodEnd, 4000);
+    expect(dashboard.report.duePayByPeriodEnd, 4000);
+    expect(dashboard.dueThisWeek.map((row) => row.id), ['receive']);
+    expect(dashboard.dueThisMonth.map((row) => row.id), ['open-pay']);
     expect(dashboard.report.periodStart, DateTime(2026, 9, 1));
     expect(dashboard.report.periodEnd, DateTime(2026, 9, 30));
   });

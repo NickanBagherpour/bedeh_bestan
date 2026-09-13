@@ -20,5 +20,13 @@
   "about": "درباره",
   "version": "نسخه $version",
   "privacy": "حریم خصوصی",
-  "privacyBody": "همه‌چیز روی همین گوشی می‌ماند. حساب کاربری، ابر و ردیابی نداریم."
+  "privacyBody": "همه‌چیز روی همین گوشی می‌ماند. حساب کاربری، ابر و ردیابی نداریم.",
+  "reminders": "یادآوری سررسید",
+  "remindersHint": "پیش‌فرض برای حساب‌ها. در ویرایش هر مورد می‌توانید عوض کنید.",
+  "reminderExactDay": "فقط روز سررسید",
+  "reminderRange": "چند روز قبل + سررسید",
+  "reminderDaysBefore": "روزهای قبل",
+  "reminderDay7": "۷ روز",
+  "reminderDay2": "۲ روز",
+  "reminderDay1": "۱ روز"
 }

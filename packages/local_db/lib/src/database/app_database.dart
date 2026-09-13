@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 
+import '../models/asset_account.dart';
 import '../models/enums.dart';
 import '../models/library_snapshot.dart';
 import '../models/money_item.dart';
@@ -27,6 +28,7 @@ part 'app_database.g.dart';
     MoneyPayments,
     Reminders,
     Notes,
+    AssetAccounts,
     MetaEntries,
   ],
 )
@@ -59,7 +61,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration {
@@ -234,10 +236,36 @@ class AppDatabase extends _$AppDatabase {
         startDate: Value(item.startDate),
         nextDueDate: Value(item.nextDueDate),
         note: Value(item.note),
+        reminderPolicy: Value(item.reminderPolicy),
+        reminderDaysBeforeJson: Value(item.reminderDaysBeforeJson),
         createdAt: Value(item.createdAt),
         updatedAt: Value(item.updatedAt),
       ),
     );
+  }
+
+  Stream<List<AssetAccount>> watchAssetAccounts() {
+    return select(assetAccounts).watch().map(
+      (rows) => [for (final row in rows) assetFromRow(row)],
+    );
+  }
+
+  Future<void> upsertAssetAccount(AssetAccount account) {
+    return into(assetAccounts).insertOnConflictUpdate(
+      AssetAccountsCompanion(
+        id: Value(account.id),
+        name: Value(account.name),
+        kind: Value(account.kind.name),
+        balance: Value(account.balance),
+        note: Value(account.note),
+        createdAt: Value(account.createdAt),
+        updatedAt: Value(account.updatedAt),
+      ),
+    );
+  }
+
+  Future<void> deleteAssetAccount(String id) async {
+    await (delete(assetAccounts)..where((row) => row.id.equals(id))).go();
   }
 
   /// Records a (possibly partial) payment and updates remaining / installments.
@@ -385,6 +413,7 @@ class AppDatabase extends _$AppDatabase {
     final paymentRows = await select(moneyPayments).get();
     final reminderRows = await select(reminders).get();
     final noteRows = await select(notes).get();
+    final assetRows = await select(assetAccounts).get();
     final metaRows = await select(metaEntries).get();
     return LibraryDump(
       schemaVersion: schemaVersion,
@@ -393,6 +422,7 @@ class AppDatabase extends _$AppDatabase {
       payments: [for (final row in paymentRows) paymentFromRow(row)],
       reminders: [for (final row in reminderRows) reminderFromRow(row)],
       notes: [for (final row in noteRows) noteFromRow(row)],
+      assetAccounts: [for (final row in assetRows) assetFromRow(row)],
       meta: {for (final row in metaRows) row.key: row.value},
     );
   }
@@ -412,6 +442,7 @@ class AppDatabase extends _$AppDatabase {
       await delete(moneyPayments).go();
       await delete(reminders).go();
       await delete(moneyItems).go();
+      await delete(assetAccounts).go();
       await delete(parties).go();
       await delete(metaEntries).go();
       for (final party in dump.parties) {
@@ -436,6 +467,9 @@ class AppDatabase extends _$AppDatabase {
       }
       for (final note in dump.notes) {
         await upsertNote(note);
+      }
+      for (final asset in dump.assetAccounts) {
+        await upsertAssetAccount(asset);
       }
       for (final entry in dump.meta.entries) {
         await into(metaEntries).insertOnConflictUpdate(
@@ -501,6 +535,16 @@ class AppDatabase extends _$AppDatabase {
     await _ensureColumn('notes', 'pinned', 'INTEGER NOT NULL DEFAULT 0');
     await _ensureColumn('notes', 'party_id', 'TEXT NULL');
     await _ensureColumn('notes', 'money_item_id', 'TEXT NULL');
+    await _ensureColumn(
+      'money_items',
+      'reminder_policy',
+      "TEXT NOT NULL DEFAULT 'default'",
+    );
+    await _ensureColumn(
+      'money_items',
+      'reminder_days_before_json',
+      "TEXT NOT NULL DEFAULT '[]'",
+    );
   }
 
   Future<void> _ensureColumn(
@@ -559,6 +603,20 @@ MoneyItem moneyFromRow(MoneyItemRow row) {
     periodsPaid: row.periodsPaid,
     startDate: row.startDate,
     nextDueDate: row.nextDueDate,
+    note: row.note,
+    reminderPolicy: row.reminderPolicy,
+    reminderDaysBeforeJson: row.reminderDaysBeforeJson,
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
+  );
+}
+
+AssetAccount assetFromRow(AssetAccountRow row) {
+  return AssetAccount(
+    id: row.id,
+    name: row.name,
+    kind: enumByName(AssetAccountKind.values, row.kind, AssetAccountKind.other),
+    balance: row.balance,
     note: row.note,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,

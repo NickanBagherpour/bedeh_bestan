@@ -26,6 +26,12 @@ enum MoneyStatus {
   settled,
 }
 
+enum AssetAccountKind {
+  cash,
+  bank,
+  other,
+}
+
 /// Reminder recurrence.
 enum RepeatRule {
   none,

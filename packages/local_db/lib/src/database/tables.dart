@@ -33,6 +33,24 @@ class MoneyItems extends Table {
   DateTimeColumn get startDate => dateTime()();
   DateTimeColumn get nextDueDate => dateTime()();
   TextColumn get note => text().nullable()();
+  TextColumn get reminderPolicy =>
+      text().withDefault(const Constant('default'))();
+  TextColumn get reminderDaysBeforeJson =>
+      text().withDefault(const Constant('[]'))();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+@DataClassName('AssetAccountRow')
+class AssetAccounts extends Table {
+  TextColumn get id => text()();
+  TextColumn get name => text()();
+  TextColumn get kind => text()();
+  IntColumn get balance => integer()();
+  TextColumn get note => text().nullable()();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
 

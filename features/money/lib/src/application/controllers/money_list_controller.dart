@@ -146,6 +146,8 @@ final class MoneyListController extends Notifier<MoneyListState> {
       startDate: draft.startDate,
       nextDueDate: draft.nextDueDate,
       note: draft.note,
+      reminderPolicy: draft.reminderPolicy,
+      reminderDaysBeforeJson: draft.reminderDaysBeforeJson,
       createdAt: existing?.createdAt ?? now,
       updatedAt: now,
     );

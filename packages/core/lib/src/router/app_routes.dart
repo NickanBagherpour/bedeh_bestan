@@ -47,6 +47,9 @@ abstract final class AppRoutes {
     path: '/notes/item/:id/edit',
   );
   static const settings = AppRoute(name: 'settings', path: '/settings');
+  static const profile = AppRoute(name: 'profile', path: '/profile');
+  static const profileAssets =
+      AppRoute(name: 'profileAssets', path: '/profile/assets');
 
   /// Primary destinations in bottom-nav order.
   static const List<AppRoute> primary = [home, money, calendar, notes];
@@ -70,6 +73,8 @@ abstract final class AppRoutes {
     notesItem,
     notesEdit,
     settings,
+    profile,
+    profileAssets,
   ];
 
   static String moneyItemPath(String id) => '/money/item/$id';
