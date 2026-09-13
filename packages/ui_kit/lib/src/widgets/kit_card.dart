@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../haptics/app_haptics.dart';
-import '../theme/app_gradients.dart';
 import '../theme/app_spacing.dart';
 
 /// Surface card for interactive or content groupings.
@@ -41,27 +40,41 @@ class KitCard extends StatelessWidget {
     final bg = color ?? theme.cardTheme.color ?? theme.colorScheme.surface;
 
     final shadow = accent != null
-        ? AppGradients.glow(accent!, strength: isDark ? 0.30 : 0.24)
+        ? [
+            BoxShadow(
+              color: accent!.withValues(alpha: isDark ? 0.22 : 0.16),
+              blurRadius: 14,
+              offset: const Offset(0, 6),
+            ),
+          ]
         : [
             BoxShadow(
               color: isDark
-                  ? Colors.black.withValues(alpha: 0.34)
-                  : const Color(0x333F3AA8),
-              blurRadius: 22,
-              offset: const Offset(0, 8),
+                  ? Colors.black.withValues(alpha: 0.28)
+                  : const Color(0x1F3F3AA8),
+              blurRadius: 14,
+              offset: const Offset(0, 6),
             ),
           ];
 
     Widget content = Padding(padding: padding, child: child);
     if (accent != null) {
-      content = IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(width: 5, color: accent),
-            Expanded(child: content),
-          ],
-        ),
+      // A leading accent strip drawn via a Stack — no IntrinsicHeight, so no
+      // extra layout pass per list item.
+      content = Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsetsDirectional.only(start: 5),
+            child: content,
+          ),
+          PositionedDirectional(
+            start: 0,
+            top: 0,
+            bottom: 0,
+            width: 5,
+            child: ColoredBox(color: accent!),
+          ),
+        ],
       );
     }
 
