@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3] - 2026-09-13
+
+### Added
+- introduce app style customization with classic and glass themes
+- enhance notification system with background handling and action support
+- integrate profile feature into the app
+
 ## [1.0.1] - 2026-09-13
 
 ### Added
