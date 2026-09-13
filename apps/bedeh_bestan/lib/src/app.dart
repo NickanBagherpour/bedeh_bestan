@@ -19,14 +19,15 @@ class BedeBestanApp extends ConsumerWidget {
     final settings = ref.watch(appSettingsProvider);
     final router = ref.watch(appRouterProvider);
     final languageCode = settings.locale.languageCode;
+    final style = settings.appStyle;
     ref.watch(reminderNotificationSyncProvider);
     ref.watch(moneyNotificationSyncProvider);
 
     return MaterialApp.router(
       title: t.app.appName,
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightFor(languageCode),
-      darkTheme: AppTheme.darkFor(languageCode),
+      theme: AppTheme.lightFor(languageCode, style: style),
+      darkTheme: AppTheme.darkFor(languageCode, style: style),
       themeMode: settings.themeMode,
       locale: settings.locale,
       supportedLocales: AppLocaleUtils.supportedLocales,

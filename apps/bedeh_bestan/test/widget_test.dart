@@ -67,6 +67,12 @@ void main() {
     await tester.tap(find.byTooltip('تنظیمات'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
+    await tester.drag(
+      find.byType(Scrollable).first,
+      const Offset(0, -300),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
     expect(find.text('گاه‌شماری'), findsWidgets);
 
     await database.close();

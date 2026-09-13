@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../storage/app_storage.dart';
 import '../storage/storage_providers.dart';
 import '../reminders/reminder_schedule_policy.dart';
+import '../utils/app_style.dart';
 import '../utils/calendar_type.dart';
 import '../utils/currency.dart';
 import 'app_settings.dart';
@@ -29,6 +30,13 @@ final class AppSettingsController extends Notifier<AppSettings> {
     await ref
         .read(appStorageProvider)
         .writeString(AppSettingsKeys.themeMode, mode.name);
+  }
+
+  Future<void> setAppStyle(AppStyle style) async {
+    state = state.copyWith(appStyle: style);
+    await ref
+        .read(appStorageProvider)
+        .writeString(AppSettingsKeys.appStyle, style.name);
   }
 
   Future<void> setLocale(Locale locale) async {
@@ -97,6 +105,11 @@ AppSettings loadAppSettings({required AppStorage storage}) {
     themeMode:
         _enumByName(ThemeMode.values, storage.readString(AppSettingsKeys.themeMode)) ??
             ThemeMode.system,
+    appStyle: _enumByName(
+          AppStyle.values,
+          storage.readString(AppSettingsKeys.appStyle),
+        ) ??
+        AppStyle.classic,
     locale: locale,
     direction: directionForLocale(locale),
     calendar: _enumByName(

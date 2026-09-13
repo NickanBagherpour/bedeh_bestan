@@ -1,6 +1,8 @@
 {
   "title": "Settings",
   "theme": "Theme",
+  "style": "Style",
+  "styleHint": "Glass gives translucent, blurred surfaces. Classic keeps solid surfaces. Independent of light/dark.",
   "language": "Language",
   "calendar": "Calendar",
   "calendarHint": "First and last day of the month and week follow this calendar — not the language.",

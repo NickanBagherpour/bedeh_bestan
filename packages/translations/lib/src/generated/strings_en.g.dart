@@ -78,6 +78,7 @@ class Translations$app$en {
 	late final Translations$app$nav$en nav = Translations$app$nav$en.internal(_root);
 	late final Translations$app$language$en language = Translations$app$language$en.internal(_root);
 	late final Translations$app$theme$en theme = Translations$app$theme$en.internal(_root);
+	late final Translations$app$style$en style = Translations$app$style$en.internal(_root);
 	late final Translations$app$errors$en errors = Translations$app$errors$en.internal(_root);
 	late final Translations$app$actions$en actions = Translations$app$actions$en.internal(_root);
 }
@@ -842,6 +843,12 @@ class Translations$settings$en {
 	/// en: 'Theme'
 	String get theme => 'Theme';
 
+	/// en: 'Style'
+	String get style => 'Style';
+
+	/// en: 'Glass gives translucent, blurred surfaces. Classic keeps solid surfaces. Independent of light/dark.'
+	String get styleHint => 'Glass gives translucent, blurred surfaces. Classic keeps solid surfaces. Independent of light/dark.';
+
 	/// en: 'Language'
 	String get language => 'Language';
 
@@ -1015,6 +1022,24 @@ class Translations$app$theme$en {
 
 	/// en: 'System'
 	String get system => 'System';
+}
+
+// Path: app.style
+class Translations$app$style$en {
+	Translations$app$style$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Style'
+	String get label => 'Style';
+
+	/// en: 'Classic'
+	String get classic => 'Classic';
+
+	/// en: 'Glass'
+	String get glass => 'Glass';
 }
 
 // Path: app.errors
@@ -1260,6 +1285,9 @@ extension on Translations {
 			'app.theme.light' => 'Light',
 			'app.theme.dark' => 'Dark',
 			'app.theme.system' => 'System',
+			'app.style.label' => 'Style',
+			'app.style.classic' => 'Classic',
+			'app.style.glass' => 'Glass',
 			'app.errors.unknown' => 'An unexpected error occurred',
 			'app.actions.retry' => 'Retry',
 			'app.actions.cancel' => 'Cancel',
@@ -1537,6 +1565,8 @@ extension on Translations {
 			'profile.version' => ({required Object version}) => 'Version ${version}',
 			'settings.title' => 'Settings',
 			'settings.theme' => 'Theme',
+			'settings.style' => 'Style',
+			'settings.styleHint' => 'Glass gives translucent, blurred surfaces. Classic keeps solid surfaces. Independent of light/dark.',
 			'settings.language' => 'Language',
 			'settings.calendar' => 'Calendar',
 			'settings.calendarHint' => 'First and last day of the month and week follow this calendar — not the language.',

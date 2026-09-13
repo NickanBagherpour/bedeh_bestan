@@ -1,5 +1,11 @@
 import 'package:core/core.dart'
-    show AppCurrency, AppRoutes, CalendarPreference, MoneyReminderMode, overlayAppBar;
+    show
+        AppCurrency,
+        AppRoutes,
+        AppStyle,
+        CalendarPreference,
+        MoneyReminderMode,
+        overlayAppBar;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -47,6 +53,20 @@ class SettingsPage extends ConsumerWidget {
                 ThemeMode.system => t.app.theme.system,
               },
               onChanged: controller.setThemeMode,
+            ),
+          ),
+          SettingsSection(
+            title: t.settings.style,
+            footer: t.settings.styleHint,
+            child: SettingsChoiceRow<AppStyle>(
+              label: t.app.style.label,
+              value: settings.appStyle,
+              options: AppStyle.values,
+              labelFor: (style) => switch (style) {
+                AppStyle.classic => t.app.style.classic,
+                AppStyle.glass => t.app.style.glass,
+              },
+              onChanged: controller.setAppStyle,
             ),
           ),
           SettingsSection(

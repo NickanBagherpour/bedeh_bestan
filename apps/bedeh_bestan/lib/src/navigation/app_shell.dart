@@ -1,3 +1,5 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:core/core.dart' show AppRoute, AppRoutes;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -8,7 +10,8 @@ import 'package:ui_kit/ui_kit.dart'
         AppHaptics,
         AppMotion,
         AppSpacing,
-        KitScreenBackground;
+        KitScreenBackground,
+        KitSurfaceStyle;
 
 /// A single primary destination in the bottom navigation bar.
 class _Destination {
@@ -124,6 +127,66 @@ class _FloatingNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final surface = KitSurfaceStyle.of(context);
+    final glass = surface.isGlass;
+    final radius = BorderRadius.circular(AppSpacing.radiusXl);
+
+    final bgAlpha = glass
+        ? (isDark ? 0.42 : 0.55)
+        : (isDark ? 0.92 : 0.96);
+    final borderColor = glass
+        ? Colors.white.withValues(alpha: isDark ? 0.20 : 0.65)
+        : theme.dividerColor;
+
+    Widget bar = DecoratedBox(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface.withValues(alpha: bgAlpha),
+        borderRadius: radius,
+        border: Border.all(color: borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.42)
+                : const Color(0x2A2A2870),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.xs,
+          vertical: AppSpacing.xs,
+        ),
+        child: Row(
+          children: [
+            for (var i = 0; i < _destinations.length; i++)
+              Expanded(
+                child: _NavItem(
+                  destination: _destinations[i],
+                  label: labels[i],
+                  selected: i == selectedIndex,
+                  onTap: () => onSelected(i),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+
+    if (glass) {
+      bar = ClipRRect(
+        borderRadius: radius,
+        child: BackdropFilter(
+          filter: ImageFilter.blur(
+            sigmaX: surface.blurSigma,
+            sigmaY: surface.blurSigma,
+          ),
+          child: bar,
+        ),
+      );
+    }
+
     return SafeArea(
       top: false,
       child: Padding(
@@ -133,41 +196,7 @@ class _FloatingNavBar extends StatelessWidget {
           AppSpacing.md,
           AppSpacing.sm,
         ),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface.withValues(alpha: isDark ? 0.92 : 0.96),
-            borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-            border: Border.all(color: theme.dividerColor),
-            boxShadow: [
-              BoxShadow(
-                color: isDark
-                    ? Colors.black.withValues(alpha: 0.42)
-                    : const Color(0x2A2A2870),
-                blurRadius: 24,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.xs,
-              vertical: AppSpacing.xs,
-            ),
-            child: Row(
-              children: [
-                for (var i = 0; i < _destinations.length; i++)
-                  Expanded(
-                    child: _NavItem(
-                      destination: _destinations[i],
-                      label: labels[i],
-                      selected: i == selectedIndex,
-                      onTap: () => onSelected(i),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
+        child: bar,
       ),
     );
   }

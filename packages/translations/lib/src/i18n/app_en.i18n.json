@@ -26,6 +26,11 @@
     "dark": "Dark",
     "system": "System"
   },
+  "style": {
+    "label": "Style",
+    "classic": "Classic",
+    "glass": "Glass"
+  },
   "errors": {
     "unknown": "An unexpected error occurred"
   },

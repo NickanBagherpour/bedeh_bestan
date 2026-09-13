@@ -3,6 +3,7 @@ import 'dart:ui' show Locale;
 import 'package:flutter/material.dart' show TextDirection, ThemeMode;
 
 import '../reminders/reminder_schedule_policy.dart';
+import '../utils/app_style.dart';
 import '../utils/calendar_type.dart';
 import '../utils/currency.dart';
 
@@ -12,6 +13,7 @@ import '../utils/currency.dart';
 final class AppSettings {
   const AppSettings({
     this.themeMode = ThemeMode.system,
+    this.appStyle = AppStyle.classic,
     this.locale = const Locale('fa'),
     this.direction = TextDirection.rtl,
     this.calendar = CalendarPreference.jalali,
@@ -21,6 +23,7 @@ final class AppSettings {
   });
 
   final ThemeMode themeMode;
+  final AppStyle appStyle;
   final Locale locale;
   final TextDirection direction;
   final CalendarPreference calendar;
@@ -37,6 +40,7 @@ final class AppSettings {
 
   AppSettings copyWith({
     ThemeMode? themeMode,
+    AppStyle? appStyle,
     Locale? locale,
     TextDirection? direction,
     CalendarPreference? calendar,
@@ -46,6 +50,7 @@ final class AppSettings {
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
+      appStyle: appStyle ?? this.appStyle,
       locale: locale ?? this.locale,
       direction: direction ?? this.direction,
       calendar: calendar ?? this.calendar,
@@ -59,6 +64,7 @@ final class AppSettings {
 
 abstract final class AppSettingsKeys {
   static const themeMode = 'app.settings.themeMode';
+  static const appStyle = 'app.settings.appStyle';
   static const locale = 'app.settings.locale';
   static const calendar = 'app.settings.calendar';
   static const currency = 'app.settings.currency';
@@ -67,6 +73,7 @@ abstract final class AppSettingsKeys {
 
   static const List<String> all = [
     themeMode,
+    appStyle,
     locale,
     calendar,
     currency,

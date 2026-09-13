@@ -5,6 +5,7 @@ import 'package:core/core.dart'
         AppCurrency,
         AppSettings,
         AppSettingsKeys,
+        AppStyle,
         CalendarPreference,
         MoneyReminderMode,
         appSettingsProvider,
@@ -31,6 +32,10 @@ final class SettingsController extends Notifier<AppSettings> {
 
   Future<void> setThemeMode(ThemeMode mode) {
     return ref.read(appSettingsProvider.notifier).setThemeMode(mode);
+  }
+
+  Future<void> setAppStyle(AppStyle style) {
+    return ref.read(appSettingsProvider.notifier).setAppStyle(style);
   }
 
   Future<void> setLocale(Locale locale) async {

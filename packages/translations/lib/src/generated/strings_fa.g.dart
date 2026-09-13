@@ -64,6 +64,7 @@ class _Translations$app$fa extends Translations$app$en {
 	@override late final _Translations$app$nav$fa nav = _Translations$app$nav$fa._(_root);
 	@override late final _Translations$app$language$fa language = _Translations$app$language$fa._(_root);
 	@override late final _Translations$app$theme$fa theme = _Translations$app$theme$fa._(_root);
+	@override late final _Translations$app$style$fa style = _Translations$app$style$fa._(_root);
 	@override late final _Translations$app$errors$fa errors = _Translations$app$errors$fa._(_root);
 	@override late final _Translations$app$actions$fa actions = _Translations$app$actions$fa._(_root);
 }
@@ -359,6 +360,8 @@ class _Translations$settings$fa extends Translations$settings$en {
 	// Translations
 	@override String get title => 'تنظیمات';
 	@override String get theme => 'پوسته';
+	@override String get style => 'ظاهر';
+	@override String get styleHint => 'حالت شیشه‌ای سطح‌ها را نیمه‌شفاف و مات می‌کند. حالت ساده سطح‌ها را تو‌پر نگه می‌دارد. مستقل از روشن/تاریک.';
 	@override String get language => 'زبان';
 	@override String get calendar => 'گاه‌شماری';
 	@override String get calendarHint => 'اول و آخر ماه و هفته با این گاه‌شماری حساب می‌شود — نه با زبان برنامه.';
@@ -441,6 +444,18 @@ class _Translations$app$theme$fa extends Translations$app$theme$en {
 	@override String get light => 'روشن';
 	@override String get dark => 'تاریک';
 	@override String get system => 'سیستم';
+}
+
+// Path: app.style
+class _Translations$app$style$fa extends Translations$app$style$en {
+	_Translations$app$style$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get label => 'ظاهر';
+	@override String get classic => 'ساده';
+	@override String get glass => 'شیشه‌ای';
 }
 
 // Path: app.errors
@@ -596,6 +611,9 @@ extension on TranslationsFa {
 			'app.theme.light' => 'روشن',
 			'app.theme.dark' => 'تاریک',
 			'app.theme.system' => 'سیستم',
+			'app.style.label' => 'ظاهر',
+			'app.style.classic' => 'ساده',
+			'app.style.glass' => 'شیشه‌ای',
 			'app.errors.unknown' => 'خطای غیرمنتظره‌ای رخ داد',
 			'app.actions.retry' => 'تلاش مجدد',
 			'app.actions.cancel' => 'انصراف',
@@ -873,6 +891,8 @@ extension on TranslationsFa {
 			'profile.version' => ({required Object version}) => 'نسخه ${version}',
 			'settings.title' => 'تنظیمات',
 			'settings.theme' => 'پوسته',
+			'settings.style' => 'ظاهر',
+			'settings.styleHint' => 'حالت شیشه‌ای سطح‌ها را نیمه‌شفاف و مات می‌کند. حالت ساده سطح‌ها را تو‌پر نگه می‌دارد. مستقل از روشن/تاریک.',
 			'settings.language' => 'زبان',
 			'settings.calendar' => 'گاه‌شماری',
 			'settings.calendarHint' => 'اول و آخر ماه و هفته با این گاه‌شماری حساب می‌شود — نه با زبان برنامه.',
