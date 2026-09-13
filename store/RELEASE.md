@@ -9,6 +9,9 @@ Package: `com.nickapp.bedebestan`.
 # Full release: bump version, changelog, tag, build APK+AAB, sign for Bazaar
 ./store/release.sh --version 1.0.1 --apk --aab --bazaar
 
+# Same, and regenerate phone listing screenshots (light + dark)
+./store/release.sh --version 1.0.1 --apk --aab --bazaar --screenshots
+
 # Push the release commit + tag
 git push origin HEAD && git push origin v1.0.1
 ```
@@ -74,7 +77,8 @@ copies them to `store/builds/`, then commits and tags.
 
 1. Compute versions (`--version X.Y.Z` or `--bump patch|minor|major`; auto build number).
 2. Guard against a dirty working tree (`--allow-dirty` stages only release files).
-3. Verify gate: `flutter pub get && flutter analyze && flutter test`.
+3. Verify gate: `flutter pub get && flutter analyze && flutter test --exclude-tags store`.
+   Store screenshots stay off unless you pass `--screenshots`.
 4. Bump `pubspec.yaml`; sync the version line in `store/LISTING.md`.
 5. Regenerate `CHANGELOG.md` from git history since the last tag.
 6. Build the requested artifacts → `store/builds/bedebestan-<ver>-<build>.{apk,aab}`.
@@ -93,6 +97,7 @@ copies them to `store/builds/`, then commits and tags.
 | `--bazaar` | After the AAB, produce the Bazaar `.bin` |
 | `--no-build` | Only bump + changelog + commit + tag |
 | `--no-verify` | Skip analyze + test |
+| `--screenshots` | Opt-in: regenerate `store/screenshots` (phone, light + dark) |
 | `--no-tag` | Skip commit + tag |
 | `--allow-dirty` | Proceed on a dirty tree (stages only release files) |
 | `--push` | Push commit + tag to origin |

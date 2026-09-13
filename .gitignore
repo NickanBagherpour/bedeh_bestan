@@ -30,6 +30,7 @@ app.*.map.json
 **/*.keystore
 **/*.jks
 store/builds/
+**/test/failures/
 
 # Melos
 .melos_tool/

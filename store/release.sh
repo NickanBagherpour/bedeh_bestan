@@ -24,6 +24,7 @@
 #
 # Flow control:
 #   --no-verify         Skip `flutter analyze` + `flutter test`
+#   --screenshots       Opt-in: regenerate store/screenshots (phone, light+dark)
 #   --no-tag            Skip the git commit + tag step
 #   --allow-dirty       Proceed even if the working tree has other changes
 #   --push              Push the release commit and tag to origin
@@ -64,8 +65,8 @@ ok()   { printf '%s✓ %s%s\n'  "$GRN" "$*" "$RST"; }
 # ---------------------------------------------------------------------------
 BUMP="patch"; VERSION=""; BUILD_NUM=""
 DO_APK=0; DO_AAB=0; DO_WEB=0; DO_BUILD=1; DO_BAZAAR=0
-VERIFY=1; DO_TAG=1; ALLOW_DIRTY=0; PUSH=0; DRY_RUN=0
-usage() { sed -n '2,40p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0; }
+VERIFY=1; DO_SCREENSHOTS=0; DO_TAG=1; ALLOW_DIRTY=0; PUSH=0; DRY_RUN=0
+usage() { sed -n '2,32p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0; }
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -79,6 +80,7 @@ while [[ $# -gt 0 ]]; do
     --bazaar)    DO_AAB=1; DO_BAZAAR=1; shift;;
     --no-build)  DO_BUILD=0; shift;;
     --no-verify) VERIFY=0; shift;;
+    --screenshots) DO_SCREENSHOTS=1; shift;;
     --no-tag)    DO_TAG=0; shift;;
     --allow-dirty) ALLOW_DIRTY=1; shift;;
     --push)      PUSH=1; shift;;
@@ -148,7 +150,7 @@ targets=""
 [[ $DO_WEB -eq 1 ]] && targets+=" web"
 [[ $DO_BUILD -eq 0 ]] && targets=" (none)"
 info "build   :${targets:-" (none)"}"
-info "verify  : $([[ $VERIFY -eq 1 ]] && echo yes || echo no)   tag/commit: $([[ $DO_TAG -eq 1 ]] && echo yes || echo no)   push: $([[ $PUSH -eq 1 ]] && echo yes || echo no)"
+info "verify  : $([[ $VERIFY -eq 1 ]] && echo yes || echo no)   screenshots: $([[ $DO_SCREENSHOTS -eq 1 ]] && echo yes || echo no)   tag/commit: $([[ $DO_TAG -eq 1 ]] && echo yes || echo no)   push: $([[ $PUSH -eq 1 ]] && echo yes || echo no)"
 
 if git rev-parse "$TAG" >/dev/null 2>&1; then
   die "Tag $TAG already exists."
@@ -174,10 +176,17 @@ if [[ $VERIFY -eq 1 ]]; then
   step "Verify: flutter analyze + test"
   run "(cd '$APP_DIR' && '$FLUTTER' pub get)"
   run "(cd '$APP_DIR' && '$FLUTTER' analyze)"
-  run "(cd '$APP_DIR' && '$FLUTTER' test)"
+  # Store goldens are opt-in (--screenshots / STORE_SCREENSHOTS=1).
+  run "(cd '$APP_DIR' && '$FLUTTER' test --exclude-tags store)"
   ok "verify passed"
 else
   warn "Skipping verify gate (--no-verify)"
+fi
+
+if [[ $DO_SCREENSHOTS -eq 1 ]]; then
+  step "Regenerate store screenshots (phone, light + dark)"
+  run "(cd '$APP_DIR' && STORE_SCREENSHOTS=1 '$FLUTTER' test --tags store)"
+  ok "store/screenshots updated"
 fi
 
 # ---------------------------------------------------------------------------
@@ -287,6 +296,7 @@ if [[ $DO_TAG -eq 1 ]]; then
   step "Commit + tag $TAG"
   files=("$PUBSPEC" "$CHANGELOG")
   [[ -f "$LISTING" ]] && files+=("$LISTING")
+  [[ $DO_SCREENSHOTS -eq 1 ]] && files+=("$ROOT/store/screenshots")
   run "git add ${files[*]}"
   run "git commit -m 'chore(release): $TAG'"
   run "git tag -a '$TAG' -m '$TAG'"

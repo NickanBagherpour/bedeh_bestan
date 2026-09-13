@@ -1,0 +1,4 @@
+# Declare the `store` tag so `flutter test` does not warn. Store goldens are
+# opt-in (`STORE_SCREENSHOTS=1`); default verify / release skips them.
+tags:
+  store:
