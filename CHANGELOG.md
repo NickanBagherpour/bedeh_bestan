@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.1] - 2026-09-13
+
+### Added
+- update routing to use buildTabPage for improved navigation
+- enhance money management UX with installment features
+
 ## [1.0.0] - 2026-09-12
 
 ### Added
