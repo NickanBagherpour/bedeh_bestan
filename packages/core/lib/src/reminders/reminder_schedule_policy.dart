@@ -71,23 +71,39 @@ ReminderSchedulePolicy resolveMoneyReminderPolicy({
   }
 }
 
+List<int> normalizeDaysBefore(Iterable<int> days) {
+  final unique = <int>{
+    for (final day in days)
+      if (day > 0 && day <= 30) day,
+  }.toList()
+    ..sort();
+  return unique;
+}
+
 List<int> decodeDaysBeforeJson(String? raw) {
   if (raw == null || raw.trim().isEmpty) return const [];
   try {
     final decoded = jsonDecode(raw);
     if (decoded is! List) return const [];
-    return [
+    return normalizeDaysBefore([
       for (final v in decoded)
-        if (v is num && v.toInt() > 0) v.toInt(),
-    ]..sort();
+        if (v is num) v.toInt(),
+    ]);
   } catch (_) {
     return const [];
   }
 }
 
 String encodeDaysBeforeJson(List<int> days) {
-  final sorted = [...days.where((d) => d > 0)]..sort();
-  return jsonEncode(sorted);
+  return jsonEncode(normalizeDaysBefore(days));
+}
+
+/// Next local 09:00 after today — used by «remind tomorrow».
+DateTime snoozeUntilTomorrow(DateTime now) {
+  final tomorrow = DateTime(now.year, now.month, now.day).add(
+    const Duration(days: 1),
+  );
+  return DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 9);
 }
 
 MoneyItemReminderPolicy moneyItemReminderPolicyFromStorage(String? raw) {

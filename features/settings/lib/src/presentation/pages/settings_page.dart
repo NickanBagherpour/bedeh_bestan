@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:translations/translations.dart' show Translations;
-import 'package:ui_kit/ui_kit.dart' show AppHaptics, AppSpacing;
+import 'package:ui_kit/ui_kit.dart'
+    show AppHaptics, AppSpacing, KitReminderDaysPicker;
 
 import '../../application/controllers/settings_controller.dart';
 import '../widgets/settings_choice_row.dart';
@@ -106,34 +107,28 @@ class SettingsPage extends ConsumerWidget {
                 ),
                 if (settings.moneyReminderMode == MoneyReminderMode.range) ...[
                   const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    t.settings.reminderDaysBefore,
-                    style: theme.textTheme.bodySmall,
-                  ),
-                  Wrap(
-                    spacing: AppSpacing.xs,
-                    children: [
-                      for (final day in [7, 2, 1])
-                        FilterChip(
-                          label: Text(switch (day) {
-                            7 => t.settings.reminderDay7,
-                            2 => t.settings.reminderDay2,
-                            _ => t.settings.reminderDay1,
-                          }),
-                          selected: settings.moneyReminderDaysBefore.contains(day),
-                          onSelected: (on) {
-                            final next = {...settings.moneyReminderDaysBefore};
-                            if (on) {
-                              next.add(day);
-                            } else {
-                              next.remove(day);
-                            }
-                            controller.setMoneyReminderDaysBefore(next.toList());
-                          },
-                        ),
-                    ],
+                  KitReminderDaysPicker(
+                    selected: settings.moneyReminderDaysBefore,
+                    onChanged: controller.setMoneyReminderDaysBefore,
+                    daysBeforeLabel: t.settings.reminderDaysBefore,
+                    customLabel: t.settings.reminderCustomDay,
+                    addLabel: t.settings.reminderAddDay,
+                    labelFor: (day) => switch (day) {
+                      7 => t.settings.reminderDay7,
+                      3 => t.settings.reminderDay3,
+                      2 => t.settings.reminderDay2,
+                      1 => t.settings.reminderDay1,
+                      _ => t.settings.reminderDay1.replaceFirst('1', '$day'),
+                    },
                   ),
                 ],
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  t.settings.reminderTimeHint,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
               ],
             ),
           ),

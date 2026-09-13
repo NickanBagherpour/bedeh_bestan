@@ -9,10 +9,10 @@ import 'package:core/core.dart'
         toPersianDigits;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:local_db/local_db.dart' show AssetAccountKind;
+import 'package:local_db/local_db.dart' show AssetAccount, AssetAccountKind;
 import 'package:translations/translations.dart' show Translations;
 import 'package:ui_kit/ui_kit.dart'
-    show AppHaptics, AppSpacing, KitCard, KitLoading;
+    show AppHaptics, AppSpacing, KitCard, KitLoading, showKitConfirmDialog;
 
 import '../../application/assets_controller.dart';
 
@@ -36,6 +36,13 @@ class AssetsPage extends ConsumerWidget {
           persianDigits: persian,
         );
 
+    final utilization = state.utilization;
+    final percent = utilization == null
+        ? null
+        : (persian
+            ? toPersianDigits('${(utilization * 100).round()}٪')
+            : '${(utilization * 100).round()}%');
+
     return Scaffold(
       appBar: overlayAppBar(
         context: context,
@@ -44,7 +51,7 @@ class AssetsPage extends ConsumerWidget {
         backTooltip: t.app.actions.back,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _addAccount(context, ref, t, currency),
+        onPressed: () => _editAccount(context, ref, t, currency),
         child: const Icon(Icons.add_rounded),
       ),
       body: state.loading
@@ -62,16 +69,25 @@ class AssetsPage extends ConsumerWidget {
                       ),
                       Text(
                         money(state.netWorth),
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.w800,
-                            ),
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineSmall
+                            ?.copyWith(fontWeight: FontWeight.w800),
                       ),
                       const SizedBox(height: AppSpacing.sm),
-                      Text(t.profile.assetsTotal(amount: money(state.totalAssets))),
+                      Text(
+                        t.profile.assetsTotal(amount: money(state.totalAssets)),
+                      ),
                       Text(t.profile.openDebts(amount: money(state.openPay))),
                       Text(
-                        t.profile.openReceivables(amount: money(state.openReceive)),
+                        t.profile.openReceivables(
+                          amount: money(state.openReceive),
+                        ),
                       ),
+                      if (percent != null) ...[
+                        const SizedBox(height: AppSpacing.xs),
+                        Text(t.profile.utilization(percent: percent)),
+                      ],
                     ],
                   ),
                 ),
@@ -84,6 +100,13 @@ class AssetsPage extends ConsumerWidget {
                       title: Text(account.name),
                       subtitle: Text(_kindLabel(t, account.kind)),
                       trailing: Text(money(account.balance)),
+                      onTap: () => _editAccount(
+                        context,
+                        ref,
+                        t,
+                        currency,
+                        account: account,
+                      ),
                     ),
               ],
             ),
@@ -94,55 +117,98 @@ class AssetsPage extends ConsumerWidget {
     return switch (kind) {
       AssetAccountKind.cash => t.profile.kindCash,
       AssetAccountKind.bank => t.profile.kindBank,
+      AssetAccountKind.gold => t.profile.kindGold,
       AssetAccountKind.other => t.profile.kindOther,
     };
   }
 
-  Future<void> _addAccount(
+  Future<void> _editAccount(
     BuildContext context,
     WidgetRef ref,
     Translations t,
-    AppCurrency currency,
-  ) async {
-    final name = TextEditingController();
-    final balance = TextEditingController();
-    final kind = ValueNotifier(AssetAccountKind.cash);
+    AppCurrency currency, {
+    AssetAccount? account,
+  }) async {
+    final name = TextEditingController(text: account?.name ?? '');
+    final balance = TextEditingController(
+      text: account == null ? '' : '${account.balance}',
+    );
+    var kind = account?.kind ?? AssetAccountKind.cash;
     final ok = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(t.profile.addAsset),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: name,
-              decoration: InputDecoration(labelText: t.profile.assetName),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setLocal) => AlertDialog(
+          title: Text(account == null ? t.profile.addAsset : t.profile.editAsset),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: name,
+                  decoration: InputDecoration(labelText: t.profile.assetName),
+                ),
+                TextField(
+                  controller: balance,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(labelText: t.profile.assetBalance),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(t.profile.assetKind),
+                ),
+                Wrap(
+                  spacing: AppSpacing.xs,
+                  children: [
+                    for (final value in AssetAccountKind.values)
+                      ChoiceChip(
+                        label: Text(_kindLabel(t, value)),
+                        selected: kind == value,
+                        onSelected: (_) => setLocal(() => kind = value),
+                      ),
+                  ],
+                ),
+              ],
             ),
-            TextField(
-              controller: balance,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: t.profile.assetBalance),
+          ),
+          actions: [
+            if (account != null)
+              TextButton(
+                onPressed: () async {
+                  final confirm = await showKitConfirmDialog(
+                    context: ctx,
+                    title: t.profile.deleteAsset,
+                    body: t.profile.deleteAssetConfirm,
+                    confirmLabel: t.app.actions.confirm,
+                    cancelLabel: t.app.actions.cancel,
+                  );
+                  if (!confirm || !ctx.mounted) return;
+                  await ref
+                      .read(assetsControllerProvider.notifier)
+                      .deleteAccount(account.id);
+                  if (ctx.mounted) Navigator.pop(ctx, false);
+                },
+                child: Text(t.profile.deleteAsset),
+              ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(t.app.actions.cancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(t.app.actions.confirm),
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(t.app.actions.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(t.app.actions.confirm),
-          ),
-        ],
       ),
     );
     if (ok != true || !context.mounted) return;
     final parsed = parseStoredAmount(balance.text, currency);
     if (name.text.trim().isEmpty || parsed == null) return;
     await ref.read(assetsControllerProvider.notifier).saveAccount(
+          id: account?.id,
           name: name.text,
-          kind: kind.value,
+          kind: kind,
           balance: parsed,
         );
     AppHaptics.confirm();

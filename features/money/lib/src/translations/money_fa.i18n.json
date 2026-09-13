@@ -100,7 +100,7 @@
   "shareSubject": "صورت‌حساب: $name",
   "shareFailed": "باز کردن صفحهٔ اشتراک‌گذاری ممکن نشد.",
   "dueTitle": "سررسید امروز",
-  "dueSoonTitle": "سررسید فردا",
+  "dueSoonTitle": "سررسید نزدیک",
   "dueBody": "$title",
   "dueBodyInstallment": "$title — قسط $index",
   "scheduleTitle": "زمان‌بندی اقساط",
@@ -118,5 +118,18 @@
   "settleInstallmentConfirm": "قسط $index به مبلغ $amount با سررسید $date ثبت شود؟",
   "viewParty": "مشاهده طرف حساب",
   "partyLink": "مشاهده طرف‌حساب",
-  "jumpToPayment": "برو به پرداخت"
+  "jumpToPayment": "برو به پرداخت",
+  "notificationActionMarkPaid": "پرداخت شد",
+  "notificationActionRemindTomorrow": "فردا",
+  "reminder": {
+    "title": "یادآوری",
+    "defaultPolicy": "پیش‌فرض برنامه",
+    "exactDay": "فقط روز سررسید",
+    "customRange": "بازهٔ سفارشی",
+    "daysBefore": "روزهای قبل",
+    "day7": "۷ روز",
+    "day3": "۳ روز",
+    "day2": "۲ روز",
+    "day1": "۱ روز"
+  }
 }

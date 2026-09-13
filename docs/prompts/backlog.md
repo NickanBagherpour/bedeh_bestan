@@ -48,17 +48,17 @@ Implement in this order when possible: collapse → row settle → party links �
 
 | Priority | Status | Task | Spec |
 |----------|--------|------|------|
-| A | todo | Collapsible home list sections (who owes, due lists) | [home-collapsible-sections.md](home-collapsible-sections.md) |
-| A | todo | Tap who-owes row → party detail | [home-balances-party-link.md](home-balances-party-link.md) |
-| B | todo | «This month» due list + item-focused period lists | [home-period-due-lists.md](home-period-due-lists.md) |
-| B | todo | Month snapshot: settled vs still due in period | [home-month-settled-remaining.md](home-month-settled-remaining.md) |
-| C | todo | Quick pay/receive on home due rows | [home-quick-pay.md](home-quick-pay.md) |
-| D0 | todo | Settings: reminder mode (exact day vs range) + custom offsets | [reminder-offset-settings.md](reminder-offset-settings.md) |
-| D0 | todo | Money form: per-item reminder override (default / exact / custom) | [money-item-reminder-override.md](money-item-reminder-override.md) |
-| D | todo | Per-قسط notices using reminder policy | [installment-due-notifications.md](installment-due-notifications.md) |
-| E | todo | Notification actions: mark paid, remind tomorrow | [money-notification-actions.md](money-notification-actions.md) |
-| P | todo | Profile hub nav (home entry; assets + settings links) | [profile-nav-hub.md](profile-nav-hub.md) |
-| F | todo | Manual asset accounts + net worth (under profile) | [manual-assets-net-worth.md](manual-assets-net-worth.md) |
+| A | done | Collapsible home list sections (who owes, due lists) | [home-collapsible-sections.md](home-collapsible-sections.md) |
+| A | done | Tap who-owes row → party detail | [home-balances-party-link.md](home-balances-party-link.md) |
+| B | done | «This month» due list + item-focused period lists | [home-period-due-lists.md](home-period-due-lists.md) |
+| B | done | Month snapshot: settled vs still due in period | [home-month-settled-remaining.md](home-month-settled-remaining.md) |
+| C | done | Quick pay/receive on home due rows | [home-quick-pay.md](home-quick-pay.md) |
+| D0 | done | Settings: reminder mode (exact day vs range) + custom offsets | [reminder-offset-settings.md](reminder-offset-settings.md) |
+| D0 | done | Money form: per-item reminder override (default / exact / custom) | [money-item-reminder-override.md](money-item-reminder-override.md) |
+| D | done | Per-قسط notices using reminder policy | [installment-due-notifications.md](installment-due-notifications.md) |
+| E | done | Notification actions: mark paid, remind tomorrow | [money-notification-actions.md](money-notification-actions.md) |
+| P | done | Profile hub nav (home entry; assets + settings links) | [profile-nav-hub.md](profile-nav-hub.md) |
+| F | done | Manual asset accounts + net worth (under profile) | [manual-assets-net-worth.md](manual-assets-net-worth.md) |
 
 ## Profile & future auth (placeholder)
 

@@ -6,6 +6,7 @@ import '../presentation/pages/assets_page.dart';
 import '../presentation/pages/profile_page.dart';
 
 List<RouteBase> buildProfileRoutes(Ref ref) {
+  // TODO(auth): redirect to sign-in when AuthSession empty.
   return [
     GoRoute(
       path: AppRoutes.profile.path,

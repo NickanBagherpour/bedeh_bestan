@@ -26,4 +26,10 @@ void main() {
     expect(AppRoutes.settings.path, '/settings');
     expect(AppRoutes.primary.contains(AppRoutes.settings), isFalse);
   });
+
+  test('profile lives off the tab bar', () {
+    expect(AppRoutes.profile.path, '/profile');
+    expect(AppRoutes.profileAssets.path, '/profile/assets');
+    expect(AppRoutes.primary.contains(AppRoutes.profile), isFalse);
+  });
 }

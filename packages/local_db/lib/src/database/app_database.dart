@@ -244,6 +244,12 @@ class AppDatabase extends _$AppDatabase {
     );
   }
 
+  Future<AssetAccount?> getAssetAccount(String id) async {
+    final row = await (select(assetAccounts)..where((table) => table.id.equals(id)))
+        .getSingleOrNull();
+    return row == null ? null : assetFromRow(row);
+  }
+
   Stream<List<AssetAccount>> watchAssetAccounts() {
     return select(assetAccounts).watch().map(
       (rows) => [for (final row in rows) assetFromRow(row)],

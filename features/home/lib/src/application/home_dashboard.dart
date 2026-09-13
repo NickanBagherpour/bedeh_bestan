@@ -9,6 +9,7 @@ final class HomeDueRow {
     required this.partyName,
     required this.direction,
     required this.remainingAmount,
+    required this.suggestedAmount,
     required this.dueDate,
     required this.status,
   });
@@ -18,6 +19,7 @@ final class HomeDueRow {
   final String partyName;
   final MoneyDirection direction;
   final int remainingAmount;
+  final int suggestedAmount;
   final DateTime dueDate;
   final MoneyStatus status;
 }
@@ -156,6 +158,8 @@ HomeDashboard buildHomeDashboard({
       partyName: names[item.partyId] ?? item.partyId,
       direction: item.direction,
       remainingAmount: item.remainingAmount,
+      suggestedAmount:
+          item.suggestedQuickPaymentAmount() ?? item.remainingAmount,
       dueDate: item.nextDueDate,
       status: item.statusOn(now),
     );

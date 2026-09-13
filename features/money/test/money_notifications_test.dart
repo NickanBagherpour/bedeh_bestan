@@ -76,4 +76,98 @@ void main() {
     expect(notices, hasLength(1));
     expect(notices.single.at, DateTime(2026, 9, 20, 9));
   });
+
+  test('installment range schedules each unpaid قسط', () {
+    final loan = MoneyItem(
+      id: 'loan',
+      partyId: 'p',
+      direction: MoneyDirection.pay,
+      title: 'loan',
+      totalAmount: 300,
+      paidAmount: 0,
+      schedule: MoneySchedule.installment,
+      installmentCount: 3,
+      installmentAmount: 100,
+      startDate: DateTime(2026, 10, 1),
+      nextDueDate: DateTime(2026, 10, 1),
+      createdAt: now,
+      updatedAt: now,
+    );
+    final notices = upcomingMoneyNotices(
+      items: [loan],
+      now: now,
+      appPolicy: policy,
+      calendar: CalendarType.gregorian,
+      dueTitle: (_) => 'due',
+      dueSoonTitle: (_) => 'soon',
+      body: (item, {installmentIndex}) => '${item.title}-$installmentIndex',
+    );
+    expect(notices, hasLength(9));
+    expect(
+      notices.where((n) => n.body == 'loan-1').map((n) => n.at),
+      [
+        DateTime(2026, 9, 24, 9),
+        DateTime(2026, 9, 29, 9),
+        DateTime(2026, 10, 1, 9),
+      ],
+    );
+  });
+
+  test('item exact override ignores global range', () {
+    final notices = upcomingMoneyNotices(
+      items: [
+        item(id: 'a', due: DateTime(2026, 9, 20)).copyWith(
+          reminderPolicy: 'exactDay',
+        ),
+      ],
+      now: now,
+      appPolicy: policy,
+      calendar: CalendarType.gregorian,
+      dueTitle: (_) => 'due',
+      dueSoonTitle: (_) => 'soon',
+      body: (item, {installmentIndex}) => item.title,
+    );
+    expect(notices, hasLength(1));
+    expect(notices.single.at, DateTime(2026, 9, 20, 9));
+  });
+
+  test('custom range one day before includes due day', () {
+    final notices = upcomingMoneyNotices(
+      items: [
+        item(id: 'a', due: DateTime(2026, 9, 20)).copyWith(
+          reminderPolicy: 'customRange',
+          reminderDaysBeforeJson: '[1]',
+        ),
+      ],
+      now: now,
+      appPolicy: policy,
+      calendar: CalendarType.gregorian,
+      dueTitle: (_) => 'due',
+      dueSoonTitle: (_) => 'soon',
+      body: (item, {installmentIndex}) => item.title,
+    );
+    expect(notices.map((n) => n.at), [
+      DateTime(2026, 9, 19, 9),
+      DateTime(2026, 9, 20, 9),
+    ]);
+  });
+
+  test('snooze drops earlier instants and adds tomorrow morning', () {
+    final notices = upcomingMoneyNotices(
+      items: [item(id: 'a', due: DateTime(2026, 9, 20))],
+      now: now,
+      appPolicy: policy,
+      calendar: CalendarType.gregorian,
+      dueTitle: (_) => 'due',
+      dueSoonTitle: (_) => 'soon',
+      body: (item, {installmentIndex}) => item.title,
+      snoozeUntil: { 'a': DateTime(2026, 9, 13, 9) },
+    );
+    expect(notices.map((n) => n.at), [
+      DateTime(2026, 9, 13, 9),
+      DateTime(2026, 9, 18, 9),
+      DateTime(2026, 9, 20, 9),
+    ]);
+    expect(notices.where((n) => n.at == DateTime(2026, 9, 13, 9)), hasLength(1));
+  });
 }

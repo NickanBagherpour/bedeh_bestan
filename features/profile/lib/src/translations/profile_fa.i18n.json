@@ -6,11 +6,22 @@
   "assetsTotal": "جمع دارایی: $amount",
   "openDebts": "بدهی باز: $amount",
   "openReceivables": "طلب باز: $amount",
+  "utilization": "بدهی کوتاه‌مدت $percent دارایی‌هاست",
   "emptyAssets": "هنوز حساب دارایی ندارید.",
   "addAsset": "افزودن حساب",
+  "editAsset": "ویرایش حساب",
+  "deleteAsset": "حذف حساب",
+  "deleteAssetConfirm": "این حساب دارایی حذف شود؟",
   "assetName": "نام",
   "assetBalance": "موجودی",
+  "assetKind": "نوع",
   "kindCash": "نقد",
   "kindBank": "بانک",
-  "kindOther": "سایر"
+  "kindGold": "طلا",
+  "kindOther": "سایر",
+  "accountSoon": "حساب کاربری",
+  "accountSoonHint": "ورود بعداً همین‌جا می‌آید. فعلاً همه‌چیز روی همین دستگاه است.",
+  "privacyLock": "قفل حریم خصوصی",
+  "privacyLockHint": "قفل اختیاری فقط برای پروفایل — هنوز فعال نیست.",
+  "version": "نسخه $version"
 }

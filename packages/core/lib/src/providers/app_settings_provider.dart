@@ -75,7 +75,7 @@ final class AppSettingsController extends Notifier<AppSettings> {
   }
 
   Future<void> setMoneyReminderDaysBefore(List<int> days) async {
-    final sorted = [...days.where((d) => d > 0)]..sort();
+    final sorted = normalizeDaysBefore(days);
     state = state.copyWith(moneyReminderDaysBefore: sorted);
     await ref.read(appStorageProvider).writeString(
           AppSettingsKeys.moneyReminderDaysBefore,
@@ -114,14 +114,16 @@ AppSettings loadAppSettings({required AppStorage storage}) {
           storage.readString(AppSettingsKeys.moneyReminderMode),
         ) ??
         MoneyReminderMode.range,
-    moneyReminderDaysBefore: decodeDaysBeforeJson(
-      storage.readString(AppSettingsKeys.moneyReminderDaysBefore),
-    ).isEmpty
-        ? ReminderSchedulePolicy.defaultDaysBefore
-        : decodeDaysBeforeJson(
-            storage.readString(AppSettingsKeys.moneyReminderDaysBefore),
-          ),
+    moneyReminderDaysBefore: _loadReminderDays(storage),
   );
+}
+
+List<int> _loadReminderDays(AppStorage storage) {
+  final raw = storage.readString(AppSettingsKeys.moneyReminderDaysBefore);
+  if (raw == null || raw.trim().isEmpty) {
+    return ReminderSchedulePolicy.defaultDaysBefore;
+  }
+  return decodeDaysBeforeJson(raw);
 }
 
 TextDirection directionForLocale(Locale locale) {

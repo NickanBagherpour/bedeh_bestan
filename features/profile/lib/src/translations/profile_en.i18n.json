@@ -6,11 +6,22 @@
   "assetsTotal": "Total assets: $amount",
   "openDebts": "Open debts: $amount",
   "openReceivables": "Open receivables: $amount",
+  "utilization": "Short-term debts are $percent of assets",
   "emptyAssets": "No asset accounts yet.",
   "addAsset": "Add account",
+  "editAsset": "Edit account",
+  "deleteAsset": "Delete account",
+  "deleteAssetConfirm": "Remove this asset account?",
   "assetName": "Name",
   "assetBalance": "Balance",
+  "assetKind": "Type",
   "kindCash": "Cash",
   "kindBank": "Bank",
-  "kindOther": "Other"
+  "kindGold": "Gold",
+  "kindOther": "Other",
+  "accountSoon": "Account",
+  "accountSoonHint": "Sign-in will live here later. Everything stays on this device for now.",
+  "privacyLock": "Privacy lock",
+  "privacyLockHint": "Optional lock for profile only — not implemented yet.",
+  "version": "Version $version"
 }

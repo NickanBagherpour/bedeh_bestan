@@ -1,3 +1,10 @@
+import 'package:core/core.dart'
+    show appStorageProvider, decodeNoticePayload;
+import 'package:feature_money/money.dart'
+    show
+        MoneyNotificationActionResult,
+        applyMoneyNotificationAction,
+        moneySnoozeTickProvider;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_db/local_db.dart' show appDatabaseProvider;
 
@@ -9,22 +16,24 @@ Future<void> handleNotificationPayload(
   String payload, {
   String? actionId,
 }) async {
-  if (actionId == 'pay' && payload.startsWith('/money/item/')) {
-    final itemId = payload.split('/').last;
-    final db = container.read(appDatabaseProvider);
-    final item = await db.getMoneyItem(itemId);
-    final amount = item?.suggestedQuickPaymentAmount();
-    if (item != null && amount != null && amount > 0) {
-      await db.recordPayment(moneyItemId: itemId, amount: amount);
+  final decoded = decodeNoticePayload(payload);
+  final itemId = decoded.moneyItemId;
+  if (actionId != null &&
+      actionId.isNotEmpty &&
+      itemId != null &&
+      (actionId == 'pay' || actionId == 'snooze')) {
+    final result = await applyMoneyNotificationAction(
+      database: container.read(appDatabaseProvider),
+      storage: container.read(appStorageProvider),
+      actionId: actionId,
+      moneyItemId: itemId,
+    );
+    if (result == MoneyNotificationActionResult.snoozed) {
+      container.read(moneySnoozeTickProvider.notifier).bump();
     }
     return;
   }
-  if (actionId == 'snooze' && payload.startsWith('/money/item/')) {
-    // Opens the item on next tap; full snooze reschedule is a follow-up.
-    container.read(pendingNotificationRouteProvider.notifier).set(payload);
-    return;
-  }
-  if (payload.startsWith('/')) {
-    container.read(pendingNotificationRouteProvider.notifier).set(payload);
+  if (decoded.route.startsWith('/')) {
+    container.read(pendingNotificationRouteProvider.notifier).set(decoded.route);
   }
 }

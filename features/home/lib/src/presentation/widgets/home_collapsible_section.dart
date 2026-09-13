@@ -11,6 +11,8 @@ class HomeCollapsibleSection extends StatelessWidget {
     required this.expanded,
     required this.onToggle,
     required this.child,
+    this.expandTooltip,
+    this.collapseTooltip,
   });
 
   final String title;
@@ -19,6 +21,8 @@ class HomeCollapsibleSection extends StatelessWidget {
   final bool expanded;
   final VoidCallback onToggle;
   final Widget child;
+  final String? expandTooltip;
+  final String? collapseTooltip;
 
   @override
   Widget build(BuildContext context) {
@@ -59,11 +63,16 @@ class HomeCollapsibleSection extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Icon(
-                    expanded
-                        ? Icons.expand_less_rounded
-                        : Icons.expand_more_rounded,
-                    color: theme.colorScheme.onSurfaceVariant,
+                  Tooltip(
+                    message: expanded
+                        ? (collapseTooltip ?? '')
+                        : (expandTooltip ?? ''),
+                    child: Icon(
+                      expanded
+                          ? Icons.expand_less_rounded
+                          : Icons.expand_more_rounded,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),

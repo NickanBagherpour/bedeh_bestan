@@ -122,10 +122,11 @@ class _Translations$home$fa extends Translations$home$en {
 	@override String get payAndReceive => 'بده و بستان';
 	@override String get offlineBlurb => 'قسط، طلب و بدهی و یادآوری — همه روی این دستگاه.';
 	@override String get emptyTitle => 'هفته آرام';
-	@override String get emptyBody => 'در هفت روز آینده سررسیدی نیست.';
+	@override String get emptyBody => 'این هفته سررسیدی نیست.';
+	@override String get emptyThisMonth => 'سررسید دیگری تا آخر ماه نیست.';
 	@override String get loadError => 'خواندن دادهٔ محلی ممکن نشد.';
 	@override String get dueThisWeek => 'این هفته';
-	@override String get dueThisMonth => 'این ماه';
+	@override String get dueThisMonth => 'سررسید این ماه';
 	@override String get overdue => 'عقب‌مانده';
 	@override String get whoOwes => 'کی چقدر؟';
 	@override String get emptyBalances => 'بدهی یا طلب باز نیست.';
@@ -135,7 +136,7 @@ class _Translations$home$fa extends Translations$home$en {
 	@override String get fabReceive => 'طلب';
 	@override String get settings => 'تنظیمات';
 	@override String get profile => 'پروفایل';
-	@override String get reportTitle => 'این ماه';
+	@override String get reportTitle => 'خلاصه این ماه';
 	@override String paidOut({required Object amount}) => 'پرداخت شده ${amount}';
 	@override String paidIn({required Object amount}) => 'دریافت شده ${amount}';
 	@override String stillOwe({required Object amount}) => 'مانده بدهی ${amount}';
@@ -149,6 +150,8 @@ class _Translations$home$fa extends Translations$home$en {
 	@override String get capStillOwe => 'مانده بدهی';
 	@override String get capDueByEnd => 'سررسید این ماه';
 	@override String sectionCount({required Object count}) => '${count} مورد';
+	@override String get sectionShowMore => 'نمایش فهرست';
+	@override String get sectionCollapse => 'بستن فهرست';
 	@override String get quickPay => 'پرداخت';
 	@override String get quickReceive => 'دریافت';
 	@override String get quickPayConfirmTitle => 'پرداخت ثبت شود؟';
@@ -252,7 +255,7 @@ class _Translations$money$fa extends Translations$money$en {
 	@override String shareSubject({required Object name}) => 'صورت‌حساب: ${name}';
 	@override String get shareFailed => 'باز کردن صفحهٔ اشتراک‌گذاری ممکن نشد.';
 	@override String get dueTitle => 'سررسید امروز';
-	@override String get dueSoonTitle => 'سررسید فردا';
+	@override String get dueSoonTitle => 'سررسید نزدیک';
 	@override String dueBody({required Object title}) => '${title}';
 	@override String dueBodyInstallment({required Object title, required Object index}) => '${title} — قسط ${index}';
 	@override String get scheduleTitle => 'زمان‌بندی اقساط';
@@ -267,6 +270,9 @@ class _Translations$money$fa extends Translations$money$en {
 	@override String get viewParty => 'مشاهده طرف حساب';
 	@override String get partyLink => 'مشاهده طرف‌حساب';
 	@override String get jumpToPayment => 'برو به پرداخت';
+	@override String get notificationActionMarkPaid => 'پرداخت شد';
+	@override String get notificationActionRemindTomorrow => 'فردا';
+	@override late final _Translations$money$reminder$fa reminder = _Translations$money$reminder$fa._(_root);
 }
 
 // Path: notes
@@ -324,13 +330,24 @@ class _Translations$profile$fa extends Translations$profile$en {
 	@override String assetsTotal({required Object amount}) => 'جمع دارایی: ${amount}';
 	@override String openDebts({required Object amount}) => 'بدهی باز: ${amount}';
 	@override String openReceivables({required Object amount}) => 'طلب باز: ${amount}';
+	@override String utilization({required Object percent}) => 'بدهی کوتاه‌مدت ${percent} دارایی‌هاست';
 	@override String get emptyAssets => 'هنوز حساب دارایی ندارید.';
 	@override String get addAsset => 'افزودن حساب';
+	@override String get editAsset => 'ویرایش حساب';
+	@override String get deleteAsset => 'حذف حساب';
+	@override String get deleteAssetConfirm => 'این حساب دارایی حذف شود؟';
 	@override String get assetName => 'نام';
 	@override String get assetBalance => 'موجودی';
+	@override String get assetKind => 'نوع';
 	@override String get kindCash => 'نقد';
 	@override String get kindBank => 'بانک';
+	@override String get kindGold => 'طلا';
 	@override String get kindOther => 'سایر';
+	@override String get accountSoon => 'حساب کاربری';
+	@override String get accountSoonHint => 'ورود بعداً همین‌جا می‌آید. فعلاً همه‌چیز روی همین دستگاه است.';
+	@override String get privacyLock => 'قفل حریم خصوصی';
+	@override String get privacyLockHint => 'قفل اختیاری فقط برای پروفایل — هنوز فعال نیست.';
+	@override String version({required Object version}) => 'نسخه ${version}';
 }
 
 // Path: settings
@@ -363,13 +380,17 @@ class _Translations$settings$fa extends Translations$settings$en {
 	@override String get privacy => 'حریم خصوصی';
 	@override String get privacyBody => 'همه‌چیز روی همین گوشی می‌ماند. حساب کاربری، ابر و ردیابی نداریم.';
 	@override String get reminders => 'یادآوری سررسید';
-	@override String get remindersHint => 'پیش‌فرض برای حساب‌ها. در ویرایش هر مورد می‌توانید عوض کنید.';
+	@override String get remindersHint => 'پیش‌فرض برای حساب‌ها. در ویرایش هر مورد می‌توانید عوض کنید. یادآوری‌های تقویم همچنان کلیدهای خودشان را دارند.';
 	@override String get reminderExactDay => 'فقط روز سررسید';
 	@override String get reminderRange => 'چند روز قبل + سررسید';
 	@override String get reminderDaysBefore => 'روزهای قبل';
 	@override String get reminderDay7 => '۷ روز';
+	@override String get reminderDay3 => '۳ روز';
 	@override String get reminderDay2 => '۲ روز';
 	@override String get reminderDay1 => '۱ روز';
+	@override String get reminderCustomDay => 'روز دلخواه (۱ تا ۳۰)';
+	@override String get reminderAddDay => 'افزودن';
+	@override String get reminderTimeHint => 'ساعت ارسال: ۰۹:۰۰.';
 }
 
 // Path: app.currency
@@ -530,6 +551,24 @@ class _Translations$money$installmentState$fa extends Translations$money$install
 	@override String get upcoming => 'آینده';
 }
 
+// Path: money.reminder
+class _Translations$money$reminder$fa extends Translations$money$reminder$en {
+	_Translations$money$reminder$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'یادآوری';
+	@override String get defaultPolicy => 'پیش‌فرض برنامه';
+	@override String get exactDay => 'فقط روز سررسید';
+	@override String get customRange => 'بازهٔ سفارشی';
+	@override String get daysBefore => 'روزهای قبل';
+	@override String get day7 => '۷ روز';
+	@override String get day3 => '۳ روز';
+	@override String get day2 => '۲ روز';
+	@override String get day1 => '۱ روز';
+}
+
 /// The flat map containing all translations for locale <fa>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -616,10 +655,11 @@ extension on TranslationsFa {
 			'home.payAndReceive' => 'بده و بستان',
 			'home.offlineBlurb' => 'قسط، طلب و بدهی و یادآوری — همه روی این دستگاه.',
 			'home.emptyTitle' => 'هفته آرام',
-			'home.emptyBody' => 'در هفت روز آینده سررسیدی نیست.',
+			'home.emptyBody' => 'این هفته سررسیدی نیست.',
+			'home.emptyThisMonth' => 'سررسید دیگری تا آخر ماه نیست.',
 			'home.loadError' => 'خواندن دادهٔ محلی ممکن نشد.',
 			'home.dueThisWeek' => 'این هفته',
-			'home.dueThisMonth' => 'این ماه',
+			'home.dueThisMonth' => 'سررسید این ماه',
 			'home.overdue' => 'عقب‌مانده',
 			'home.whoOwes' => 'کی چقدر؟',
 			'home.emptyBalances' => 'بدهی یا طلب باز نیست.',
@@ -629,7 +669,7 @@ extension on TranslationsFa {
 			'home.fabReceive' => 'طلب',
 			'home.settings' => 'تنظیمات',
 			'home.profile' => 'پروفایل',
-			'home.reportTitle' => 'این ماه',
+			'home.reportTitle' => 'خلاصه این ماه',
 			'home.paidOut' => ({required Object amount}) => 'پرداخت شده ${amount}',
 			'home.paidIn' => ({required Object amount}) => 'دریافت شده ${amount}',
 			'home.stillOwe' => ({required Object amount}) => 'مانده بدهی ${amount}',
@@ -643,6 +683,8 @@ extension on TranslationsFa {
 			'home.capStillOwe' => 'مانده بدهی',
 			'home.capDueByEnd' => 'سررسید این ماه',
 			'home.sectionCount' => ({required Object count}) => '${count} مورد',
+			'home.sectionShowMore' => 'نمایش فهرست',
+			'home.sectionCollapse' => 'بستن فهرست',
 			'home.quickPay' => 'پرداخت',
 			'home.quickReceive' => 'دریافت',
 			'home.quickPayConfirmTitle' => 'پرداخت ثبت شود؟',
@@ -744,7 +786,7 @@ extension on TranslationsFa {
 			'money.shareSubject' => ({required Object name}) => 'صورت‌حساب: ${name}',
 			'money.shareFailed' => 'باز کردن صفحهٔ اشتراک‌گذاری ممکن نشد.',
 			'money.dueTitle' => 'سررسید امروز',
-			'money.dueSoonTitle' => 'سررسید فردا',
+			'money.dueSoonTitle' => 'سررسید نزدیک',
 			'money.dueBody' => ({required Object title}) => '${title}',
 			'money.dueBodyInstallment' => ({required Object title, required Object index}) => '${title} — قسط ${index}',
 			'money.scheduleTitle' => 'زمان‌بندی اقساط',
@@ -761,6 +803,17 @@ extension on TranslationsFa {
 			'money.viewParty' => 'مشاهده طرف حساب',
 			'money.partyLink' => 'مشاهده طرف‌حساب',
 			'money.jumpToPayment' => 'برو به پرداخت',
+			'money.notificationActionMarkPaid' => 'پرداخت شد',
+			'money.notificationActionRemindTomorrow' => 'فردا',
+			'money.reminder.title' => 'یادآوری',
+			'money.reminder.defaultPolicy' => 'پیش‌فرض برنامه',
+			'money.reminder.exactDay' => 'فقط روز سررسید',
+			'money.reminder.customRange' => 'بازهٔ سفارشی',
+			'money.reminder.daysBefore' => 'روزهای قبل',
+			'money.reminder.day7' => '۷ روز',
+			'money.reminder.day3' => '۳ روز',
+			'money.reminder.day2' => '۲ روز',
+			'money.reminder.day1' => '۱ روز',
 			'notes.title' => 'یادداشت',
 			'notes.fab' => 'یادداشت',
 			'notes.emptyTitle' => 'هنوز یادداشتی نیست',
@@ -800,13 +853,24 @@ extension on TranslationsFa {
 			'profile.assetsTotal' => ({required Object amount}) => 'جمع دارایی: ${amount}',
 			'profile.openDebts' => ({required Object amount}) => 'بدهی باز: ${amount}',
 			'profile.openReceivables' => ({required Object amount}) => 'طلب باز: ${amount}',
+			'profile.utilization' => ({required Object percent}) => 'بدهی کوتاه‌مدت ${percent} دارایی‌هاست',
 			'profile.emptyAssets' => 'هنوز حساب دارایی ندارید.',
 			'profile.addAsset' => 'افزودن حساب',
+			'profile.editAsset' => 'ویرایش حساب',
+			'profile.deleteAsset' => 'حذف حساب',
+			'profile.deleteAssetConfirm' => 'این حساب دارایی حذف شود؟',
 			'profile.assetName' => 'نام',
 			'profile.assetBalance' => 'موجودی',
+			'profile.assetKind' => 'نوع',
 			'profile.kindCash' => 'نقد',
 			'profile.kindBank' => 'بانک',
+			'profile.kindGold' => 'طلا',
 			'profile.kindOther' => 'سایر',
+			'profile.accountSoon' => 'حساب کاربری',
+			'profile.accountSoonHint' => 'ورود بعداً همین‌جا می‌آید. فعلاً همه‌چیز روی همین دستگاه است.',
+			'profile.privacyLock' => 'قفل حریم خصوصی',
+			'profile.privacyLockHint' => 'قفل اختیاری فقط برای پروفایل — هنوز فعال نیست.',
+			'profile.version' => ({required Object version}) => 'نسخه ${version}',
 			'settings.title' => 'تنظیمات',
 			'settings.theme' => 'پوسته',
 			'settings.language' => 'زبان',
@@ -830,13 +894,17 @@ extension on TranslationsFa {
 			'settings.privacy' => 'حریم خصوصی',
 			'settings.privacyBody' => 'همه‌چیز روی همین گوشی می‌ماند. حساب کاربری، ابر و ردیابی نداریم.',
 			'settings.reminders' => 'یادآوری سررسید',
-			'settings.remindersHint' => 'پیش‌فرض برای حساب‌ها. در ویرایش هر مورد می‌توانید عوض کنید.',
+			'settings.remindersHint' => 'پیش‌فرض برای حساب‌ها. در ویرایش هر مورد می‌توانید عوض کنید. یادآوری‌های تقویم همچنان کلیدهای خودشان را دارند.',
 			'settings.reminderExactDay' => 'فقط روز سررسید',
 			'settings.reminderRange' => 'چند روز قبل + سررسید',
 			'settings.reminderDaysBefore' => 'روزهای قبل',
 			'settings.reminderDay7' => '۷ روز',
+			'settings.reminderDay3' => '۳ روز',
 			'settings.reminderDay2' => '۲ روز',
 			'settings.reminderDay1' => '۱ روز',
+			'settings.reminderCustomDay' => 'روز دلخواه (۱ تا ۳۰)',
+			'settings.reminderAddDay' => 'افزودن',
+			'settings.reminderTimeHint' => 'ساعت ارسال: ۰۹:۰۰.',
 			_ => null,
 		};
 	}

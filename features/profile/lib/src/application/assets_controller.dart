@@ -4,6 +4,23 @@ import 'package:local_db/local_db.dart'
 
 import '../data/assets_repository_provider.dart';
 
+int computeNetWorth({
+  required int totalAssets,
+  required int openPay,
+  required int openReceive,
+}) {
+  return totalAssets + openReceive - openPay;
+}
+
+/// Open بدهی as a fraction of assets. Null when there are no assets.
+double? debtUtilization({
+  required int totalAssets,
+  required int openPay,
+}) {
+  if (totalAssets <= 0) return null;
+  return openPay / totalAssets;
+}
+
 final assetsControllerProvider =
     NotifierProvider<AssetsController, AssetsState>(AssetsController.new);
 
@@ -20,10 +37,16 @@ final class AssetsState {
   final int openReceive;
   final bool loading;
 
-  int get totalAssets =>
-      accounts.fold<int>(0, (sum, a) => sum + a.balance);
+  int get totalAssets => accounts.fold<int>(0, (sum, a) => sum + a.balance);
 
-  int get netWorth => totalAssets + openReceive - openPay;
+  int get netWorth => computeNetWorth(
+        totalAssets: totalAssets,
+        openPay: openPay,
+        openReceive: openReceive,
+      );
+
+  double? get utilization =>
+      debtUtilization(totalAssets: totalAssets, openPay: openPay);
 }
 
 final class AssetsController extends Notifier<AssetsState> {
@@ -76,6 +99,7 @@ final class AssetsController extends Notifier<AssetsState> {
   }) async {
     final repo = ref.read(assetsRepositoryProvider);
     final now = DateTime.now();
+    final existing = id == null ? null : await repo.get(id);
     await repo.upsert(
       AssetAccount(
         id: id ?? newEntityId('asset'),
@@ -83,7 +107,7 @@ final class AssetsController extends Notifier<AssetsState> {
         kind: kind,
         balance: balance,
         note: note?.trim().isEmpty == true ? null : note?.trim(),
-        createdAt: now,
+        createdAt: existing?.createdAt ?? now,
         updatedAt: now,
       ),
     );

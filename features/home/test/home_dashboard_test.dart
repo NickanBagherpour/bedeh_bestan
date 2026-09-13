@@ -156,10 +156,54 @@ void main() {
     expect(dashboard.report.paidOut, 1000);
     expect(dashboard.report.paidIn, 300);
     expect(dashboard.report.remainingPay, 6000);
+    expect(dashboard.report.remainingReceive, 800);
     expect(dashboard.report.duePayByPeriodEnd, 4000);
+    expect(dashboard.report.dueReceiveByPeriodEnd, 800);
     expect(dashboard.dueThisWeek.map((row) => row.id), ['receive']);
     expect(dashboard.dueThisMonth.map((row) => row.id), ['open-pay']);
+    expect(dashboard.dueThisMonth.single.suggestedAmount, 4000);
     expect(dashboard.report.periodStart, DateTime(2026, 9, 1));
     expect(dashboard.report.periodEnd, DateTime(2026, 9, 30));
+  });
+
+  test('jalali month lists items in Shahrivar not Mehr', () {
+    final shop = Party(
+      id: 'shop',
+      name: 'فروشگاه',
+      kind: PartyKind.shop,
+      createdAt: now,
+      updatedAt: now,
+    );
+    final dashboard = buildHomeDashboard(
+      items: [
+        money(
+          id: 'in-month',
+          partyId: shop.id,
+          direction: MoneyDirection.pay,
+          due: DateTime(2026, 9, 20),
+          total: 1000,
+        ),
+        money(
+          id: 'next-month',
+          partyId: shop.id,
+          direction: MoneyDirection.pay,
+          due: DateTime(2026, 10, 5),
+          total: 500,
+        ),
+      ],
+      parties: [shop],
+      payments: const [],
+      now: now,
+      calendar: CalendarType.jalali,
+    );
+    expect(dashboard.dueThisMonth.map((row) => row.id), ['in-month']);
+    expect(dashboard.report.remainingPay, 1500);
+  });
+
+  test('section collapse defaults follow the spec thresholds', () {
+    expect(homeSectionExpandedByDefault(5), isTrue);
+    expect(homeSectionExpandedByDefault(6), isFalse);
+    expect(homeBalancesCollapsedByDefault(4), isFalse);
+    expect(homeBalancesCollapsedByDefault(5), isTrue);
   });
 }

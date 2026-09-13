@@ -148,6 +148,37 @@ void main() {
     expect(await clone.getMoneyItem(SeedIds.shopOverdue), isNotNull);
   });
 
+  test('backup round-trips reminder fields and asset accounts', () async {
+    final item = await db.getMoneyItem(SeedIds.shopOverdue);
+    await db.upsertMoneyItem(
+      item!.copyWith(
+        reminderPolicy: 'customRange',
+        reminderDaysBeforeJson: '[3,1]',
+      ),
+    );
+    await db.upsertAssetAccount(
+      AssetAccount(
+        id: 'asset-cash',
+        name: 'صندوق',
+        kind: AssetAccountKind.cash,
+        balance: 2500000,
+        createdAt: now,
+        updatedAt: now,
+      ),
+    );
+    final json = await db.exportBackupJson();
+    final clone = openMemoryDatabase();
+    addTearDown(clone.close);
+    await clone.importBackupJson(json);
+    final restored = await clone.getMoneyItem(SeedIds.shopOverdue);
+    expect(restored?.reminderPolicy, 'customRange');
+    expect(restored?.reminderDaysBeforeJson, '[3,1]');
+    final asset = await clone.getAssetAccount('asset-cash');
+    expect(asset?.name, 'صندوق');
+    expect(asset?.balance, 2500000);
+    expect(asset?.kind, AssetAccountKind.cash);
+  });
+
   test('createAll restores a dropped payments table so inserts work', () async {
     await db.customStatement('DROP TABLE IF EXISTS money_payments');
     await db.createMigrator().createAll();

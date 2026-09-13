@@ -6,6 +6,8 @@ final class AssetsRepository {
 
   final AppDatabase _database;
 
+  Future<AssetAccount?> get(String id) => _database.getAssetAccount(id);
+
   Stream<List<AssetAccount>> watchAccounts() => _database.watchAssetAccounts();
 
   Stream<List<MoneyItem>> watchMoneyItems() => _database.watchMoneyItems();

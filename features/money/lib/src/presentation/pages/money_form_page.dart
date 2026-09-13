@@ -4,10 +4,15 @@ import 'package:core/core.dart'
         AppRoutes,
         CalendarType,
         GroupedAmountFormatter,
+        MoneyItemReminderPolicy,
         appSettingsProvider,
+        decodeDaysBeforeJson,
+        encodeDaysBeforeJson,
         formatLongDate,
         formatMoney,
         groupAmount,
+        moneyItemReminderPolicyFromStorage,
+        moneyItemReminderPolicyToStorage,
         overlayAppBar,
         parseStoredAmount,
         parseTomanInput,
@@ -24,6 +29,7 @@ import 'package:ui_kit/ui_kit.dart'
         AppHaptics,
         AppSpacing,
         KitCard,
+        KitReminderDaysPicker,
         KitSearchSelect,
         showKitDatePicker;
 
@@ -62,6 +68,8 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
   DateTime _due = DateTime.now();
   bool _loaded = false;
   bool _saving = false;
+  MoneyItemReminderPolicy _reminderPolicy = MoneyItemReminderPolicy.defaultPolicy;
+  List<int> _reminderDays = const [7, 2];
 
   bool get _isEdit => widget.itemId != null;
 
@@ -104,6 +112,9 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
     _note.text = item.note ?? '';
     _start = item.startDate;
     _due = item.nextDueDate;
+    _reminderPolicy = moneyItemReminderPolicyFromStorage(item.reminderPolicy);
+    final customDays = decodeDaysBeforeJson(item.reminderDaysBeforeJson);
+    _reminderDays = customDays.isEmpty ? const [7, 2] : customDays;
     if (item.schedule == MoneySchedule.installment) {
       _periods.text = '${item.installmentCount ?? ''}';
       final each = item.installmentAmount;
@@ -337,6 +348,51 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
             onPick: () => _pickDate(isDue: false),
           ),
           const SizedBox(height: AppSpacing.md),
+          Text(
+            t.money.reminder.title,
+            style: theme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Wrap(
+            spacing: AppSpacing.xs,
+            children: [
+              for (final policy in MoneyItemReminderPolicy.values)
+                ChoiceChip(
+                  label: Text(switch (policy) {
+                    MoneyItemReminderPolicy.defaultPolicy =>
+                      t.money.reminder.defaultPolicy,
+                    MoneyItemReminderPolicy.exactDay => t.money.reminder.exactDay,
+                    MoneyItemReminderPolicy.customRange =>
+                      t.money.reminder.customRange,
+                  }),
+                  selected: _reminderPolicy == policy,
+                  onSelected: (_) {
+                    AppHaptics.selection();
+                    setState(() => _reminderPolicy = policy);
+                  },
+                ),
+            ],
+          ),
+          if (_reminderPolicy == MoneyItemReminderPolicy.customRange) ...[
+            const SizedBox(height: AppSpacing.sm),
+            KitReminderDaysPicker(
+              selected: _reminderDays,
+              onChanged: (days) => setState(() => _reminderDays = days),
+              daysBeforeLabel: t.money.reminder.daysBefore,
+              customLabel: t.settings.reminderCustomDay,
+              addLabel: t.settings.reminderAddDay,
+              labelFor: (day) => switch (day) {
+                7 => t.money.reminder.day7,
+                3 => t.money.reminder.day3,
+                2 => t.money.reminder.day2,
+                1 => t.money.reminder.day1,
+                _ => t.money.reminder.day1.replaceFirst('1', '$day'),
+              },
+            ),
+          ],
+          const SizedBox(height: AppSpacing.md),
           TextField(
             controller: _note,
             maxLines: 3,
@@ -466,6 +522,8 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
               installmentCount: installmentCount,
               installmentAmount: installmentAmount,
               note: _note.text.trim().isEmpty ? null : _note.text.trim(),
+              reminderPolicy: moneyItemReminderPolicyToStorage(_reminderPolicy),
+              reminderDaysBeforeJson: encodeDaysBeforeJson(_reminderDays),
             ),
           );
       if (!mounted) return;

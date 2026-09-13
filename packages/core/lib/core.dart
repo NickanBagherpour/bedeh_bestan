@@ -2,6 +2,7 @@
 library;
 
 export 'src/branding/brand.dart';
+export 'src/notifications/notice_payload.dart';
 export 'src/notifications/notification_scheduler.dart';
 export 'src/notifications/notification_scheduler_provider.dart';
 export 'src/notifications/scheduled_notice.dart';

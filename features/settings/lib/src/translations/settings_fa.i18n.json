@@ -22,11 +22,15 @@
   "privacy": "حریم خصوصی",
   "privacyBody": "همه‌چیز روی همین گوشی می‌ماند. حساب کاربری، ابر و ردیابی نداریم.",
   "reminders": "یادآوری سررسید",
-  "remindersHint": "پیش‌فرض برای حساب‌ها. در ویرایش هر مورد می‌توانید عوض کنید.",
+  "remindersHint": "پیش‌فرض برای حساب‌ها. در ویرایش هر مورد می‌توانید عوض کنید. یادآوری‌های تقویم همچنان کلیدهای خودشان را دارند.",
   "reminderExactDay": "فقط روز سررسید",
   "reminderRange": "چند روز قبل + سررسید",
   "reminderDaysBefore": "روزهای قبل",
   "reminderDay7": "۷ روز",
+  "reminderDay3": "۳ روز",
   "reminderDay2": "۲ روز",
-  "reminderDay1": "۱ روز"
+  "reminderDay1": "۱ روز",
+  "reminderCustomDay": "روز دلخواه (۱ تا ۳۰)",
+  "reminderAddDay": "افزودن",
+  "reminderTimeHint": "ساعت ارسال: ۰۹:۰۰."
 }

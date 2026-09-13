@@ -231,23 +231,6 @@ class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
   @override
   void initState() {
     super.initState();
-    _syncDefaults();
-  }
-
-  @override
-  void didUpdateWidget(covariant _HomeDashboardBody oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.dashboard.overdue.length != widget.dashboard.overdue.length ||
-        oldWidget.dashboard.dueThisWeek.length !=
-            widget.dashboard.dueThisWeek.length ||
-        oldWidget.dashboard.dueThisMonth.length !=
-            widget.dashboard.dueThisMonth.length ||
-        oldWidget.dashboard.balances.length != widget.dashboard.balances.length) {
-      _syncDefaults();
-    }
-  }
-
-  void _syncDefaults() {
     final d = widget.dashboard;
     _overdueExpanded = homeSectionExpandedByDefault(d.overdue.length);
     _weekExpanded = homeSectionExpandedByDefault(d.dueThisWeek.length);
@@ -304,10 +287,11 @@ class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
     Widget dueList(
       List<HomeDueRow> rows, {
       required bool enableQuickPay,
+      required String emptyLabel,
     }) {
       return HomeDueList(
         rows: rows,
-        emptyLabel: t.home.emptyBody,
+        emptyLabel: emptyLabel,
         amountOf: (row) => money(row.remainingAmount),
         dueOf: due,
         statusOf: status,
@@ -349,9 +333,15 @@ class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
             title: t.home.overdue,
             icon: Icons.warning_amber_rounded,
             summary: t.home.sectionCount(count: d.overdue.length),
+            expandTooltip: t.home.sectionShowMore,
+            collapseTooltip: t.home.sectionCollapse,
             expanded: _overdueExpanded,
             onToggle: () => setState(() => _overdueExpanded = !_overdueExpanded),
-            child: dueList(d.overdue, enableQuickPay: true),
+            child: dueList(
+              d.overdue,
+              enableQuickPay: true,
+              emptyLabel: t.home.emptyBody,
+            ),
           ),
         ),
         const SizedBox(height: AppSpacing.md),
@@ -362,9 +352,15 @@ class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
           title: t.home.dueThisWeek,
           icon: Icons.event_available_rounded,
           summary: t.home.sectionCount(count: d.dueThisWeek.length),
+          expandTooltip: t.home.sectionShowMore,
+          collapseTooltip: t.home.sectionCollapse,
           expanded: _weekExpanded,
           onToggle: () => setState(() => _weekExpanded = !_weekExpanded),
-          child: dueList(d.dueThisWeek, enableQuickPay: true),
+          child: dueList(
+            d.dueThisWeek,
+            enableQuickPay: true,
+            emptyLabel: t.home.emptyBody,
+          ),
         ),
       ),
       const SizedBox(height: AppSpacing.md),
@@ -374,9 +370,15 @@ class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
           title: t.home.dueThisMonth,
           icon: Icons.calendar_month_rounded,
           summary: t.home.sectionCount(count: d.dueThisMonth.length),
+          expandTooltip: t.home.sectionShowMore,
+          collapseTooltip: t.home.sectionCollapse,
           expanded: _monthExpanded,
           onToggle: () => setState(() => _monthExpanded = !_monthExpanded),
-          child: dueList(d.dueThisMonth, enableQuickPay: true),
+          child: dueList(
+            d.dueThisMonth,
+            enableQuickPay: true,
+            emptyLabel: t.home.emptyThisMonth,
+          ),
         ),
       ),
       const SizedBox(height: AppSpacing.md),
@@ -386,6 +388,8 @@ class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
           title: t.home.whoOwes,
           icon: Icons.groups_rounded,
           summary: t.home.sectionCount(count: d.balances.length),
+          expandTooltip: t.home.sectionShowMore,
+          collapseTooltip: t.home.sectionCollapse,
           expanded: _balancesExpanded,
           onToggle: () => setState(() => _balancesExpanded = !_balancesExpanded),
           child: HomeBalancesCard(
@@ -409,7 +413,7 @@ class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
     HomeDueRow row,
   ) async {
     final repo = ref.read(homeControllerProvider.notifier);
-    final amountLabel = money(row.remainingAmount);
+    final amountLabel = money(row.suggestedAmount);
     final ok = await showKitConfirmDialog(
       context: context,
       title: row.direction == MoneyDirection.pay

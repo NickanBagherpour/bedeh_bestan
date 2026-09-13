@@ -29,6 +29,7 @@ enum MoneyStatus {
 enum AssetAccountKind {
   cash,
   bank,
+  gold,
   other,
 }
 

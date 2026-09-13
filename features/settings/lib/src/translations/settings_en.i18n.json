@@ -22,11 +22,15 @@
   "privacy": "Privacy",
   "privacyBody": "Everything stays on this phone. No account, no cloud, no tracking.",
   "reminders": "Due reminders",
-  "remindersHint": "Default for money items. You can override per item when editing.",
+  "remindersHint": "Default for money items. You can override per item when editing. Calendar reminders still use their own on-time / day-before switches.",
   "reminderExactDay": "Due day only",
   "reminderRange": "Before + due day",
   "reminderDaysBefore": "Days before",
   "reminderDay7": "7 days",
+  "reminderDay3": "3 days",
   "reminderDay2": "2 days",
-  "reminderDay1": "1 day"
+  "reminderDay1": "1 day",
+  "reminderCustomDay": "Custom (1–30)",
+  "reminderAddDay": "Add",
+  "reminderTimeHint": "Fires at 09:00."
 }

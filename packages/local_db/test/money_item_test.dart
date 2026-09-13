@@ -37,6 +37,31 @@ void main() {
     );
   });
 
+  test('suggested quick payment is remaining or one installment', () {
+    expect(item(due: now, paid: 1000).suggestedQuickPaymentAmount(), isNull);
+    expect(item(due: now).suggestedQuickPaymentAmount(), 1000);
+    final installment = MoneyItem(
+      id: 'x',
+      partyId: 'p',
+      direction: MoneyDirection.pay,
+      title: 't',
+      totalAmount: 5000,
+      paidAmount: 0,
+      schedule: MoneySchedule.installment,
+      installmentCount: 5,
+      installmentAmount: 1000,
+      startDate: now,
+      nextDueDate: now,
+      createdAt: now,
+      updatedAt: now,
+    );
+    expect(installment.suggestedQuickPaymentAmount(), 1000);
+    expect(
+      installment.copyWith(paidAmount: 4200).suggestedQuickPaymentAmount(),
+      800,
+    );
+  });
+
   test('addCalendarMonths clamps the day', () {
     expect(addCalendarMonths(DateTime(2026, 1, 31), 1), DateTime(2026, 2, 28));
   });

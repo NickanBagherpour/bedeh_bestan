@@ -9,23 +9,31 @@ import 'notification_action_handler.dart';
 /// container is [attach]ed, then handed to [pendingNotificationRouteProvider].
 final class NotificationTapSink {
   ProviderContainer? _container;
-  String? _queued;
+  String? _queuedPayload;
+  String? _queuedActionId;
 
-  void emit(String route, {String? actionId}) {
+  void emit(String payload, {String? actionId}) {
     final container = _container;
     if (container == null) {
-      _queued = route;
+      _queuedPayload = payload;
+      _queuedActionId = actionId;
       return;
     }
-    unawaited(handleNotificationPayload(container, route, actionId: actionId));
+    unawaited(
+      handleNotificationPayload(container, payload, actionId: actionId),
+    );
   }
 
   void attach(ProviderContainer container) {
     _container = container;
-    final queued = _queued;
-    _queued = null;
+    final queued = _queuedPayload;
+    final actionId = _queuedActionId;
+    _queuedPayload = null;
+    _queuedActionId = null;
     if (queued != null) {
-      unawaited(handleNotificationPayload(container, queued));
+      unawaited(
+        handleNotificationPayload(container, queued, actionId: actionId),
+      );
     }
   }
 }

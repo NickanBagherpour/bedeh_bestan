@@ -210,8 +210,11 @@ class Translations$home$en {
 	/// en: 'Quiet week'
 	String get emptyTitle => 'Quiet week';
 
-	/// en: 'Nothing is due in the next seven days.'
-	String get emptyBody => 'Nothing is due in the next seven days.';
+	/// en: 'Nothing is due this week.'
+	String get emptyBody => 'Nothing is due this week.';
+
+	/// en: 'Nothing else is due this month.'
+	String get emptyThisMonth => 'Nothing else is due this month.';
 
 	/// en: 'Could not read local data.'
 	String get loadError => 'Could not read local data.';
@@ -219,8 +222,8 @@ class Translations$home$en {
 	/// en: 'This week'
 	String get dueThisWeek => 'This week';
 
-	/// en: 'This month'
-	String get dueThisMonth => 'This month';
+	/// en: 'Due this month'
+	String get dueThisMonth => 'Due this month';
 
 	/// en: 'Overdue'
 	String get overdue => 'Overdue';
@@ -249,8 +252,8 @@ class Translations$home$en {
 	/// en: 'Profile'
 	String get profile => 'Profile';
 
-	/// en: 'This month'
-	String get reportTitle => 'This month';
+	/// en: 'Month snapshot'
+	String get reportTitle => 'Month snapshot';
 
 	/// en: 'Paid $amount'
 	String paidOut({required Object amount}) => 'Paid ${amount}';
@@ -290,6 +293,12 @@ class Translations$home$en {
 
 	/// en: '$count items'
 	String sectionCount({required Object count}) => '${count} items';
+
+	/// en: 'Show list'
+	String get sectionShowMore => 'Show list';
+
+	/// en: 'Hide list'
+	String get sectionCollapse => 'Hide list';
 
 	/// en: 'Pay'
 	String get quickPay => 'Pay';
@@ -577,8 +586,8 @@ class Translations$money$en {
 	/// en: 'Due today'
 	String get dueTitle => 'Due today';
 
-	/// en: 'Due tomorrow'
-	String get dueSoonTitle => 'Due tomorrow';
+	/// en: 'Coming due'
+	String get dueSoonTitle => 'Coming due';
 
 	/// en: '$title'
 	String dueBody({required Object title}) => '${title}';
@@ -620,6 +629,14 @@ class Translations$money$en {
 
 	/// en: 'Jump to payment'
 	String get jumpToPayment => 'Jump to payment';
+
+	/// en: 'Mark paid'
+	String get notificationActionMarkPaid => 'Mark paid';
+
+	/// en: 'Tomorrow'
+	String get notificationActionRemindTomorrow => 'Tomorrow';
+
+	late final Translations$money$reminder$en reminder = Translations$money$reminder$en.internal(_root);
 }
 
 // Path: notes
@@ -756,11 +773,23 @@ class Translations$profile$en {
 	/// en: 'Open receivables: $amount'
 	String openReceivables({required Object amount}) => 'Open receivables: ${amount}';
 
+	/// en: 'Short-term debts are $percent of assets'
+	String utilization({required Object percent}) => 'Short-term debts are ${percent} of assets';
+
 	/// en: 'No asset accounts yet.'
 	String get emptyAssets => 'No asset accounts yet.';
 
 	/// en: 'Add account'
 	String get addAsset => 'Add account';
+
+	/// en: 'Edit account'
+	String get editAsset => 'Edit account';
+
+	/// en: 'Delete account'
+	String get deleteAsset => 'Delete account';
+
+	/// en: 'Remove this asset account?'
+	String get deleteAssetConfirm => 'Remove this asset account?';
 
 	/// en: 'Name'
 	String get assetName => 'Name';
@@ -768,14 +797,35 @@ class Translations$profile$en {
 	/// en: 'Balance'
 	String get assetBalance => 'Balance';
 
+	/// en: 'Type'
+	String get assetKind => 'Type';
+
 	/// en: 'Cash'
 	String get kindCash => 'Cash';
 
 	/// en: 'Bank'
 	String get kindBank => 'Bank';
 
+	/// en: 'Gold'
+	String get kindGold => 'Gold';
+
 	/// en: 'Other'
 	String get kindOther => 'Other';
+
+	/// en: 'Account'
+	String get accountSoon => 'Account';
+
+	/// en: 'Sign-in will live here later. Everything stays on this device for now.'
+	String get accountSoonHint => 'Sign-in will live here later. Everything stays on this device for now.';
+
+	/// en: 'Privacy lock'
+	String get privacyLock => 'Privacy lock';
+
+	/// en: 'Optional lock for profile only — not implemented yet.'
+	String get privacyLockHint => 'Optional lock for profile only — not implemented yet.';
+
+	/// en: 'Version $version'
+	String version({required Object version}) => 'Version ${version}';
 }
 
 // Path: settings
@@ -855,8 +905,8 @@ class Translations$settings$en {
 	/// en: 'Due reminders'
 	String get reminders => 'Due reminders';
 
-	/// en: 'Default for money items. You can override per item when editing.'
-	String get remindersHint => 'Default for money items. You can override per item when editing.';
+	/// en: 'Default for money items. You can override per item when editing. Calendar reminders still use their own on-time / day-before switches.'
+	String get remindersHint => 'Default for money items. You can override per item when editing. Calendar reminders still use their own on-time / day-before switches.';
 
 	/// en: 'Due day only'
 	String get reminderExactDay => 'Due day only';
@@ -870,11 +920,23 @@ class Translations$settings$en {
 	/// en: '7 days'
 	String get reminderDay7 => '7 days';
 
+	/// en: '3 days'
+	String get reminderDay3 => '3 days';
+
 	/// en: '2 days'
 	String get reminderDay2 => '2 days';
 
 	/// en: '1 day'
 	String get reminderDay1 => '1 day';
+
+	/// en: 'Custom (1–30)'
+	String get reminderCustomDay => 'Custom (1–30)';
+
+	/// en: 'Add'
+	String get reminderAddDay => 'Add';
+
+	/// en: 'Fires at 09:00.'
+	String get reminderTimeHint => 'Fires at 09:00.';
 }
 
 // Path: app.currency
@@ -1135,6 +1197,42 @@ class Translations$money$installmentState$en {
 	String get upcoming => 'Upcoming';
 }
 
+// Path: money.reminder
+class Translations$money$reminder$en {
+	Translations$money$reminder$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Reminders'
+	String get title => 'Reminders';
+
+	/// en: 'Use app default'
+	String get defaultPolicy => 'Use app default';
+
+	/// en: 'Due day only'
+	String get exactDay => 'Due day only';
+
+	/// en: 'Custom range'
+	String get customRange => 'Custom range';
+
+	/// en: 'Days before'
+	String get daysBefore => 'Days before';
+
+	/// en: '7 days'
+	String get day7 => '7 days';
+
+	/// en: '3 days'
+	String get day3 => '3 days';
+
+	/// en: '2 days'
+	String get day2 => '2 days';
+
+	/// en: '1 day'
+	String get day1 => '1 day';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -1221,10 +1319,11 @@ extension on Translations {
 			'home.payAndReceive' => 'Give and take',
 			'home.offlineBlurb' => 'Installments, receivables, and reminders — all on this device.',
 			'home.emptyTitle' => 'Quiet week',
-			'home.emptyBody' => 'Nothing is due in the next seven days.',
+			'home.emptyBody' => 'Nothing is due this week.',
+			'home.emptyThisMonth' => 'Nothing else is due this month.',
 			'home.loadError' => 'Could not read local data.',
 			'home.dueThisWeek' => 'This week',
-			'home.dueThisMonth' => 'This month',
+			'home.dueThisMonth' => 'Due this month',
 			'home.overdue' => 'Overdue',
 			'home.whoOwes' => 'Who owes what',
 			'home.emptyBalances' => 'No open balances.',
@@ -1234,7 +1333,7 @@ extension on Translations {
 			'home.fabReceive' => 'Owed to me',
 			'home.settings' => 'Settings',
 			'home.profile' => 'Profile',
-			'home.reportTitle' => 'This month',
+			'home.reportTitle' => 'Month snapshot',
 			'home.paidOut' => ({required Object amount}) => 'Paid ${amount}',
 			'home.paidIn' => ({required Object amount}) => 'Received ${amount}',
 			'home.stillOwe' => ({required Object amount}) => 'Still to pay ${amount}',
@@ -1248,6 +1347,8 @@ extension on Translations {
 			'home.capStillOwe' => 'To pay',
 			'home.capDueByEnd' => 'Due this month',
 			'home.sectionCount' => ({required Object count}) => '${count} items',
+			'home.sectionShowMore' => 'Show list',
+			'home.sectionCollapse' => 'Hide list',
 			'home.quickPay' => 'Pay',
 			'home.quickReceive' => 'Receive',
 			'home.quickPayConfirmTitle' => 'Record payment?',
@@ -1349,7 +1450,7 @@ extension on Translations {
 			'money.shareSubject' => ({required Object name}) => 'Statement: ${name}',
 			'money.shareFailed' => 'Could not open the share sheet.',
 			'money.dueTitle' => 'Due today',
-			'money.dueSoonTitle' => 'Due tomorrow',
+			'money.dueSoonTitle' => 'Coming due',
 			'money.dueBody' => ({required Object title}) => '${title}',
 			'money.dueBodyInstallment' => ({required Object title, required Object index}) => '${title} — installment ${index}',
 			'money.scheduleTitle' => 'Installment schedule',
@@ -1366,6 +1467,17 @@ extension on Translations {
 			'money.viewParty' => 'View party',
 			'money.partyLink' => 'Open party',
 			'money.jumpToPayment' => 'Jump to payment',
+			'money.notificationActionMarkPaid' => 'Mark paid',
+			'money.notificationActionRemindTomorrow' => 'Tomorrow',
+			'money.reminder.title' => 'Reminders',
+			'money.reminder.defaultPolicy' => 'Use app default',
+			'money.reminder.exactDay' => 'Due day only',
+			'money.reminder.customRange' => 'Custom range',
+			'money.reminder.daysBefore' => 'Days before',
+			'money.reminder.day7' => '7 days',
+			'money.reminder.day3' => '3 days',
+			'money.reminder.day2' => '2 days',
+			'money.reminder.day1' => '1 day',
 			'notes.title' => 'Notes',
 			'notes.fab' => 'Note',
 			'notes.emptyTitle' => 'No notes yet',
@@ -1405,13 +1517,24 @@ extension on Translations {
 			'profile.assetsTotal' => ({required Object amount}) => 'Total assets: ${amount}',
 			'profile.openDebts' => ({required Object amount}) => 'Open debts: ${amount}',
 			'profile.openReceivables' => ({required Object amount}) => 'Open receivables: ${amount}',
+			'profile.utilization' => ({required Object percent}) => 'Short-term debts are ${percent} of assets',
 			'profile.emptyAssets' => 'No asset accounts yet.',
 			'profile.addAsset' => 'Add account',
+			'profile.editAsset' => 'Edit account',
+			'profile.deleteAsset' => 'Delete account',
+			'profile.deleteAssetConfirm' => 'Remove this asset account?',
 			'profile.assetName' => 'Name',
 			'profile.assetBalance' => 'Balance',
+			'profile.assetKind' => 'Type',
 			'profile.kindCash' => 'Cash',
 			'profile.kindBank' => 'Bank',
+			'profile.kindGold' => 'Gold',
 			'profile.kindOther' => 'Other',
+			'profile.accountSoon' => 'Account',
+			'profile.accountSoonHint' => 'Sign-in will live here later. Everything stays on this device for now.',
+			'profile.privacyLock' => 'Privacy lock',
+			'profile.privacyLockHint' => 'Optional lock for profile only — not implemented yet.',
+			'profile.version' => ({required Object version}) => 'Version ${version}',
 			'settings.title' => 'Settings',
 			'settings.theme' => 'Theme',
 			'settings.language' => 'Language',
@@ -1435,13 +1558,17 @@ extension on Translations {
 			'settings.privacy' => 'Privacy',
 			'settings.privacyBody' => 'Everything stays on this phone. No account, no cloud, no tracking.',
 			'settings.reminders' => 'Due reminders',
-			'settings.remindersHint' => 'Default for money items. You can override per item when editing.',
+			'settings.remindersHint' => 'Default for money items. You can override per item when editing. Calendar reminders still use their own on-time / day-before switches.',
 			'settings.reminderExactDay' => 'Due day only',
 			'settings.reminderRange' => 'Before + due day',
 			'settings.reminderDaysBefore' => 'Days before',
 			'settings.reminderDay7' => '7 days',
+			'settings.reminderDay3' => '3 days',
 			'settings.reminderDay2' => '2 days',
 			'settings.reminderDay1' => '1 day',
+			'settings.reminderCustomDay' => 'Custom (1–30)',
+			'settings.reminderAddDay' => 'Add',
+			'settings.reminderTimeHint' => 'Fires at 09:00.',
 			_ => null,
 		};
 	}

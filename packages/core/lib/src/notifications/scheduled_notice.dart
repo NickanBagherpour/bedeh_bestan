@@ -11,6 +11,8 @@ final class ScheduledNotice {
     required this.route,
     this.moneyItemId,
     this.enablePaymentActions = false,
+    this.payActionLabel,
+    this.snoozeActionLabel,
   });
 
   final int id;
@@ -20,4 +22,6 @@ final class ScheduledNotice {
   final String route;
   final String? moneyItemId;
   final bool enablePaymentActions;
+  final String? payActionLabel;
+  final String? snoozeActionLabel;
 }
