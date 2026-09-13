@@ -1,4 +1,4 @@
-import 'package:core/core.dart' show AppRoutes, buildRoutePage;
+import 'package:core/core.dart' show AppRoutes, buildTabPage;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -11,7 +11,7 @@ List<RouteBase> buildHomeRoutes(Ref ref) {
       path: AppRoutes.home.path,
       name: AppRoutes.home.name,
       pageBuilder: (context, state) =>
-          buildRoutePage(state: state, child: const HomePage()),
+          buildTabPage(state: state, child: const HomePage()),
     ),
   ];
 }

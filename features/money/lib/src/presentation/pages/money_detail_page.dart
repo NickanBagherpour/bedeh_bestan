@@ -726,15 +726,29 @@ class _InstallmentRowCard extends StatelessWidget {
               ],
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+          Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              MoneyStatusChip(label: stateLabel, color: stateColor),
-              if (onSettle != null)
-                FilledButton.tonal(
+              if (onSettle != null) ...[
+                TextButton(
+                  style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    minimumSize: Size.zero,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.xs,
+                      vertical: AppSpacing.xxs,
+                    ),
+                    textStyle: theme.textTheme.labelMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                   onPressed: busy ? null : onSettle,
                   child: Text(settleLabel),
                 ),
+                const SizedBox(width: AppSpacing.xxs),
+              ],
+              MoneyStatusChip(label: stateLabel, color: stateColor),
             ],
           ),
         ],

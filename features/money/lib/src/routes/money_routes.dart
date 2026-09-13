@@ -1,4 +1,4 @@
-import 'package:core/core.dart' show AppRoutes, buildRoutePage;
+import 'package:core/core.dart' show AppRoutes, buildRoutePage, buildTabPage;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:local_db/local_db.dart' show MoneyDirection;
@@ -16,7 +16,7 @@ List<RouteBase> buildMoneyRoutes(Ref ref) {
       path: AppRoutes.money.path,
       name: AppRoutes.money.name,
       pageBuilder: (context, state) =>
-          buildRoutePage(state: state, child: const MoneyPage()),
+          buildTabPage(state: state, child: const MoneyPage()),
     ),
   ];
 }

@@ -1,4 +1,4 @@
-import 'package:core/core.dart' show AppRoutes, buildRoutePage;
+import 'package:core/core.dart' show AppRoutes, buildRoutePage, buildTabPage;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -12,7 +12,7 @@ List<RouteBase> buildNotesRoutes(Ref ref) {
       path: AppRoutes.notes.path,
       name: AppRoutes.notes.name,
       pageBuilder: (context, state) =>
-          buildRoutePage(state: state, child: const NotesPage()),
+          buildTabPage(state: state, child: const NotesPage()),
     ),
   ];
 }
