@@ -3,6 +3,11 @@
 ## [1.0.4] - 2026-09-14
 
 ### Added
+- enhance notification handling with new action receiver and background processing
+
+## [1.0.4] - 2026-09-14
+
+### Added
 - integrate profile feature into bottom navigation and enhance UI
 
 ## [1.0.3] - 2026-09-13
