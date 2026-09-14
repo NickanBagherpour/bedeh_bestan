@@ -1,10 +1,15 @@
 import 'package:core/core.dart'
-    show appStorageProvider, decodeNoticePayload;
+    show
+        appSettingsProvider,
+        appStorageProvider,
+        decodeNoticePayload,
+        notificationSchedulerProvider;
 import 'package:feature_money/money.dart'
     show
         MoneyNotificationActionResult,
         applyMoneyNotificationAction,
-        moneySnoozeTickProvider;
+        moneySnoozeTickProvider,
+        syncMoneyNoticesNow;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_db/local_db.dart' show appDatabaseProvider;
 
@@ -22,12 +27,25 @@ Future<void> handleNotificationPayload(
       actionId.isNotEmpty &&
       itemId != null &&
       (actionId == 'pay' || actionId == 'snooze')) {
+    final database = container.read(appDatabaseProvider);
+    final storage = container.read(appStorageProvider);
     final result = await applyMoneyNotificationAction(
-      database: container.read(appDatabaseProvider),
-      storage: container.read(appStorageProvider),
+      database: database,
+      storage: storage,
       actionId: actionId,
       moneyItemId: itemId,
     );
+    if (result == MoneyNotificationActionResult.paid ||
+        result == MoneyNotificationActionResult.snoozed) {
+      final settings = container.read(appSettingsProvider);
+      await syncMoneyNoticesNow(
+        database: database,
+        storage: storage,
+        scheduler: container.read(notificationSchedulerProvider),
+        appPolicy: settings.moneyReminderPolicy,
+        calendar: settings.resolvedCalendar,
+      );
+    }
     if (result == MoneyNotificationActionResult.snoozed) {
       container.read(moneySnoozeTickProvider.notifier).bump();
     }

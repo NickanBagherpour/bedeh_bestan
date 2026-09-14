@@ -19,6 +19,7 @@ void notificationTapBackground(NotificationResponse response) {
   unawaited(handleBackgroundNotificationResponse(response));
 }
 
+@pragma('vm:entry-point')
 Future<void> handleBackgroundNotificationResponse(
   NotificationResponse response,
 ) async {
