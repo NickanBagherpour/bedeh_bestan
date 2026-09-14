@@ -13,6 +13,11 @@
 #   store/bazaar_sign.sh [path/to/app.aab]
 #     (no arg = newest *.aab in store/builds/)
 #
+# Output is always named after the AAB stem, e.g.
+#   store/builds/bedebestan-1.0.1-3.aab  ->  store/builds/bedebestan-1.0.1-3.bin
+# genbin itself writes a generic name (bedebestan-<versionCode>.bin) which would
+# overwrite the previous release; we rename so history in store/builds/ is kept.
+#
 # Env overrides:
 #   JAR         path to bundlesigner-*.jar   (default: newest in store/)
 #   V2          v2 signing enabled           (default: true)
@@ -45,6 +50,10 @@ if [[ -z "$AAB" ]]; then
   AAB="$(ls -t "$BUILDS_DIR"/*.aab 2>/dev/null | head -1 || true)"
 fi
 [[ -n "$AAB" && -f "$AAB" ]] || die "No AAB given and none found in store/builds/. Build one first (store/release.sh)."
+AAB_BASE="$(basename "$AAB")"
+[[ "$AAB_BASE" == *.aab ]] || die "Expected an .aab, got: $AAB"
+AAB_STEM="${AAB_BASE%.aab}"
+TARGET_BIN="$BUILDS_DIR/${AAB_STEM}.bin"
 
 # Load keystore config.
 [[ -f "$KEY_PROPS" ]] || die "Missing $KEY_PROPS (run store/create_keystore.sh)."
@@ -63,24 +72,25 @@ esac
 printf '%s==>%s Signing for Cafe Bazaar\n' "$B" "$N"
 printf '    aab : %s\n' "$AAB"
 printf '    ks  : %s (alias %s)\n' "$STORE_FILE" "$KEY_ALIAS"
-printf '    v2=%s v3=%s -> bin dir %s\n' "$V2" "$V3" "$BUILDS_DIR"
+printf '    v2=%s v3=%s -> %s\n' "$V2" "$V3" "$TARGET_BIN"
 
 mkdir -p "$BUILDS_DIR"
+BIN_TMP="$(mktemp -d "${TMPDIR:-/tmp}/bazaar-bin.XXXXXX")"
+cleanup() { rm -rf "$BIN_TMP"; unset BB_KS_PASS BB_KEY_PASS; }
+trap cleanup EXIT
 
 java -jar "$JAR" genbin -v \
   --v2-signing-enabled "$V2" \
   --v3-signing-enabled "$V3" \
   --bundle "$AAB" \
-  --bin "$BUILDS_DIR" \
+  --bin "$BIN_TMP" \
   --ks "$STORE_FILE" \
   --ks-key-alias "$KEY_ALIAS" \
   --ks-pass "env:BB_KS_PASS" \
   --key-pass "env:BB_KEY_PASS"
 
-# Report the produced .bin (genbin names it after the bundle).
-BIN="$(ls -t "$BUILDS_DIR"/*.bin 2>/dev/null | head -1 || true)"
-if [[ -n "$BIN" ]]; then
-  printf '%s✓%s Upload this .bin to Bazaar: %s%s%s\n' "$G" "$N" "$B" "$BIN" "$N"
-else
-  printf '%s!!%s genbin finished but no .bin found in %s\n' "$Y" "$N" "$BUILDS_DIR"
-fi
+PRODUCED="$(ls -1 "$BIN_TMP"/*.bin 2>/dev/null | head -1 || true)"
+[[ -n "$PRODUCED" && -f "$PRODUCED" ]] || die "genbin finished but produced no .bin"
+
+mv -f "$PRODUCED" "$TARGET_BIN"
+printf '%s✓%s Upload this .bin to Bazaar: %s%s%s\n' "$G" "$N" "$B" "$TARGET_BIN" "$N"

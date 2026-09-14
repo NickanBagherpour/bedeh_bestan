@@ -37,8 +37,13 @@ Android reads these automatically (`flutter.versionName` / `flutter.versionCode`
 
 - **versionName** — bump per [SemVer](https://semver.org/): `patch` for fixes, `minor`
   for features, `major` for breaking changes.
-- **versionCode** — the integer after `+`. Every store upload needs a strictly higher
-  value. `release.sh` auto-increments it.
+- **versionCode** (`W` in `X.Y.Z+W`) — every store upload needs a strictly higher
+  value. `release.sh` picks it like this:
+  - same `X.Y.Z` as current (`--version 1.0.4` while already on `1.0.4+2`) → `W+1`
+  - new `X.Y.Z` (`--version 1.0.5` or `--bump`) → `W` starts at `1` again
+  - override with `--version 1.0.5+4` or `--build 4`
+  - if the new `W` is not greater than the current one, the script warns: Bazaar /
+    Play / Myket will reject the upload (pass `--build N` with `N` higher)
 
 The melos sub-packages are `publish_to: none`; only the app version matters for stores.
 
@@ -75,23 +80,26 @@ copies them to `store/builds/`, then commits and tags.
 
 ### What it does, in order
 
-1. Compute versions (`--version X.Y.Z` or `--bump patch|minor|major`; auto build number).
+1. Compute versions (`--version X.Y.Z[+W]` or `--bump patch|minor|major`).
+   Same name increments `W`; a new name starts `W` at 1 (`--build` overrides).
 2. Guard against a dirty working tree (`--allow-dirty` stages only release files).
 3. Verify gate: `flutter pub get && flutter analyze && flutter test --exclude-tags store`.
    Store screenshots stay off unless you pass `--screenshots`.
 4. Bump `pubspec.yaml`; sync the version line in `store/LISTING.md`.
 5. Regenerate `CHANGELOG.md` from git history since the last tag.
 6. Build the requested artifacts → `store/builds/bedebestan-<ver>-<build>.{apk,aab}`.
-7. With `--bazaar`, sign the AAB into a `.bin` (see below).
+7. With `--bazaar`, sign the AAB into `store/builds/bedebestan-<ver>-<build>.bin`
+   (genbin's generic `bedebestan-<versionCode>.bin` is renamed so releases do not
+   overwrite each other).
 8. Commit `chore(release): vX.Y.Z` and create annotated tag `vX.Y.Z`.
 
 ### Options
 
 | Flag | Meaning |
 |---|---|
-| `--version X.Y.Z` | Explicit version name |
+| `--version X.Y.Z[+W]` | Explicit version name, optional build |
 | `--bump patch\|minor\|major` | Bump instead of explicit (default `patch`) |
-| `--build N` | Explicit build number (default: current + 1) |
+| `--build N` | Explicit build number (default: `W+1` on the same name, `1` on a new name) |
 | `--apk` / `--aab` / `--web` | Pick build targets (default: `apk`+`aab`) |
 | `--all` | apk + aab + web |
 | `--bazaar` | After the AAB, produce the Bazaar `.bin` |
@@ -121,7 +129,7 @@ directly.
 ```bash
 # Sign the newest AAB in store/builds/ (or pass a path):
 ./store/bazaar_sign.sh store/builds/bedebestan-1.0.1-3.aab
-# -> store/builds/<name>.bin
+# -> store/builds/bedebestan-1.0.1-3.bin
 
 # If Bazaar requires v3 signing:
 V3=true ./store/bazaar_sign.sh store/builds/bedebestan-1.0.1-3.aab
@@ -129,6 +137,7 @@ V3=true ./store/bazaar_sign.sh store/builds/bedebestan-1.0.1-3.aab
 
 Defaults to signing scheme `v2=true, v3=false` (matching Bazaar's own example). The
 script reads alias + passwords from `key.properties` and passes them via env vars.
+The `.bin` is always named after the AAB stem so each release keeps its own file.
 
 ---
 

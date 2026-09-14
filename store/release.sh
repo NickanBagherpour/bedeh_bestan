@@ -10,9 +10,10 @@
 #   store/release.sh [options]
 #
 # Version selection (pick one; default: --bump patch):
-#   --version X.Y.Z     Set an explicit version name (e.g. 1.0.1)
+#   --version X.Y.Z[+W] Set version name, optionally with an explicit build.
+#                       Same X.Y.Z increments W; a new X.Y.Z starts W at 1.
 #   --bump patch|minor|major
-#   --build N           Explicit build number (default: current build + 1)
+#   --build N           Explicit build number (overrides the W rules above)
 #
 # Build targets (if none given, defaults to --apk --aab):
 #   --apk               Build release APK (Cafe Bazaar / Myket)
@@ -66,7 +67,7 @@ ok()   { printf '%s✓ %s%s\n'  "$GRN" "$*" "$RST"; }
 BUMP="patch"; VERSION=""; BUILD_NUM=""
 DO_APK=0; DO_AAB=0; DO_WEB=0; DO_BUILD=1; DO_BAZAAR=0
 VERIFY=1; DO_SCREENSHOTS=0; DO_TAG=1; ALLOW_DIRTY=0; PUSH=0; DRY_RUN=0
-usage() { sed -n '2,32p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0; }
+usage() { sed -n '2,33p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0; }
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -121,6 +122,14 @@ CUR_BUILD="${CUR_FULL##*+}"
 [[ "$CUR_FULL" == *+* ]] || CUR_BUILD=0
 [[ "$CUR_BUILD" =~ ^[0-9]+$ ]] || die "Cannot parse build number from '$CUR_FULL'"
 
+# --version may be X.Y.Z or X.Y.Z+W (the +W is an explicit build unless --build).
+if [[ -n "$VERSION" && "$VERSION" == *+* ]]; then
+  VERSION_BUILD="${VERSION##*+}"
+  VERSION="${VERSION%%+*}"
+  [[ "$VERSION_BUILD" =~ ^[0-9]+$ ]] || die "Build number in --version must be an integer, got '$VERSION_BUILD'"
+  BUILD_NUM="${BUILD_NUM:-$VERSION_BUILD}"
+fi
+
 if [[ -z "$VERSION" ]]; then
   IFS='.' read -r MAJ MIN PAT <<<"$CUR_NAME"
   [[ "$MAJ" =~ ^[0-9]+$ && "$MIN" =~ ^[0-9]+$ && "$PAT" =~ ^[0-9]+$ ]] \
@@ -133,13 +142,30 @@ if [[ -z "$VERSION" ]]; then
   esac
   VERSION="$MAJ.$MIN.$PAT"
 fi
-[[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || die "Version must be X.Y.Z, got '$VERSION'"
+[[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || die "Version must be X.Y.Z or X.Y.Z+W, got '$VERSION'"
 
-NEW_BUILD="${BUILD_NUM:-$((CUR_BUILD+1))}"
+if [[ -n "$BUILD_NUM" ]]; then
+  NEW_BUILD="$BUILD_NUM"
+elif [[ "$VERSION" == "$CUR_NAME" ]]; then
+  NEW_BUILD=$((CUR_BUILD+1))
+else
+  NEW_BUILD=1
+fi
 [[ "$NEW_BUILD" =~ ^[0-9]+$ ]] || die "Build number must be an integer"
-(( NEW_BUILD > CUR_BUILD )) || warn "New build ($NEW_BUILD) not greater than current ($CUR_BUILD); stores will reject it."
+if (( NEW_BUILD <= CUR_BUILD )); then
+  warn "New build ($NEW_BUILD) is not greater than current ($CUR_BUILD); stores will reject it."
+  warn "Pass --build N (N > $CUR_BUILD) if this upload must succeed."
+fi
 NEW_FULL="$VERSION+$NEW_BUILD"
 TAG="v$VERSION"
+if git rev-parse "$TAG" >/dev/null 2>&1; then
+  if [[ "$VERSION" == "$CUR_NAME" ]]; then
+    TAG="v$NEW_FULL"
+    warn "Tag v$VERSION already exists; tagging $TAG for this build instead."
+  else
+    die "Tag $TAG already exists."
+  fi
+fi
 
 step "Release plan"
 info "current : $CUR_FULL"
@@ -151,10 +177,6 @@ targets=""
 [[ $DO_BUILD -eq 0 ]] && targets=" (none)"
 info "build   :${targets:-" (none)"}"
 info "verify  : $([[ $VERIFY -eq 1 ]] && echo yes || echo no)   screenshots: $([[ $DO_SCREENSHOTS -eq 1 ]] && echo yes || echo no)   tag/commit: $([[ $DO_TAG -eq 1 ]] && echo yes || echo no)   push: $([[ $PUSH -eq 1 ]] && echo yes || echo no)"
-
-if git rev-parse "$TAG" >/dev/null 2>&1; then
-  die "Tag $TAG already exists."
-fi
 
 # ---------------------------------------------------------------------------
 # 2. Working tree check
@@ -315,4 +337,5 @@ fi
 
 step "Done — $NEW_FULL"
 [[ $DO_AAB -eq 1 ]] && info "Play (AAB): store/builds/bedebestan-$VERSION-$NEW_BUILD.aab"
+[[ $DO_BAZAAR -eq 1 ]] && info "Bazaar (.bin): store/builds/bedebestan-$VERSION-$NEW_BUILD.bin"
 [[ $DO_APK -eq 1 ]] && info "Bazaar/Myket (APK): store/builds/bedebestan-$VERSION-$NEW_BUILD.apk"
