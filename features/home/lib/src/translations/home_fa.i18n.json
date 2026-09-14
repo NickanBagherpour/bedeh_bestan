@@ -30,6 +30,8 @@
   "capStillOwe": "مانده بدهی",
   "capDueByEnd": "سررسید این ماه",
   "sectionCount": "$count مورد",
+  "summaryPay": "بدهی $amount",
+  "summaryReceive": "طلب $amount",
   "sectionShowMore": "نمایش فهرست",
   "sectionCollapse": "بستن فهرست",
   "quickPay": "پرداخت",

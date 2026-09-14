@@ -30,6 +30,8 @@
   "capStillOwe": "To pay",
   "capDueByEnd": "Due this month",
   "sectionCount": "$count items",
+  "summaryPay": "Pay $amount",
+  "summaryReceive": "Collect $amount",
   "sectionShowMore": "Show list",
   "sectionCollapse": "Hide list",
   "quickPay": "Pay",

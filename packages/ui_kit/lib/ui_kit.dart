@@ -9,6 +9,7 @@ export 'src/theme/app_motion.dart';
 export 'src/theme/app_spacing.dart';
 export 'src/theme/app_theme.dart';
 export 'src/theme/app_typography.dart';
+export 'src/theme/kit_glass.dart';
 export 'src/theme/kit_surface_style.dart';
 export 'src/widgets/kit_card.dart';
 export 'src/widgets/kit_confirm_dialog.dart';

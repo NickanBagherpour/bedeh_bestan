@@ -151,6 +151,8 @@ class _Translations$home$fa extends Translations$home$en {
 	@override String get capStillOwe => 'مانده بدهی';
 	@override String get capDueByEnd => 'سررسید این ماه';
 	@override String sectionCount({required Object count}) => '${count} مورد';
+	@override String summaryPay({required Object amount}) => 'بدهی ${amount}';
+	@override String summaryReceive({required Object amount}) => 'طلب ${amount}';
 	@override String get sectionShowMore => 'نمایش فهرست';
 	@override String get sectionCollapse => 'بستن فهرست';
 	@override String get quickPay => 'پرداخت';
@@ -325,14 +327,10 @@ class _Translations$profile$fa extends Translations$profile$en {
 
 	// Translations
 	@override String get title => 'پروفایل';
-	@override String get assets => 'دارایی‌ها';
-	@override String get assetsHint => 'موجودی دستی و وضعیت مالی';
-	@override String get netWorth => 'وضعیت خالص';
-	@override String assetsTotal({required Object amount}) => 'جمع دارایی: ${amount}';
-	@override String openDebts({required Object amount}) => 'بدهی باز: ${amount}';
-	@override String openReceivables({required Object amount}) => 'طلب باز: ${amount}';
-	@override String utilization({required Object percent}) => 'بدهی کوتاه‌مدت ${percent} دارایی‌هاست';
-	@override String get emptyAssets => 'هنوز حساب دارایی ندارید.';
+	@override String get assets => 'حساب‌ها';
+	@override String get assetsHint => 'موجودی حساب‌های شما';
+	@override String get totalBalance => 'موجودی کل';
+	@override String get emptyAssets => 'هنوز حسابی ندارید.';
 	@override String get addAsset => 'افزودن حساب';
 	@override String get editAsset => 'ویرایش حساب';
 	@override String get deleteAsset => 'حذف حساب';
@@ -419,6 +417,7 @@ class _Translations$app$nav$fa extends Translations$app$nav$en {
 	@override String get money => 'حساب';
 	@override String get calendar => 'تقویم';
 	@override String get notes => 'یادداشت';
+	@override String get profile => 'پروفایل';
 }
 
 // Path: app.language
@@ -604,6 +603,7 @@ extension on TranslationsFa {
 			'app.nav.money' => 'حساب',
 			'app.nav.calendar' => 'تقویم',
 			'app.nav.notes' => 'یادداشت',
+			'app.nav.profile' => 'پروفایل',
 			'app.language.label' => 'زبان',
 			'app.language.en' => 'انگلیسی',
 			'app.language.fa' => 'فارسی',
@@ -701,6 +701,8 @@ extension on TranslationsFa {
 			'home.capStillOwe' => 'مانده بدهی',
 			'home.capDueByEnd' => 'سررسید این ماه',
 			'home.sectionCount' => ({required Object count}) => '${count} مورد',
+			'home.summaryPay' => ({required Object amount}) => 'بدهی ${amount}',
+			'home.summaryReceive' => ({required Object amount}) => 'طلب ${amount}',
 			'home.sectionShowMore' => 'نمایش فهرست',
 			'home.sectionCollapse' => 'بستن فهرست',
 			'home.quickPay' => 'پرداخت',
@@ -865,14 +867,10 @@ extension on TranslationsFa {
 			'notes.searchParty' => 'جستجوی طرف حساب',
 			'notes.searchMoney' => 'جستجوی حساب',
 			'profile.title' => 'پروفایل',
-			'profile.assets' => 'دارایی‌ها',
-			'profile.assetsHint' => 'موجودی دستی و وضعیت مالی',
-			'profile.netWorth' => 'وضعیت خالص',
-			'profile.assetsTotal' => ({required Object amount}) => 'جمع دارایی: ${amount}',
-			'profile.openDebts' => ({required Object amount}) => 'بدهی باز: ${amount}',
-			'profile.openReceivables' => ({required Object amount}) => 'طلب باز: ${amount}',
-			'profile.utilization' => ({required Object percent}) => 'بدهی کوتاه‌مدت ${percent} دارایی‌هاست',
-			'profile.emptyAssets' => 'هنوز حساب دارایی ندارید.',
+			'profile.assets' => 'حساب‌ها',
+			'profile.assetsHint' => 'موجودی حساب‌های شما',
+			'profile.totalBalance' => 'موجودی کل',
+			'profile.emptyAssets' => 'هنوز حسابی ندارید.',
 			'profile.addAsset' => 'افزودن حساب',
 			'profile.editAsset' => 'ویرایش حساب',
 			'profile.deleteAsset' => 'حذف حساب',

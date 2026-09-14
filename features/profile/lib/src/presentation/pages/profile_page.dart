@@ -1,4 +1,4 @@
-import 'package:core/core.dart' show AppRoutes, overlayAppBar;
+import 'package:core/core.dart' show AppRoutes;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -13,11 +13,10 @@ class ProfilePage extends StatelessWidget {
     final t = Translations.of(context);
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: overlayAppBar(
-        context: context,
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
         title: Text(t.profile.title),
-        fallbackPath: AppRoutes.home.path,
-        backTooltip: t.app.actions.back,
       ),
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),

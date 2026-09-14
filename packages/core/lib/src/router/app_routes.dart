@@ -52,7 +52,7 @@ abstract final class AppRoutes {
       AppRoute(name: 'profileAssets', path: '/profile/assets');
 
   /// Primary destinations in bottom-nav order.
-  static const List<AppRoute> primary = [home, money, calendar, notes];
+  static const List<AppRoute> primary = [home, money, calendar, notes, profile];
 
   static const List<AppRoute> all = [
     home,
@@ -123,6 +123,10 @@ abstract final class AppRoutes {
     if (normalized == notes.path ||
         normalized.startsWith('${notes.path}/')) {
       return notes;
+    }
+    if (normalized == profile.path ||
+        normalized.startsWith('${profile.path}/')) {
+      return profile;
     }
     return home;
   }

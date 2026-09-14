@@ -295,6 +295,12 @@ class Translations$home$en {
 	/// en: '$count items'
 	String sectionCount({required Object count}) => '${count} items';
 
+	/// en: 'Pay $amount'
+	String summaryPay({required Object amount}) => 'Pay ${amount}';
+
+	/// en: 'Collect $amount'
+	String summaryReceive({required Object amount}) => 'Collect ${amount}';
+
 	/// en: 'Show list'
 	String get sectionShowMore => 'Show list';
 
@@ -756,29 +762,17 @@ class Translations$profile$en {
 	/// en: 'Profile'
 	String get title => 'Profile';
 
-	/// en: 'Assets'
-	String get assets => 'Assets';
+	/// en: 'Accounts'
+	String get assets => 'Accounts';
 
-	/// en: 'Manual balances and net worth'
-	String get assetsHint => 'Manual balances and net worth';
+	/// en: 'Your account balances'
+	String get assetsHint => 'Your account balances';
 
-	/// en: 'Net position'
-	String get netWorth => 'Net position';
+	/// en: 'Total balance'
+	String get totalBalance => 'Total balance';
 
-	/// en: 'Total assets: $amount'
-	String assetsTotal({required Object amount}) => 'Total assets: ${amount}';
-
-	/// en: 'Open debts: $amount'
-	String openDebts({required Object amount}) => 'Open debts: ${amount}';
-
-	/// en: 'Open receivables: $amount'
-	String openReceivables({required Object amount}) => 'Open receivables: ${amount}';
-
-	/// en: 'Short-term debts are $percent of assets'
-	String utilization({required Object percent}) => 'Short-term debts are ${percent} of assets';
-
-	/// en: 'No asset accounts yet.'
-	String get emptyAssets => 'No asset accounts yet.';
+	/// en: 'No accounts yet.'
+	String get emptyAssets => 'No accounts yet.';
 
 	/// en: 'Add account'
 	String get addAsset => 'Add account';
@@ -983,6 +977,9 @@ class Translations$app$nav$en {
 
 	/// en: 'Notes'
 	String get notes => 'Notes';
+
+	/// en: 'Profile'
+	String get profile => 'Profile';
 }
 
 // Path: app.language
@@ -1278,6 +1275,7 @@ extension on Translations {
 			'app.nav.money' => 'Accounts',
 			'app.nav.calendar' => 'Calendar',
 			'app.nav.notes' => 'Notes',
+			'app.nav.profile' => 'Profile',
 			'app.language.label' => 'Language',
 			'app.language.en' => 'English',
 			'app.language.fa' => 'Persian',
@@ -1375,6 +1373,8 @@ extension on Translations {
 			'home.capStillOwe' => 'To pay',
 			'home.capDueByEnd' => 'Due this month',
 			'home.sectionCount' => ({required Object count}) => '${count} items',
+			'home.summaryPay' => ({required Object amount}) => 'Pay ${amount}',
+			'home.summaryReceive' => ({required Object amount}) => 'Collect ${amount}',
 			'home.sectionShowMore' => 'Show list',
 			'home.sectionCollapse' => 'Hide list',
 			'home.quickPay' => 'Pay',
@@ -1539,14 +1539,10 @@ extension on Translations {
 			'notes.searchParty' => 'Search people',
 			'notes.searchMoney' => 'Search accounts',
 			'profile.title' => 'Profile',
-			'profile.assets' => 'Assets',
-			'profile.assetsHint' => 'Manual balances and net worth',
-			'profile.netWorth' => 'Net position',
-			'profile.assetsTotal' => ({required Object amount}) => 'Total assets: ${amount}',
-			'profile.openDebts' => ({required Object amount}) => 'Open debts: ${amount}',
-			'profile.openReceivables' => ({required Object amount}) => 'Open receivables: ${amount}',
-			'profile.utilization' => ({required Object percent}) => 'Short-term debts are ${percent} of assets',
-			'profile.emptyAssets' => 'No asset accounts yet.',
+			'profile.assets' => 'Accounts',
+			'profile.assetsHint' => 'Your account balances',
+			'profile.totalBalance' => 'Total balance',
+			'profile.emptyAssets' => 'No accounts yet.',
 			'profile.addAsset' => 'Add account',
 			'profile.editAsset' => 'Edit account',
 			'profile.deleteAsset' => 'Delete account',

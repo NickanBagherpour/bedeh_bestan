@@ -1,25 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_db/local_db.dart'
-    show AssetAccount, AssetAccountKind, MoneyDirection, MoneyItem, newEntityId;
+    show AssetAccount, AssetAccountKind, newEntityId;
 
 import '../data/assets_repository_provider.dart';
-
-int computeNetWorth({
-  required int totalAssets,
-  required int openPay,
-  required int openReceive,
-}) {
-  return totalAssets + openReceive - openPay;
-}
-
-/// Open بدهی as a fraction of assets. Null when there are no assets.
-double? debtUtilization({
-  required int totalAssets,
-  required int openPay,
-}) {
-  if (totalAssets <= 0) return null;
-  return openPay / totalAssets;
-}
 
 final assetsControllerProvider =
     NotifierProvider<AssetsController, AssetsState>(AssetsController.new);
@@ -27,66 +10,24 @@ final assetsControllerProvider =
 final class AssetsState {
   const AssetsState({
     this.accounts = const [],
-    this.openPay = 0,
-    this.openReceive = 0,
     this.loading = true,
   });
 
   final List<AssetAccount> accounts;
-  final int openPay;
-  final int openReceive;
   final bool loading;
 
-  int get totalAssets => accounts.fold<int>(0, (sum, a) => sum + a.balance);
-
-  int get netWorth => computeNetWorth(
-        totalAssets: totalAssets,
-        openPay: openPay,
-        openReceive: openReceive,
-      );
-
-  double? get utilization =>
-      debtUtilization(totalAssets: totalAssets, openPay: openPay);
+  /// Total money across all accounts. Zero when nothing has been added.
+  int get total => accounts.fold<int>(0, (sum, a) => sum + a.balance);
 }
 
 final class AssetsController extends Notifier<AssetsState> {
   @override
   AssetsState build() {
     final repo = ref.watch(assetsRepositoryProvider);
-    var accounts = <AssetAccount>[];
-    var items = <MoneyItem>[];
-
-    void emit() {
-      var pay = 0;
-      var receive = 0;
-      for (final item in items) {
-        if (item.isSettled) continue;
-        if (item.direction == MoneyDirection.pay) {
-          pay += item.remainingAmount;
-        } else {
-          receive += item.remainingAmount;
-        }
-      }
-      state = AssetsState(
-        accounts: accounts,
-        openPay: pay,
-        openReceive: receive,
-        loading: false,
-      );
-    }
-
-    final aSub = repo.watchAccounts().listen((value) {
-      accounts = value;
-      emit();
+    final sub = repo.watchAccounts().listen((accounts) {
+      state = AssetsState(accounts: accounts, loading: false);
     });
-    final mSub = repo.watchMoneyItems().listen((value) {
-      items = value;
-      emit();
-    });
-    ref.onDispose(() {
-      aSub.cancel();
-      mSub.cancel();
-    });
+    ref.onDispose(sub.cancel);
     return const AssetsState();
   }
 

@@ -34,7 +34,6 @@ import '../../application/state/home_state.dart';
 import '../widgets/home_balances_card.dart';
 import '../widgets/home_collapsible_section.dart';
 import '../widgets/home_due_list.dart';
-import '../widgets/home_report_card.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -71,26 +70,13 @@ class HomePage extends ConsumerWidget {
               title: t.app.appName,
               subtitle: t.app.subtitle,
               watermark: Icons.swap_horiz_rounded,
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    tooltip: t.home.profile,
-                    onPressed: () {
-                      AppHaptics.selection();
-                      context.push(AppRoutes.profile.path);
-                    },
-                    icon: const Icon(Icons.person_rounded, color: Colors.white),
-                  ),
-                  IconButton(
-                    tooltip: t.home.settings,
-                    onPressed: () {
-                      AppHaptics.selection();
-                      context.push(AppRoutes.settings.path);
-                    },
-                    icon: const Icon(Icons.settings_rounded, color: Colors.white),
-                  ),
-                ],
+              trailing: IconButton(
+                tooltip: t.home.settings,
+                onPressed: () {
+                  AppHaptics.selection();
+                  context.push(AppRoutes.settings.path);
+                },
+                icon: const Icon(Icons.settings_rounded, color: Colors.white),
               ),
               footer: Row(
                 children: [
@@ -278,11 +264,25 @@ class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
           : Icons.north_east_rounded;
     }
 
-    final periodStart = formatLongDate(d.report.periodStart, widget.calendar);
-    final periodEnd = formatLongDate(d.report.periodEnd, widget.calendar);
-    final rangeLabel = widget.persian
-        ? '${toPersianDigits(periodStart)} – ${toPersianDigits(periodEnd)}'
-        : '$periodStart – $periodEnd';
+    // Money summary for a section header: how much to pay / collect in it.
+    // The user cares about "how much do I owe this week / month", not a count.
+    String amountSummary(List<HomeDueRow> rows) {
+      var pay = 0;
+      var receive = 0;
+      for (final row in rows) {
+        if (row.direction == MoneyDirection.pay) {
+          pay += row.remainingAmount;
+        } else {
+          receive += row.remainingAmount;
+        }
+      }
+      final parts = <String>[
+        if (pay > 0) t.home.summaryPay(amount: money(pay)),
+        if (receive > 0) t.home.summaryReceive(amount: money(receive)),
+      ];
+      if (parts.isEmpty) return t.home.sectionCount(count: rows.length);
+      return parts.join(' · ');
+    }
 
     Widget dueList(
       List<HomeDueRow> rows, {
@@ -307,32 +307,13 @@ class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
 
     return Column(
       children: [
-      KitFadeIn(
-        child: HomeReportCard(
-          title: t.home.reportTitle,
-          periodRangeLabel: rangeLabel,
-          paidOutValue: money(d.report.paidOut),
-          paidInValue: money(d.report.paidIn),
-          duePayInMonthValue: money(d.report.duePayByPeriodEnd),
-          dueReceiveInMonthValue: money(d.report.dueReceiveByPeriodEnd),
-          openPayValue: money(d.report.remainingPay),
-          openReceiveValue: money(d.report.remainingReceive),
-          paidOutCaption: t.home.capPaidOut,
-          paidInCaption: t.home.capPaidIn,
-          duePayInMonthCaption: t.home.capDuePayMonth,
-          dueReceiveInMonthCaption: t.home.capDueReceiveMonth,
-          openPayCaption: t.home.capOpenPay,
-          openReceiveCaption: t.home.capOpenReceive,
-        ),
-      ),
-      const SizedBox(height: AppSpacing.md),
       if (d.overdue.isNotEmpty) ...[
         KitFadeIn(
           delay: const Duration(milliseconds: 40),
           child: HomeCollapsibleSection(
             title: t.home.overdue,
             icon: Icons.warning_amber_rounded,
-            summary: t.home.sectionCount(count: d.overdue.length),
+            summary: amountSummary(d.overdue),
             expandTooltip: t.home.sectionShowMore,
             collapseTooltip: t.home.sectionCollapse,
             expanded: _overdueExpanded,
@@ -351,7 +332,7 @@ class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
         child: HomeCollapsibleSection(
           title: t.home.dueThisWeek,
           icon: Icons.event_available_rounded,
-          summary: t.home.sectionCount(count: d.dueThisWeek.length),
+          summary: amountSummary(d.dueThisWeek),
           expandTooltip: t.home.sectionShowMore,
           collapseTooltip: t.home.sectionCollapse,
           expanded: _weekExpanded,
@@ -369,7 +350,7 @@ class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
         child: HomeCollapsibleSection(
           title: t.home.dueThisMonth,
           icon: Icons.calendar_month_rounded,
-          summary: t.home.sectionCount(count: d.dueThisMonth.length),
+          summary: amountSummary(d.dueThisMonth),
           expandTooltip: t.home.sectionShowMore,
           collapseTooltip: t.home.sectionCollapse,
           expanded: _monthExpanded,

@@ -47,7 +47,8 @@ void main() {
     expect(find.text('یادداشت'), findsOneWidget);
     expect(find.textContaining('این ماه'), findsWidgets);
     expect(find.byTooltip('تنظیمات'), findsOneWidget);
-    expect(find.byTooltip('پروفایل'), findsOneWidget);
+    // Profile is now a primary bottom-nav destination.
+    expect(find.text('پروفایل'), findsWidgets);
 
     await tester.tap(find.byIcon(Icons.calendar_month_outlined));
     await tester.pump();

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../haptics/app_haptics.dart';
 import '../theme/app_spacing.dart';
+import '../theme/kit_glass.dart';
 import '../theme/kit_surface_style.dart';
 
 /// Surface card for interactive or content groupings.
@@ -136,10 +137,11 @@ class KitCard extends StatelessWidget {
       alpha: isDark ? surface.surfaceAlpha + 0.06 : surface.surfaceAlpha,
     );
 
-    // Luminous edge: brighter at the top-left where the "light" hits.
-    final edgeColor = accent ?? Colors.white;
-    final border = edgeColor.withValues(
-      alpha: (accent != null ? 0.55 : (isDark ? 0.24 : 0.7)) * surface.borderAlpha,
+    // Luminous gradient rim — bright top-left, faint through the body, soft
+    // glow at the far edge. Tinted by [accent] when the card is categorized.
+    final borderGradient = kitGlassBorderGradient(
+      accent ?? Colors.white,
+      isDark: isDark,
     );
 
     // Diagonal glass sheen laid over the fill (behind the content).
@@ -209,12 +211,11 @@ class KitCard extends StatelessWidget {
       ),
     );
 
-    // Border drawn on top (foreground) so the blur can't soften the edge.
+    // Gradient rim drawn on top (foreground) so the blur can't soften it.
     final bordered = DecoratedBox(
       position: DecorationPosition.foreground,
-      decoration: BoxDecoration(
-        borderRadius: radius,
-        border: Border.all(color: border),
+      decoration: ShapeDecoration(
+        shape: KitGlassBorder(borderRadius: radius, gradient: borderGradient),
       ),
       child: glassBody,
     );

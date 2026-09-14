@@ -5,8 +5,7 @@ import 'package:core/core.dart'
         appSettingsProvider,
         formatStoredMoney,
         overlayAppBar,
-        parseStoredAmount,
-        toPersianDigits;
+        parseStoredAmount;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_db/local_db.dart' show AssetAccount, AssetAccountKind;
@@ -36,13 +35,6 @@ class AssetsPage extends ConsumerWidget {
           persianDigits: persian,
         );
 
-    final utilization = state.utilization;
-    final percent = utilization == null
-        ? null
-        : (persian
-            ? toPersianDigits('${(utilization * 100).round()}٪')
-            : '${(utilization * 100).round()}%');
-
     return Scaffold(
       appBar: overlayAppBar(
         context: context,
@@ -64,30 +56,16 @@ class AssetsPage extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        t.profile.netWorth,
+                        t.profile.totalBalance,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       Text(
-                        money(state.netWorth),
+                        money(state.total),
                         style: Theme.of(context)
                             .textTheme
                             .headlineSmall
                             ?.copyWith(fontWeight: FontWeight.w800),
                       ),
-                      const SizedBox(height: AppSpacing.sm),
-                      Text(
-                        t.profile.assetsTotal(amount: money(state.totalAssets)),
-                      ),
-                      Text(t.profile.openDebts(amount: money(state.openPay))),
-                      Text(
-                        t.profile.openReceivables(
-                          amount: money(state.openReceive),
-                        ),
-                      ),
-                      if (percent != null) ...[
-                        const SizedBox(height: AppSpacing.xs),
-                        Text(t.profile.utilization(percent: percent)),
-                      ],
                     ],
                   ),
                 ),
@@ -147,6 +125,7 @@ class AssetsPage extends ConsumerWidget {
                   controller: name,
                   decoration: InputDecoration(labelText: t.profile.assetName),
                 ),
+                const SizedBox(height: AppSpacing.sm),
                 TextField(
                   controller: balance,
                   keyboardType: TextInputType.number,

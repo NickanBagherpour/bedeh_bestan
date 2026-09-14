@@ -10,8 +10,10 @@ import 'package:ui_kit/ui_kit.dart'
         AppHaptics,
         AppMotion,
         AppSpacing,
+        KitGlassBorder,
         KitScreenBackground,
-        KitSurfaceStyle;
+        KitSurfaceStyle,
+        kitGlassBorderGradient;
 
 /// A single primary destination in the bottom navigation bar.
 class _Destination {
@@ -59,12 +61,24 @@ const List<_Destination> _destinations = [
     selectedIcon: Icons.sticky_note_2_rounded,
     gradient: AppGradients.pay,
   ),
+  _Destination(
+    route: AppRoutes.profile,
+    labelOf: _profileLabel,
+    icon: Icons.person_outline_rounded,
+    selectedIcon: Icons.person_rounded,
+    gradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFF7C6CF0), Color(0xFF5B56C7)],
+    ),
+  ),
 ];
 
 String _homeLabel(Translations t) => t.app.nav.home;
 String _moneyLabel(Translations t) => t.app.nav.money;
 String _calendarLabel(Translations t) => t.app.nav.calendar;
 String _notesLabel(Translations t) => t.app.nav.notes;
+String _profileLabel(Translations t) => t.app.nav.profile;
 
 /// Persistent navigation chrome shared by the four primary destinations.
 ///
@@ -134,15 +148,12 @@ class _FloatingNavBar extends StatelessWidget {
     final bgAlpha = glass
         ? (isDark ? 0.42 : 0.55)
         : (isDark ? 0.92 : 0.96);
-    final borderColor = glass
-        ? Colors.white.withValues(alpha: isDark ? 0.20 : 0.65)
-        : theme.dividerColor;
 
     Widget bar = DecoratedBox(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface.withValues(alpha: bgAlpha),
         borderRadius: radius,
-        border: Border.all(color: borderColor),
+        border: glass ? null : Border.all(color: theme.dividerColor),
         boxShadow: [
           BoxShadow(
             color: isDark
@@ -175,14 +186,23 @@ class _FloatingNavBar extends StatelessWidget {
     );
 
     if (glass) {
-      bar = ClipRRect(
-        borderRadius: radius,
-        child: BackdropFilter(
-          filter: ImageFilter.blur(
-            sigmaX: surface.blurSigma,
-            sigmaY: surface.blurSigma,
+      bar = DecoratedBox(
+        position: DecorationPosition.foreground,
+        decoration: ShapeDecoration(
+          shape: KitGlassBorder(
+            borderRadius: radius,
+            gradient: kitGlassBorderGradient(Colors.white, isDark: isDark),
           ),
-          child: bar,
+        ),
+        child: ClipRRect(
+          borderRadius: radius,
+          child: BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: surface.blurSigma,
+              sigmaY: surface.blurSigma,
+            ),
+            child: bar,
+          ),
         ),
       );
     }
