@@ -13,6 +13,9 @@ void main() {
     required DateTime due,
     int total = 1000,
     int paid = 0,
+    MoneySchedule schedule = MoneySchedule.oneTime,
+    int? installmentCount,
+    int? installmentAmount,
   }) {
     return MoneyItem(
       id: id,
@@ -21,7 +24,9 @@ void main() {
       title: id,
       totalAmount: total,
       paidAmount: paid,
-      schedule: MoneySchedule.oneTime,
+      schedule: schedule,
+      installmentCount: installmentCount,
+      installmentAmount: installmentAmount,
       startDate: due,
       nextDueDate: due,
       createdAt: now,
@@ -164,6 +169,8 @@ void main() {
     expect(dashboard.dueThisMonth.single.suggestedAmount, 4000);
     expect(dashboard.report.periodStart, DateTime(2026, 9, 1));
     expect(dashboard.report.periodEnd, DateTime(2026, 9, 30));
+    expect(dashboard.weekRange.start, DateTime(2026, 9, 11));
+    expect(dashboard.weekRange.endInclusive, DateTime(2026, 9, 17));
   });
 
   test('jalali month lists items in Shahrivar not Mehr', () {
@@ -205,5 +212,54 @@ void main() {
     expect(homeSectionExpandedByDefault(6), isFalse);
     expect(homeBalancesCollapsedByDefault(4), isFalse);
     expect(homeBalancesCollapsedByDefault(5), isTrue);
+  });
+
+  test('week and month due amounts use current installment not remaining', () {
+    final shop = Party(
+      id: 'shop',
+      name: 'فروشگاه',
+      kind: PartyKind.shop,
+      createdAt: now,
+      updatedAt: now,
+    );
+    final dashboard = buildHomeDashboard(
+      items: [
+        money(
+          id: 'week-installment',
+          partyId: shop.id,
+          direction: MoneyDirection.pay,
+          due: now.add(const Duration(days: 1)),
+          total: 10000000,
+          schedule: MoneySchedule.installment,
+          installmentCount: 10,
+          installmentAmount: 1000000,
+        ),
+        money(
+          id: 'month-installment',
+          partyId: shop.id,
+          direction: MoneyDirection.receive,
+          due: DateTime(2026, 9, 25),
+          total: 5000000,
+          schedule: MoneySchedule.installment,
+          installmentCount: 5,
+          installmentAmount: 1000000,
+        ),
+      ],
+      parties: [shop],
+      payments: const [],
+      now: now,
+      calendar: CalendarType.gregorian,
+    );
+
+    expect(dashboard.dueThisWeek.single.id, 'week-installment');
+    expect(dashboard.dueThisWeek.single.remainingAmount, 10000000);
+    expect(dashboard.dueThisWeek.single.suggestedAmount, 1000000);
+    expect(dashboard.dueThisMonth.single.id, 'month-installment');
+    expect(dashboard.dueThisMonth.single.remainingAmount, 5000000);
+    expect(dashboard.dueThisMonth.single.suggestedAmount, 1000000);
+    expect(dashboard.report.duePayByPeriodEnd, 1000000);
+    expect(dashboard.report.dueReceiveByPeriodEnd, 1000000);
+    expect(dashboard.report.remainingPay, 10000000);
+    expect(dashboard.report.remainingReceive, 5000000);
   });
 }

@@ -39,5 +39,6 @@
   "quickPayConfirmTitle": "Record payment?",
   "quickReceiveConfirmTitle": "Record receipt?",
   "quickPayConfirmBody": "$title — $amount",
-  "greeting": "Give and take"
+  "greeting": "Give and take",
+  "weekRange": "From $from to $to"
 }

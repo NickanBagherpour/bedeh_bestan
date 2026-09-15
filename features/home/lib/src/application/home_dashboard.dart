@@ -1,4 +1,5 @@
-import 'package:core/core.dart' show CalendarType, dateOnly, monthBounds;
+import 'package:core/core.dart'
+    show CalendarType, DateRange, dateOnly, monthBounds;
 import 'package:local_db/local_db.dart'
     show MoneyDirection, MoneyItem, MoneyPayment, MoneyStatus, Party;
 
@@ -67,6 +68,7 @@ final class HomeDashboard {
     required this.overdue,
     required this.balances,
     required this.report,
+    required this.weekRange,
   });
 
   final List<HomeDueRow> dueThisWeek;
@@ -74,13 +76,20 @@ final class HomeDashboard {
   final List<HomeDueRow> overdue;
   final List<HomePartyBalance> balances;
   final HomePeriodReport report;
+  final DateRange weekRange;
+}
+
+/// Today through six days ahead — the window listed as «this week».
+DateRange rollingDueWeek(DateTime now) {
+  final today = dateOnly(now);
+  return DateRange(
+    start: today,
+    endInclusive: today.add(const Duration(days: 6)),
+  );
 }
 
 bool isDueThisWeek(DateTime due, DateTime now) {
-  final today = dateOnly(now);
-  final end = today.add(const Duration(days: 6));
-  final day = dateOnly(due);
-  return !day.isBefore(today) && !day.isAfter(end);
+  return rollingDueWeek(now).containsDate(due);
 }
 
 bool isDueInMonth(DateTime due, DateTime monthStart, DateTime monthEnd) {
@@ -121,12 +130,14 @@ HomePeriodReport buildHomePeriodReport({
     final due = dateOnly(item.nextDueDate);
     final inMonth =
         !due.isBefore(today) && !due.isAfter(month.endInclusive);
+    final dueNow =
+        item.suggestedQuickPaymentAmount() ?? item.remainingAmount;
     if (item.direction == MoneyDirection.pay) {
       remainingPay += item.remainingAmount;
-      if (inMonth) duePayByPeriodEnd += item.remainingAmount;
+      if (inMonth) duePayByPeriodEnd += dueNow;
     } else {
       remainingReceive += item.remainingAmount;
-      if (inMonth) dueReceiveByPeriodEnd += item.remainingAmount;
+      if (inMonth) dueReceiveByPeriodEnd += dueNow;
     }
   }
 
@@ -151,6 +162,7 @@ HomeDashboard buildHomeDashboard({
 }) {
   final names = {for (final party in parties) party.id: party.name};
   final month = monthBounds(now, calendar);
+  final week = rollingDueWeek(now);
   HomeDueRow rowFor(MoneyItem item) {
     return HomeDueRow(
       id: item.id,
@@ -176,7 +188,7 @@ HomeDashboard buildHomeDashboard({
         (item) =>
             !item.isSettled &&
             item.statusOn(now) != MoneyStatus.overdue &&
-            isDueThisWeek(item.nextDueDate, now),
+            week.containsDate(item.nextDueDate),
       )
       .map(rowFor)
       .toList()
@@ -187,7 +199,7 @@ HomeDashboard buildHomeDashboard({
         (item) =>
             !item.isSettled &&
             item.statusOn(now) != MoneyStatus.overdue &&
-            !isDueThisWeek(item.nextDueDate, now) &&
+            !week.containsDate(item.nextDueDate) &&
             isDueInMonth(item.nextDueDate, month.start, month.endInclusive),
       )
       .map(rowFor)
@@ -235,6 +247,7 @@ HomeDashboard buildHomeDashboard({
     dueThisMonth: dueThisMonth,
     overdue: overdue,
     balances: balances,
+    weekRange: week,
     report: buildHomePeriodReport(
       items: items,
       payments: payments,

@@ -324,6 +324,9 @@ class Translations$home$en {
 
 	/// en: 'Give and take'
 	String get greeting => 'Give and take';
+
+	/// en: 'From $from to $to'
+	String weekRange({required Object from, required Object to}) => 'From ${from} to ${to}';
 }
 
 // Path: money
@@ -1383,6 +1386,7 @@ extension on Translations {
 			'home.quickReceiveConfirmTitle' => 'Record receipt?',
 			'home.quickPayConfirmBody' => ({required Object title, required Object amount}) => '${title} — ${amount}',
 			'home.greeting' => 'Give and take',
+			'home.weekRange' => ({required Object from, required Object to}) => 'From ${from} to ${to}',
 			'money.title' => 'Accounts',
 			'money.emptyTitle' => 'No give-and-take yet',
 			'money.emptyBody' => 'Add a debt or receivable in a couple of taps.',

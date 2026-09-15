@@ -25,7 +25,7 @@ class ProfilePage extends StatelessWidget {
             leading: const Icon(Icons.savings_outlined),
             title: Text(t.profile.assets),
             subtitle: Text(t.profile.assetsHint),
-            trailing: const Icon(Icons.chevron_left_rounded),
+            trailing: const Icon(Icons.chevron_right_rounded),
             onTap: () {
               AppHaptics.selection();
               context.push(AppRoutes.profileAssets.path);
@@ -34,7 +34,7 @@ class ProfilePage extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.settings_outlined),
             title: Text(t.settings.title),
-            trailing: const Icon(Icons.chevron_left_rounded),
+            trailing: const Icon(Icons.chevron_right_rounded),
             onTap: () {
               AppHaptics.selection();
               context.push(AppRoutes.settings.path);

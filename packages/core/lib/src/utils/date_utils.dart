@@ -229,6 +229,51 @@ String formatMonthYear(
   }
 }
 
+/// Day + month without year, e.g. «۱۵ شهریور» or «15 September».
+String formatDayMonth(
+  DateTime date,
+  CalendarType calendar, {
+  required bool persian,
+}) {
+  switch (calendar) {
+    case CalendarType.jalali:
+      final j = toJalali(date);
+      return '${j.day} ${jalaliMonthNames[j.month - 1]}';
+    case CalendarType.gregorian:
+      final names = persian ? gregorianMonthNamesFa : gregorianMonthNamesEn;
+      return '${date.day} ${names[date.month - 1]}';
+  }
+}
+
+bool _sameCalendarMonth(DateTime a, DateTime b, CalendarType calendar) {
+  switch (calendar) {
+    case CalendarType.jalali:
+      final left = toJalali(a);
+      final right = toJalali(b);
+      return left.year == right.year && left.month == right.month;
+    case CalendarType.gregorian:
+      return a.year == b.year && a.month == b.month;
+  }
+}
+
+/// From/to labels for a day range.
+///
+/// Same calendar month: [from] is the start day number and [to] is
+/// day + month (e.g. `15` / `21 September`). Crossing months: both are
+/// day + month.
+({String from, String to}) formatRangeEnds(
+  DateTime start,
+  DateTime end,
+  CalendarType calendar, {
+  required bool persian,
+}) {
+  final to = formatDayMonth(end, calendar, persian: persian);
+  if (_sameCalendarMonth(start, end, calendar)) {
+    return (from: '${calendarDayOfMonth(start, calendar)}', to: to);
+  }
+  return (from: formatDayMonth(start, calendar, persian: persian), to: to);
+}
+
 /// Shifts [date] by [months] in the chosen calendar, clamping the day.
 DateTime shiftCalendarMonths(
   DateTime date,

@@ -161,6 +161,7 @@ class _Translations$home$fa extends Translations$home$en {
 	@override String get quickReceiveConfirmTitle => 'دریافت ثبت شود؟';
 	@override String quickPayConfirmBody({required Object title, required Object amount}) => '${title} — ${amount}';
 	@override String get greeting => 'بده و بستان';
+	@override String weekRange({required Object from, required Object to}) => 'از ${from} تا ${to}';
 }
 
 // Path: money
@@ -711,6 +712,7 @@ extension on TranslationsFa {
 			'home.quickReceiveConfirmTitle' => 'دریافت ثبت شود؟',
 			'home.quickPayConfirmBody' => ({required Object title, required Object amount}) => '${title} — ${amount}',
 			'home.greeting' => 'بده و بستان',
+			'home.weekRange' => ({required Object from, required Object to}) => 'از ${from} تا ${to}',
 			'money.title' => 'حساب',
 			'money.emptyTitle' => 'هنوز بده‌بستانی نیست',
 			'money.emptyBody' => 'با چند ضربه بدهی یا طلب اضافه کن.',

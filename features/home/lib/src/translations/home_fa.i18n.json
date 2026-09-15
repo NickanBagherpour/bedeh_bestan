@@ -39,5 +39,6 @@
   "quickPayConfirmTitle": "پرداخت ثبت شود؟",
   "quickReceiveConfirmTitle": "دریافت ثبت شود؟",
   "quickPayConfirmBody": "$title — $amount",
-  "greeting": "بده و بستان"
+  "greeting": "بده و بستان",
+  "weekRange": "از $from تا $to"
 }

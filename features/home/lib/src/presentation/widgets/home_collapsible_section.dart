@@ -11,6 +11,7 @@ class HomeCollapsibleSection extends StatelessWidget {
     required this.expanded,
     required this.onToggle,
     required this.child,
+    this.subtitle,
     this.expandTooltip,
     this.collapseTooltip,
   });
@@ -18,6 +19,7 @@ class HomeCollapsibleSection extends StatelessWidget {
   final String title;
   final IconData icon;
   final String summary;
+  final String? subtitle;
   final bool expanded;
   final VoidCallback onToggle;
   final Widget child;
@@ -27,6 +29,7 @@ class HomeCollapsibleSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final hasSubtitle = subtitle != null && subtitle!.isNotEmpty;
     return KitCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -53,13 +56,19 @@ class HomeCollapsibleSection extends StatelessWidget {
                             fontWeight: FontWeight.w800,
                           ),
                         ),
-                        if (!expanded)
+                        if (hasSubtitle)
                           Text(
-                            summary,
+                            subtitle!,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
                           ),
+                        Text(
+                          summary,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
                       ],
                     ),
                   ),

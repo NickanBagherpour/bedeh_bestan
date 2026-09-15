@@ -2,8 +2,10 @@ import 'package:core/core.dart'
     show
         AppCurrency,
         AppRoutes,
+        GroupedAmountFormatter,
         appSettingsProvider,
         formatStoredMoney,
+        groupAmount,
         overlayAppBar,
         parseStoredAmount;
 import 'package:flutter/material.dart';
@@ -43,7 +45,7 @@ class AssetsPage extends ConsumerWidget {
         backTooltip: t.app.actions.back,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _editAccount(context, ref, t, currency),
+        onPressed: () => _editAccount(context, ref, t, currency, persian),
         child: const Icon(Icons.add_rounded),
       ),
       body: state.loading
@@ -83,6 +85,7 @@ class AssetsPage extends ConsumerWidget {
                         ref,
                         t,
                         currency,
+                        persian,
                         account: account,
                       ),
                     ),
@@ -104,12 +107,18 @@ class AssetsPage extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     Translations t,
-    AppCurrency currency, {
+    AppCurrency currency,
+    bool persian, {
     AssetAccount? account,
   }) async {
     final name = TextEditingController(text: account?.name ?? '');
     final balance = TextEditingController(
-      text: account == null ? '' : '${account.balance}',
+      text: account == null
+          ? ''
+          : groupAmount(
+              currency.toDisplay(account.balance),
+              persianDigits: persian,
+            ),
     );
     var kind = account?.kind ?? AssetAccountKind.cash;
     final ok = await showDialog<bool>(
@@ -129,6 +138,9 @@ class AssetsPage extends ConsumerWidget {
                 TextField(
                   controller: balance,
                   keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    GroupedAmountFormatter(persianDigits: persian),
+                  ],
                   decoration: InputDecoration(labelText: t.profile.assetBalance),
                 ),
                 const SizedBox(height: AppSpacing.sm),
@@ -181,12 +193,19 @@ class AssetsPage extends ConsumerWidget {
         ),
       ),
     );
-    if (ok != true || !context.mounted) return;
+    if (ok != true || !context.mounted) {
+      name.dispose();
+      balance.dispose();
+      return;
+    }
     final parsed = parseStoredAmount(balance.text, currency);
-    if (name.text.trim().isEmpty || parsed == null) return;
+    final accountName = name.text;
+    name.dispose();
+    balance.dispose();
+    if (accountName.trim().isEmpty || parsed == null) return;
     await ref.read(assetsControllerProvider.notifier).saveAccount(
           id: account?.id,
-          name: name.text,
+          name: accountName,
           kind: kind,
           balance: parsed,
         );

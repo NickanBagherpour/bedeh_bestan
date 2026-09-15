@@ -5,6 +5,8 @@ import 'package:core/core.dart'
         CalendarType,
         appSettingsProvider,
         formatLongDate,
+        formatMonthYear,
+        formatRangeEnds,
         formatStoredMoney,
         toPersianDigits;
 import 'package:flutter/material.dart';
@@ -264,16 +266,18 @@ class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
           : Icons.north_east_rounded;
     }
 
-    // Money summary for a section header: how much to pay / collect in it.
-    // The user cares about "how much do I owe this week / month", not a count.
-    String amountSummary(List<HomeDueRow> rows) {
+    // Week/month headers sum the current قسط (suggestedAmount), not remaining.
+    String amountSummary(
+      List<HomeDueRow> rows, {
+      required int Function(HomeDueRow row) amountOf,
+    }) {
       var pay = 0;
       var receive = 0;
       for (final row in rows) {
         if (row.direction == MoneyDirection.pay) {
-          pay += row.remainingAmount;
+          pay += amountOf(row);
         } else {
-          receive += row.remainingAmount;
+          receive += amountOf(row);
         }
       }
       final parts = <String>[
@@ -284,15 +288,33 @@ class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
       return parts.join(' · ');
     }
 
+    final weekEnds = formatRangeEnds(
+      d.weekRange.start,
+      d.weekRange.endInclusive,
+      widget.calendar,
+      persian: widget.persian,
+    );
+    var weekSubtitle = t.home.weekRange(from: weekEnds.from, to: weekEnds.to);
+    var monthSubtitle = formatMonthYear(
+      d.report.periodStart,
+      widget.calendar,
+      persian: widget.persian,
+    );
+    if (widget.persian) {
+      weekSubtitle = toPersianDigits(weekSubtitle);
+      monthSubtitle = toPersianDigits(monthSubtitle);
+    }
+
     Widget dueList(
       List<HomeDueRow> rows, {
       required bool enableQuickPay,
       required String emptyLabel,
+      required int Function(HomeDueRow row) amountOf,
     }) {
       return HomeDueList(
         rows: rows,
         emptyLabel: emptyLabel,
-        amountOf: (row) => money(row.remainingAmount),
+        amountOf: (row) => money(amountOf(row)),
         dueOf: due,
         statusOf: status,
         accentOf: accent,
@@ -313,7 +335,10 @@ class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
           child: HomeCollapsibleSection(
             title: t.home.overdue,
             icon: Icons.warning_amber_rounded,
-            summary: amountSummary(d.overdue),
+            summary: amountSummary(
+              d.overdue,
+              amountOf: (row) => row.remainingAmount,
+            ),
             expandTooltip: t.home.sectionShowMore,
             collapseTooltip: t.home.sectionCollapse,
             expanded: _overdueExpanded,
@@ -322,6 +347,7 @@ class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
               d.overdue,
               enableQuickPay: true,
               emptyLabel: t.home.emptyBody,
+              amountOf: (row) => row.remainingAmount,
             ),
           ),
         ),
@@ -332,7 +358,11 @@ class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
         child: HomeCollapsibleSection(
           title: t.home.dueThisWeek,
           icon: Icons.event_available_rounded,
-          summary: amountSummary(d.dueThisWeek),
+          subtitle: weekSubtitle,
+          summary: amountSummary(
+            d.dueThisWeek,
+            amountOf: (row) => row.suggestedAmount,
+          ),
           expandTooltip: t.home.sectionShowMore,
           collapseTooltip: t.home.sectionCollapse,
           expanded: _weekExpanded,
@@ -341,6 +371,7 @@ class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
             d.dueThisWeek,
             enableQuickPay: true,
             emptyLabel: t.home.emptyBody,
+            amountOf: (row) => row.suggestedAmount,
           ),
         ),
       ),
@@ -350,7 +381,11 @@ class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
         child: HomeCollapsibleSection(
           title: t.home.dueThisMonth,
           icon: Icons.calendar_month_rounded,
-          summary: amountSummary(d.dueThisMonth),
+          subtitle: monthSubtitle,
+          summary: amountSummary(
+            d.dueThisMonth,
+            amountOf: (row) => row.suggestedAmount,
+          ),
           expandTooltip: t.home.sectionShowMore,
           collapseTooltip: t.home.sectionCollapse,
           expanded: _monthExpanded,
@@ -359,6 +394,7 @@ class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
             d.dueThisMonth,
             enableQuickPay: true,
             emptyLabel: t.home.emptyThisMonth,
+            amountOf: (row) => row.suggestedAmount,
           ),
         ),
       ),
