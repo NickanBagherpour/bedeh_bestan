@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.0.4] - 2026-09-15
+
+### Added
+- enhance home dashboard with week range and payment summaries
+
 ## [1.0.4] - 2026-09-14
 
 ### Added
