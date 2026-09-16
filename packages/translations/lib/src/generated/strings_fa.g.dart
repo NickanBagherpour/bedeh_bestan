@@ -111,6 +111,8 @@ class _Translations$calendar$fa extends Translations$calendar$en {
 	@override String get missingItem => 'این یادآوری دیگر نیست.';
 	@override late final _Translations$calendar$repeatRule$fa repeatRule = _Translations$calendar$repeatRule$fa._(_root);
 	@override late final _Translations$calendar$weekday$fa weekday = _Translations$calendar$weekday$fa._(_root);
+	@override String get kindLabel => 'نوع';
+	@override late final _Translations$calendar$kind$fa kind = _Translations$calendar$kind$fa._(_root);
 }
 
 // Path: home
@@ -128,7 +130,7 @@ class _Translations$home$fa extends Translations$home$en {
 	@override String get loadError => 'خواندن دادهٔ محلی ممکن نشد.';
 	@override String get dueThisWeek => 'این هفته';
 	@override String get dueThisMonth => 'سررسید این ماه';
-	@override String get overdue => 'عقب‌مانده';
+	@override String get overdue => 'معوق';
 	@override String get whoOwes => 'کی چقدر؟';
 	@override String get emptyBalances => 'بدهی یا طلب باز نیست.';
 	@override String iOwe({required Object amount}) => 'من بدهکارم ${amount}';
@@ -393,6 +395,11 @@ class _Translations$settings$fa extends Translations$settings$en {
 	@override String get reminderCustomDay => 'روز دلخواه (۱ تا ۳۰)';
 	@override String get reminderAddDay => 'افزودن';
 	@override String get reminderTimeHint => 'ساعت ارسال: ۰۹:۰۰.';
+	@override String get calendarItems => 'روی تقویم';
+	@override String get calendarItemsHint => 'چه چیزهایی روی ماه و فهرست روز دیده شود. رنگ‌ها: طلایی رویداد، گل‌بهی تولد، مرجانی بدهی، سبز طلب.';
+	@override String get showEvents => 'رویدادها';
+	@override String get showBirthdays => 'تولدها';
+	@override String get showMoney => 'سررسید حساب';
 }
 
 // Path: app.currency
@@ -515,6 +522,19 @@ class _Translations$calendar$weekday$fa extends Translations$calendar$weekday$en
 	@override String get wed => 'چ';
 	@override String get thu => 'پ';
 	@override String get fri => 'ج';
+}
+
+// Path: calendar.kind
+class _Translations$calendar$kind$fa extends Translations$calendar$kind$en {
+	_Translations$calendar$kind$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get event => 'رویداد';
+	@override String get birthday => 'تولد';
+	@override String get money => 'حساب';
+	@override String get installment => 'قسط';
 }
 
 // Path: money.status
@@ -671,6 +691,11 @@ extension on TranslationsFa {
 			'calendar.weekday.wed' => 'چ',
 			'calendar.weekday.thu' => 'پ',
 			'calendar.weekday.fri' => 'ج',
+			'calendar.kindLabel' => 'نوع',
+			'calendar.kind.event' => 'رویداد',
+			'calendar.kind.birthday' => 'تولد',
+			'calendar.kind.money' => 'حساب',
+			'calendar.kind.installment' => 'قسط',
 			'home.payAndReceive' => 'بده و بستان',
 			'home.offlineBlurb' => 'قسط، طلب و بدهی و یادآوری — همه روی این دستگاه.',
 			'home.emptyTitle' => 'هفته آرام',
@@ -679,7 +704,7 @@ extension on TranslationsFa {
 			'home.loadError' => 'خواندن دادهٔ محلی ممکن نشد.',
 			'home.dueThisWeek' => 'این هفته',
 			'home.dueThisMonth' => 'سررسید این ماه',
-			'home.overdue' => 'عقب‌مانده',
+			'home.overdue' => 'معوق',
 			'home.whoOwes' => 'کی چقدر؟',
 			'home.emptyBalances' => 'بدهی یا طلب باز نیست.',
 			'home.iOwe' => ({required Object amount}) => 'من بدهکارم ${amount}',
@@ -925,6 +950,11 @@ extension on TranslationsFa {
 			'settings.reminderCustomDay' => 'روز دلخواه (۱ تا ۳۰)',
 			'settings.reminderAddDay' => 'افزودن',
 			'settings.reminderTimeHint' => 'ساعت ارسال: ۰۹:۰۰.',
+			'settings.calendarItems' => 'روی تقویم',
+			'settings.calendarItemsHint' => 'چه چیزهایی روی ماه و فهرست روز دیده شود. رنگ‌ها: طلایی رویداد، گل‌بهی تولد، مرجانی بدهی، سبز طلب.',
+			'settings.showEvents' => 'رویدادها',
+			'settings.showBirthdays' => 'تولدها',
+			'settings.showMoney' => 'سررسید حساب',
 			_ => null,
 		};
 	}

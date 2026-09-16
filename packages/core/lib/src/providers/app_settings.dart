@@ -20,6 +20,9 @@ final class AppSettings {
     this.currency = AppCurrency.toman,
     this.moneyReminderMode = MoneyReminderMode.range,
     this.moneyReminderDaysBefore = ReminderSchedulePolicy.defaultDaysBefore,
+    this.showCalendarEvents = true,
+    this.showCalendarBirthdays = true,
+    this.showCalendarMoney = true,
   });
 
   final ThemeMode themeMode;
@@ -30,6 +33,9 @@ final class AppSettings {
   final AppCurrency currency;
   final MoneyReminderMode moneyReminderMode;
   final List<int> moneyReminderDaysBefore;
+  final bool showCalendarEvents;
+  final bool showCalendarBirthdays;
+  final bool showCalendarMoney;
 
   CalendarType get resolvedCalendar => calendarTypeFor(calendar);
 
@@ -47,6 +53,9 @@ final class AppSettings {
     AppCurrency? currency,
     MoneyReminderMode? moneyReminderMode,
     List<int>? moneyReminderDaysBefore,
+    bool? showCalendarEvents,
+    bool? showCalendarBirthdays,
+    bool? showCalendarMoney,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -58,6 +67,10 @@ final class AppSettings {
       moneyReminderMode: moneyReminderMode ?? this.moneyReminderMode,
       moneyReminderDaysBefore:
           moneyReminderDaysBefore ?? this.moneyReminderDaysBefore,
+      showCalendarEvents: showCalendarEvents ?? this.showCalendarEvents,
+      showCalendarBirthdays:
+          showCalendarBirthdays ?? this.showCalendarBirthdays,
+      showCalendarMoney: showCalendarMoney ?? this.showCalendarMoney,
     );
   }
 }
@@ -70,6 +83,9 @@ abstract final class AppSettingsKeys {
   static const currency = 'app.settings.currency';
   static const moneyReminderMode = 'app.settings.moneyReminderMode';
   static const moneyReminderDaysBefore = 'app.settings.moneyReminderDaysBefore';
+  static const showCalendarEvents = 'app.settings.showCalendarEvents';
+  static const showCalendarBirthdays = 'app.settings.showCalendarBirthdays';
+  static const showCalendarMoney = 'app.settings.showCalendarMoney';
 
   static const List<String> all = [
     themeMode,
@@ -79,5 +95,8 @@ abstract final class AppSettingsKeys {
     currency,
     moneyReminderMode,
     moneyReminderDaysBefore,
+    showCalendarEvents,
+    showCalendarBirthdays,
+    showCalendarMoney,
   ];
 }

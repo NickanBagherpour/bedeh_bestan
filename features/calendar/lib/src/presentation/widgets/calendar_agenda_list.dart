@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ui_kit/ui_kit.dart' show AppColors, AppSpacing, KitCard;
+import 'package:ui_kit/ui_kit.dart' show AppSpacing, KitCard;
 
 class CalendarAgendaList extends StatelessWidget {
   const CalendarAgendaList({
@@ -73,7 +73,7 @@ class CalendarAgendaList extends StatelessWidget {
                       width: 6,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: AppColors.reminder,
+                        color: row.accent,
                         borderRadius: BorderRadius.circular(99),
                       ),
                     ),
@@ -116,6 +116,8 @@ final class CalendarAgendaRow {
     required this.at,
     required this.allDay,
     required this.repeatKey,
+    required this.accent,
+    required this.isMoney,
   });
 
   final String id;
@@ -123,4 +125,6 @@ final class CalendarAgendaRow {
   final DateTime at;
   final bool allDay;
   final String repeatKey;
+  final Color accent;
+  final bool isMoney;
 }

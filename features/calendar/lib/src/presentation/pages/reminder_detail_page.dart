@@ -11,7 +11,7 @@ import 'package:core/core.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:local_db/local_db.dart' show Reminder, RepeatRule;
+import 'package:local_db/local_db.dart' show Reminder, ReminderKind, RepeatRule;
 import 'package:translations/translations.dart'
     show Translations, TranslationsLookup;
 import 'package:ui_kit/ui_kit.dart'
@@ -98,7 +98,10 @@ class ReminderDetailPage extends ConsumerWidget {
       padding: const EdgeInsets.all(AppSpacing.md),
       children: [
         KitCard(
-          color: AppColors.reminder.withValues(alpha: 0.10),
+          color: (reminder.kind == ReminderKind.birthday
+                  ? AppColors.birthday
+                  : AppColors.reminder)
+              .withValues(alpha: 0.10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -116,6 +119,7 @@ class ReminderDetailPage extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
+        _kv(theme, t.calendar.kindLabel, _kindLabel(t, reminder.kind)),
         _kv(theme, t.calendar.date, whenLabel),
         _kv(theme, t.calendar.time, timeLabel),
         _kv(theme, t.calendar.repeat, _repeatLabel(t, reminder.repeatRule)),
@@ -160,6 +164,13 @@ Widget _kv(ThemeData theme, String label, String value) {
       ],
     ),
   );
+}
+
+String _kindLabel(Translations t, ReminderKind kind) {
+  return switch (kind) {
+    ReminderKind.event => t.calendar.kind.event,
+    ReminderKind.birthday => t.calendar.kind.birthday,
+  };
 }
 
 String _repeatLabel(Translations t, RepeatRule rule) {

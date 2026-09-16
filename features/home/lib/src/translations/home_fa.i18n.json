@@ -7,7 +7,7 @@
   "loadError": "خواندن دادهٔ محلی ممکن نشد.",
   "dueThisWeek": "این هفته",
   "dueThisMonth": "سررسید این ماه",
-  "overdue": "عقب‌مانده",
+  "overdue": "معوق",
   "whoOwes": "کی چقدر؟",
   "emptyBalances": "بدهی یا طلب باز نیست.",
   "iOwe": "من بدهکارم $amount",

@@ -61,6 +61,18 @@ final class SettingsController extends Notifier<AppSettings> {
     return ref.read(appSettingsProvider.notifier).setMoneyReminderDaysBefore(days);
   }
 
+  Future<void> setShowCalendarEvents(bool value) {
+    return ref.read(appSettingsProvider.notifier).setShowCalendarEvents(value);
+  }
+
+  Future<void> setShowCalendarBirthdays(bool value) {
+    return ref.read(appSettingsProvider.notifier).setShowCalendarBirthdays(value);
+  }
+
+  Future<void> setShowCalendarMoney(bool value) {
+    return ref.read(appSettingsProvider.notifier).setShowCalendarMoney(value);
+  }
+
   Future<BackupActionResult> exportBackup({required String fileName}) async {
     try {
       final repo = _backup();

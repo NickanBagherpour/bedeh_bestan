@@ -110,6 +110,32 @@ class SettingsPage extends ConsumerWidget {
             ),
           ),
           SettingsSection(
+            title: t.settings.calendarItems,
+            footer: t.settings.calendarItemsHint,
+            child: Column(
+              children: [
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(t.settings.showEvents),
+                  value: settings.showCalendarEvents,
+                  onChanged: controller.setShowCalendarEvents,
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(t.settings.showBirthdays),
+                  value: settings.showCalendarBirthdays,
+                  onChanged: controller.setShowCalendarBirthdays,
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(t.settings.showMoney),
+                  value: settings.showCalendarMoney,
+                  onChanged: controller.setShowCalendarMoney,
+                ),
+              ],
+            ),
+          ),
+          SettingsSection(
             title: t.settings.reminders,
             footer: t.settings.remindersHint,
             child: Column(

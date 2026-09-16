@@ -2068,6 +2068,16 @@ class $RemindersTable extends Reminders
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _kindMeta = const VerificationMeta('kind');
+  @override
+  late final GeneratedColumn<String> kind = GeneratedColumn<String>(
+    'kind',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('event'),
+  );
   static const VerificationMeta _repeatRuleMeta = const VerificationMeta(
     'repeatRule',
   );
@@ -2150,6 +2160,7 @@ class $RemindersTable extends Reminders
     startAt,
     endAt,
     allDay,
+    kind,
     repeatRule,
     repeatEveryN,
     notifyOnTime,
@@ -2206,6 +2217,12 @@ class $RemindersTable extends Reminders
       context.handle(
         _allDayMeta,
         allDay.isAcceptableOrUnknown(data['all_day']!, _allDayMeta),
+      );
+    }
+    if (data.containsKey('kind')) {
+      context.handle(
+        _kindMeta,
+        kind.isAcceptableOrUnknown(data['kind']!, _kindMeta),
       );
     }
     if (data.containsKey('repeat_rule')) {
@@ -2292,6 +2309,10 @@ class $RemindersTable extends Reminders
         DriftSqlType.bool,
         data['${effectivePrefix}all_day'],
       )!,
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
       repeatRule: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}repeat_rule'],
@@ -2332,6 +2353,7 @@ class ReminderRow extends DataClass implements Insertable<ReminderRow> {
   final DateTime startAt;
   final DateTime? endAt;
   final bool allDay;
+  final String kind;
   final String repeatRule;
   final int? repeatEveryN;
   final bool notifyOnTime;
@@ -2345,6 +2367,7 @@ class ReminderRow extends DataClass implements Insertable<ReminderRow> {
     required this.startAt,
     this.endAt,
     required this.allDay,
+    required this.kind,
     required this.repeatRule,
     this.repeatEveryN,
     required this.notifyOnTime,
@@ -2365,6 +2388,7 @@ class ReminderRow extends DataClass implements Insertable<ReminderRow> {
       map['end_at'] = Variable<DateTime>(endAt);
     }
     map['all_day'] = Variable<bool>(allDay);
+    map['kind'] = Variable<String>(kind);
     map['repeat_rule'] = Variable<String>(repeatRule);
     if (!nullToAbsent || repeatEveryN != null) {
       map['repeat_every_n'] = Variable<int>(repeatEveryN);
@@ -2386,6 +2410,7 @@ class ReminderRow extends DataClass implements Insertable<ReminderRow> {
           ? const Value.absent()
           : Value(endAt),
       allDay: Value(allDay),
+      kind: Value(kind),
       repeatRule: Value(repeatRule),
       repeatEveryN: repeatEveryN == null && nullToAbsent
           ? const Value.absent()
@@ -2409,6 +2434,7 @@ class ReminderRow extends DataClass implements Insertable<ReminderRow> {
       startAt: serializer.fromJson<DateTime>(json['startAt']),
       endAt: serializer.fromJson<DateTime?>(json['endAt']),
       allDay: serializer.fromJson<bool>(json['allDay']),
+      kind: serializer.fromJson<String>(json['kind']),
       repeatRule: serializer.fromJson<String>(json['repeatRule']),
       repeatEveryN: serializer.fromJson<int?>(json['repeatEveryN']),
       notifyOnTime: serializer.fromJson<bool>(json['notifyOnTime']),
@@ -2427,6 +2453,7 @@ class ReminderRow extends DataClass implements Insertable<ReminderRow> {
       'startAt': serializer.toJson<DateTime>(startAt),
       'endAt': serializer.toJson<DateTime?>(endAt),
       'allDay': serializer.toJson<bool>(allDay),
+      'kind': serializer.toJson<String>(kind),
       'repeatRule': serializer.toJson<String>(repeatRule),
       'repeatEveryN': serializer.toJson<int?>(repeatEveryN),
       'notifyOnTime': serializer.toJson<bool>(notifyOnTime),
@@ -2443,6 +2470,7 @@ class ReminderRow extends DataClass implements Insertable<ReminderRow> {
     DateTime? startAt,
     Value<DateTime?> endAt = const Value.absent(),
     bool? allDay,
+    String? kind,
     String? repeatRule,
     Value<int?> repeatEveryN = const Value.absent(),
     bool? notifyOnTime,
@@ -2456,6 +2484,7 @@ class ReminderRow extends DataClass implements Insertable<ReminderRow> {
     startAt: startAt ?? this.startAt,
     endAt: endAt.present ? endAt.value : this.endAt,
     allDay: allDay ?? this.allDay,
+    kind: kind ?? this.kind,
     repeatRule: repeatRule ?? this.repeatRule,
     repeatEveryN: repeatEveryN.present ? repeatEveryN.value : this.repeatEveryN,
     notifyOnTime: notifyOnTime ?? this.notifyOnTime,
@@ -2471,6 +2500,7 @@ class ReminderRow extends DataClass implements Insertable<ReminderRow> {
       startAt: data.startAt.present ? data.startAt.value : this.startAt,
       endAt: data.endAt.present ? data.endAt.value : this.endAt,
       allDay: data.allDay.present ? data.allDay.value : this.allDay,
+      kind: data.kind.present ? data.kind.value : this.kind,
       repeatRule: data.repeatRule.present
           ? data.repeatRule.value
           : this.repeatRule,
@@ -2497,6 +2527,7 @@ class ReminderRow extends DataClass implements Insertable<ReminderRow> {
           ..write('startAt: $startAt, ')
           ..write('endAt: $endAt, ')
           ..write('allDay: $allDay, ')
+          ..write('kind: $kind, ')
           ..write('repeatRule: $repeatRule, ')
           ..write('repeatEveryN: $repeatEveryN, ')
           ..write('notifyOnTime: $notifyOnTime, ')
@@ -2515,6 +2546,7 @@ class ReminderRow extends DataClass implements Insertable<ReminderRow> {
     startAt,
     endAt,
     allDay,
+    kind,
     repeatRule,
     repeatEveryN,
     notifyOnTime,
@@ -2532,6 +2564,7 @@ class ReminderRow extends DataClass implements Insertable<ReminderRow> {
           other.startAt == this.startAt &&
           other.endAt == this.endAt &&
           other.allDay == this.allDay &&
+          other.kind == this.kind &&
           other.repeatRule == this.repeatRule &&
           other.repeatEveryN == this.repeatEveryN &&
           other.notifyOnTime == this.notifyOnTime &&
@@ -2547,6 +2580,7 @@ class RemindersCompanion extends UpdateCompanion<ReminderRow> {
   final Value<DateTime> startAt;
   final Value<DateTime?> endAt;
   final Value<bool> allDay;
+  final Value<String> kind;
   final Value<String> repeatRule;
   final Value<int?> repeatEveryN;
   final Value<bool> notifyOnTime;
@@ -2561,6 +2595,7 @@ class RemindersCompanion extends UpdateCompanion<ReminderRow> {
     this.startAt = const Value.absent(),
     this.endAt = const Value.absent(),
     this.allDay = const Value.absent(),
+    this.kind = const Value.absent(),
     this.repeatRule = const Value.absent(),
     this.repeatEveryN = const Value.absent(),
     this.notifyOnTime = const Value.absent(),
@@ -2576,6 +2611,7 @@ class RemindersCompanion extends UpdateCompanion<ReminderRow> {
     required DateTime startAt,
     this.endAt = const Value.absent(),
     this.allDay = const Value.absent(),
+    this.kind = const Value.absent(),
     required String repeatRule,
     this.repeatEveryN = const Value.absent(),
     this.notifyOnTime = const Value.absent(),
@@ -2596,6 +2632,7 @@ class RemindersCompanion extends UpdateCompanion<ReminderRow> {
     Expression<DateTime>? startAt,
     Expression<DateTime>? endAt,
     Expression<bool>? allDay,
+    Expression<String>? kind,
     Expression<String>? repeatRule,
     Expression<int>? repeatEveryN,
     Expression<bool>? notifyOnTime,
@@ -2611,6 +2648,7 @@ class RemindersCompanion extends UpdateCompanion<ReminderRow> {
       if (startAt != null) 'start_at': startAt,
       if (endAt != null) 'end_at': endAt,
       if (allDay != null) 'all_day': allDay,
+      if (kind != null) 'kind': kind,
       if (repeatRule != null) 'repeat_rule': repeatRule,
       if (repeatEveryN != null) 'repeat_every_n': repeatEveryN,
       if (notifyOnTime != null) 'notify_on_time': notifyOnTime,
@@ -2628,6 +2666,7 @@ class RemindersCompanion extends UpdateCompanion<ReminderRow> {
     Value<DateTime>? startAt,
     Value<DateTime?>? endAt,
     Value<bool>? allDay,
+    Value<String>? kind,
     Value<String>? repeatRule,
     Value<int?>? repeatEveryN,
     Value<bool>? notifyOnTime,
@@ -2643,6 +2682,7 @@ class RemindersCompanion extends UpdateCompanion<ReminderRow> {
       startAt: startAt ?? this.startAt,
       endAt: endAt ?? this.endAt,
       allDay: allDay ?? this.allDay,
+      kind: kind ?? this.kind,
       repeatRule: repeatRule ?? this.repeatRule,
       repeatEveryN: repeatEveryN ?? this.repeatEveryN,
       notifyOnTime: notifyOnTime ?? this.notifyOnTime,
@@ -2673,6 +2713,9 @@ class RemindersCompanion extends UpdateCompanion<ReminderRow> {
     }
     if (allDay.present) {
       map['all_day'] = Variable<bool>(allDay.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
     }
     if (repeatRule.present) {
       map['repeat_rule'] = Variable<String>(repeatRule.value);
@@ -2707,6 +2750,7 @@ class RemindersCompanion extends UpdateCompanion<ReminderRow> {
           ..write('startAt: $startAt, ')
           ..write('endAt: $endAt, ')
           ..write('allDay: $allDay, ')
+          ..write('kind: $kind, ')
           ..write('repeatRule: $repeatRule, ')
           ..write('repeatEveryN: $repeatEveryN, ')
           ..write('notifyOnTime: $notifyOnTime, ')
@@ -5604,6 +5648,7 @@ typedef $$RemindersTableCreateCompanionBuilder =
       required DateTime startAt,
       Value<DateTime?> endAt,
       Value<bool> allDay,
+      Value<String> kind,
       required String repeatRule,
       Value<int?> repeatEveryN,
       Value<bool> notifyOnTime,
@@ -5620,6 +5665,7 @@ typedef $$RemindersTableUpdateCompanionBuilder =
       Value<DateTime> startAt,
       Value<DateTime?> endAt,
       Value<bool> allDay,
+      Value<String> kind,
       Value<String> repeatRule,
       Value<int?> repeatEveryN,
       Value<bool> notifyOnTime,
@@ -5665,6 +5711,11 @@ class $$RemindersTableFilterComposer
 
   ColumnFilters<bool> get allDay => $composableBuilder(
     column: $table.allDay,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get kind => $composableBuilder(
+    column: $table.kind,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5738,6 +5789,11 @@ class $$RemindersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get repeatRule => $composableBuilder(
     column: $table.repeatRule,
     builder: (column) => ColumnOrderings(column),
@@ -5795,6 +5851,9 @@ class $$RemindersTableAnnotationComposer
 
   GeneratedColumn<bool> get allDay =>
       $composableBuilder(column: $table.allDay, builder: (column) => column);
+
+  GeneratedColumn<String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
 
   GeneratedColumn<String> get repeatRule => $composableBuilder(
     column: $table.repeatRule,
@@ -5860,6 +5919,7 @@ class $$RemindersTableTableManager
                 Value<DateTime> startAt = const Value.absent(),
                 Value<DateTime?> endAt = const Value.absent(),
                 Value<bool> allDay = const Value.absent(),
+                Value<String> kind = const Value.absent(),
                 Value<String> repeatRule = const Value.absent(),
                 Value<int?> repeatEveryN = const Value.absent(),
                 Value<bool> notifyOnTime = const Value.absent(),
@@ -5874,6 +5934,7 @@ class $$RemindersTableTableManager
                 startAt: startAt,
                 endAt: endAt,
                 allDay: allDay,
+                kind: kind,
                 repeatRule: repeatRule,
                 repeatEveryN: repeatEveryN,
                 notifyOnTime: notifyOnTime,
@@ -5890,6 +5951,7 @@ class $$RemindersTableTableManager
                 required DateTime startAt,
                 Value<DateTime?> endAt = const Value.absent(),
                 Value<bool> allDay = const Value.absent(),
+                Value<String> kind = const Value.absent(),
                 required String repeatRule,
                 Value<int?> repeatEveryN = const Value.absent(),
                 Value<bool> notifyOnTime = const Value.absent(),
@@ -5904,6 +5966,7 @@ class $$RemindersTableTableManager
                 startAt: startAt,
                 endAt: endAt,
                 allDay: allDay,
+                kind: kind,
                 repeatRule: repeatRule,
                 repeatEveryN: repeatEveryN,
                 notifyOnTime: notifyOnTime,

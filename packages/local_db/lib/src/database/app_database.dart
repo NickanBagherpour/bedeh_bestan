@@ -61,7 +61,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration {
@@ -361,6 +361,7 @@ class AppDatabase extends _$AppDatabase {
         startAt: Value(reminder.startAt),
         endAt: Value(reminder.endAt),
         allDay: Value(reminder.allDay),
+        kind: Value(reminder.kind.name),
         repeatRule: Value(reminder.repeatRule.name),
         repeatEveryN: Value(reminder.repeatEveryN),
         notifyOnTime: Value(reminder.notifyOnTime),
@@ -531,6 +532,11 @@ class AppDatabase extends _$AppDatabase {
       'notify_day_before',
       'INTEGER NOT NULL DEFAULT 0',
     );
+    await _ensureColumn(
+      'reminders',
+      'kind',
+      "TEXT NOT NULL DEFAULT 'event'",
+    );
     await _ensureColumn('notes', 'body', "TEXT NOT NULL DEFAULT ''");
     await _ensureColumn('notes', 'tags_json', "TEXT NOT NULL DEFAULT '[]'");
     await _ensureColumn(
@@ -647,6 +653,7 @@ Reminder reminderFromRow(ReminderRow row) {
     startAt: row.startAt,
     endAt: row.endAt,
     allDay: row.allDay,
+    kind: enumByName(ReminderKind.values, row.kind, ReminderKind.event),
     repeatRule: enumByName(RepeatRule.values, row.repeatRule, RepeatRule.none),
     repeatEveryN: row.repeatEveryN,
     notifyOnTime: row.notifyOnTime,

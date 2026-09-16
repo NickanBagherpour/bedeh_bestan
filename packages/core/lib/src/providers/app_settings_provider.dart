@@ -91,6 +91,35 @@ final class AppSettingsController extends Notifier<AppSettings> {
         );
   }
 
+  Future<void> setShowCalendarEvents(bool value) {
+    return _setFlag(
+      AppSettingsKeys.showCalendarEvents,
+      value,
+      () => state = state.copyWith(showCalendarEvents: value),
+    );
+  }
+
+  Future<void> setShowCalendarBirthdays(bool value) {
+    return _setFlag(
+      AppSettingsKeys.showCalendarBirthdays,
+      value,
+      () => state = state.copyWith(showCalendarBirthdays: value),
+    );
+  }
+
+  Future<void> setShowCalendarMoney(bool value) {
+    return _setFlag(
+      AppSettingsKeys.showCalendarMoney,
+      value,
+      () => state = state.copyWith(showCalendarMoney: value),
+    );
+  }
+
+  Future<void> _setFlag(String key, bool value, void Function() apply) async {
+    apply();
+    await ref.read(appStorageProvider).writeString(key, value ? 'true' : 'false');
+  }
+
   Future<void> reloadFromStorage() async {
     state = loadAppSettings(storage: ref.read(appStorageProvider));
   }
@@ -128,6 +157,21 @@ AppSettings loadAppSettings({required AppStorage storage}) {
         ) ??
         MoneyReminderMode.range,
     moneyReminderDaysBefore: _loadReminderDays(storage),
+    showCalendarEvents: _loadBool(
+      storage,
+      AppSettingsKeys.showCalendarEvents,
+      fallback: true,
+    ),
+    showCalendarBirthdays: _loadBool(
+      storage,
+      AppSettingsKeys.showCalendarBirthdays,
+      fallback: true,
+    ),
+    showCalendarMoney: _loadBool(
+      storage,
+      AppSettingsKeys.showCalendarMoney,
+      fallback: true,
+    ),
   );
 }
 
@@ -137,6 +181,12 @@ List<int> _loadReminderDays(AppStorage storage) {
     return ReminderSchedulePolicy.defaultDaysBefore;
   }
   return decodeDaysBeforeJson(raw);
+}
+
+bool _loadBool(AppStorage storage, String key, {required bool fallback}) {
+  final raw = storage.readString(key);
+  if (raw == null || raw.trim().isEmpty) return fallback;
+  return raw == 'true';
 }
 
 TextDirection directionForLocale(Locale locale) {

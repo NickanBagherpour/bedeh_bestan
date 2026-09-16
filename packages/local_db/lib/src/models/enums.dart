@@ -33,6 +33,12 @@ enum AssetAccountKind {
   other,
 }
 
+/// Calendar reminder type (money due dates overlay separately).
+enum ReminderKind {
+  event,
+  birthday,
+}
+
 /// Reminder recurrence.
 enum RepeatRule {
   none,

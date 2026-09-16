@@ -48,5 +48,12 @@
     "wed": "Wed",
     "thu": "Thu",
     "fri": "Fri"
+  },
+  "kindLabel": "Type",
+  "kind": {
+    "event": "Event",
+    "birthday": "Birthday",
+    "money": "Money",
+    "installment": "Installment"
   }
 }

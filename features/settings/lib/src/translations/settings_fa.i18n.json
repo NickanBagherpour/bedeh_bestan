@@ -34,5 +34,10 @@
   "reminderDay1": "۱ روز",
   "reminderCustomDay": "روز دلخواه (۱ تا ۳۰)",
   "reminderAddDay": "افزودن",
-  "reminderTimeHint": "ساعت ارسال: ۰۹:۰۰."
+  "reminderTimeHint": "ساعت ارسال: ۰۹:۰۰.",
+  "calendarItems": "روی تقویم",
+  "calendarItemsHint": "چه چیزهایی روی ماه و فهرست روز دیده شود. رنگ‌ها: طلایی رویداد، گل‌بهی تولد، مرجانی بدهی، سبز طلب.",
+  "showEvents": "رویدادها",
+  "showBirthdays": "تولدها",
+  "showMoney": "سررسید حساب"
 }

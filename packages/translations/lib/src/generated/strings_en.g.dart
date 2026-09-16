@@ -192,6 +192,11 @@ class Translations$calendar$en {
 
 	late final Translations$calendar$repeatRule$en repeatRule = Translations$calendar$repeatRule$en.internal(_root);
 	late final Translations$calendar$weekday$en weekday = Translations$calendar$weekday$en.internal(_root);
+
+	/// en: 'Type'
+	String get kindLabel => 'Type';
+
+	late final Translations$calendar$kind$en kind = Translations$calendar$kind$en.internal(_root);
 }
 
 // Path: home
@@ -941,6 +946,21 @@ class Translations$settings$en {
 
 	/// en: 'Fires at 09:00.'
 	String get reminderTimeHint => 'Fires at 09:00.';
+
+	/// en: 'On the calendar'
+	String get calendarItems => 'On the calendar';
+
+	/// en: 'Choose which items appear on the month grid and agenda. Colors: gold events, rose birthdays, coral debts, teal receivables.'
+	String get calendarItemsHint => 'Choose which items appear on the month grid and agenda. Colors: gold events, rose birthdays, coral debts, teal receivables.';
+
+	/// en: 'Events'
+	String get showEvents => 'Events';
+
+	/// en: 'Birthdays'
+	String get showBirthdays => 'Birthdays';
+
+	/// en: 'Money due dates'
+	String get showMoney => 'Money due dates';
 }
 
 // Path: app.currency
@@ -1147,6 +1167,27 @@ class Translations$calendar$weekday$en {
 	String get fri => 'Fri';
 }
 
+// Path: calendar.kind
+class Translations$calendar$kind$en {
+	Translations$calendar$kind$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Event'
+	String get event => 'Event';
+
+	/// en: 'Birthday'
+	String get birthday => 'Birthday';
+
+	/// en: 'Money'
+	String get money => 'Money';
+
+	/// en: 'Installment'
+	String get installment => 'Installment';
+}
+
 // Path: money.status
 class Translations$money$status$en {
 	Translations$money$status$en.internal(this._root);
@@ -1345,6 +1386,11 @@ extension on Translations {
 			'calendar.weekday.wed' => 'Wed',
 			'calendar.weekday.thu' => 'Thu',
 			'calendar.weekday.fri' => 'Fri',
+			'calendar.kindLabel' => 'Type',
+			'calendar.kind.event' => 'Event',
+			'calendar.kind.birthday' => 'Birthday',
+			'calendar.kind.money' => 'Money',
+			'calendar.kind.installment' => 'Installment',
 			'home.payAndReceive' => 'Give and take',
 			'home.offlineBlurb' => 'Installments, receivables, and reminders — all on this device.',
 			'home.emptyTitle' => 'Quiet week',
@@ -1599,6 +1645,11 @@ extension on Translations {
 			'settings.reminderCustomDay' => 'Custom (1–30)',
 			'settings.reminderAddDay' => 'Add',
 			'settings.reminderTimeHint' => 'Fires at 09:00.',
+			'settings.calendarItems' => 'On the calendar',
+			'settings.calendarItemsHint' => 'Choose which items appear on the month grid and agenda. Colors: gold events, rose birthdays, coral debts, teal receivables.',
+			'settings.showEvents' => 'Events',
+			'settings.showBirthdays' => 'Birthdays',
+			'settings.showMoney' => 'Money due dates',
 			_ => null,
 		};
 	}

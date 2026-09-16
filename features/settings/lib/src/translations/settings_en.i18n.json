@@ -34,5 +34,10 @@
   "reminderDay1": "1 day",
   "reminderCustomDay": "Custom (1–30)",
   "reminderAddDay": "Add",
-  "reminderTimeHint": "Fires at 09:00."
+  "reminderTimeHint": "Fires at 09:00.",
+  "calendarItems": "On the calendar",
+  "calendarItemsHint": "Choose which items appear on the month grid and agenda. Colors: gold events, rose birthdays, coral debts, teal receivables.",
+  "showEvents": "Events",
+  "showBirthdays": "Birthdays",
+  "showMoney": "Money due dates"
 }

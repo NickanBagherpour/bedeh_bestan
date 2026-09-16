@@ -78,6 +78,7 @@ class Reminders extends Table {
   DateTimeColumn get startAt => dateTime()();
   DateTimeColumn get endAt => dateTime().nullable()();
   BoolColumn get allDay => boolean().withDefault(const Constant(false))();
+  TextColumn get kind => text().withDefault(const Constant('event'))();
   TextColumn get repeatRule => text()();
   IntColumn get repeatEveryN => integer().nullable()();
   BoolColumn get notifyOnTime => boolean().withDefault(const Constant(true))();

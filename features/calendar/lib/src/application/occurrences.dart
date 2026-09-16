@@ -1,11 +1,28 @@
 import 'package:core/core.dart' show CalendarType, dateOnly, shiftCalendarMonths;
-import 'package:local_db/local_db.dart' show Reminder, RepeatRule;
+import 'package:local_db/local_db.dart'
+    show MoneyDirection, MoneyItem, MoneySchedule, Reminder, ReminderKind, RepeatRule;
+
+enum CalendarEventKind { event, birthday, moneyPay, moneyReceive }
 
 final class CalendarOccurrence {
-  const CalendarOccurrence({required this.reminder, required this.at});
+  const CalendarOccurrence({
+    required this.id,
+    required this.title,
+    required this.at,
+    required this.allDay,
+    required this.kind,
+    required this.repeatKey,
+  });
 
-  final Reminder reminder;
+  final String id;
+  final String title;
   final DateTime at;
+  final bool allDay;
+  final CalendarEventKind kind;
+  final String repeatKey;
+
+  bool get isMoney =>
+      kind == CalendarEventKind.moneyPay || kind == CalendarEventKind.moneyReceive;
 }
 
 List<CalendarOccurrence> expandOccurrences({
@@ -24,15 +41,75 @@ List<CalendarOccurrence> expandOccurrences({
       end: end,
       calendar: calendar,
     )) {
-      out.add(CalendarOccurrence(reminder: reminder, at: at));
+      out.add(
+        CalendarOccurrence(
+          id: reminder.id,
+          title: reminder.title,
+          at: at,
+          allDay: reminder.allDay,
+          kind: reminder.kind == ReminderKind.birthday
+              ? CalendarEventKind.birthday
+              : CalendarEventKind.event,
+          repeatKey: 'calendar.repeatRule.${reminder.repeatRule.name}',
+        ),
+      );
     }
   }
-  out.sort((a, b) {
-    final byTime = a.at.compareTo(b.at);
-    if (byTime != 0) return byTime;
-    return a.reminder.title.compareTo(b.reminder.title);
-  });
+  _sortOccurrences(out);
   return out;
+}
+
+List<CalendarOccurrence> expandMoneyDueOccurrences({
+  required List<MoneyItem> items,
+  required DateTime rangeStart,
+  required DateTime rangeEnd,
+}) {
+  final start = dateOnly(rangeStart);
+  final end = dateOnly(rangeEnd);
+  final out = <CalendarOccurrence>[];
+  for (final item in items) {
+    if (item.isSettled) continue;
+    final at = dateOnly(item.nextDueDate);
+    if (at.isBefore(start) || at.isAfter(end)) continue;
+    out.add(
+      CalendarOccurrence(
+        id: item.id,
+        title: item.title,
+        at: at,
+        allDay: true,
+        kind: item.direction == MoneyDirection.pay
+            ? CalendarEventKind.moneyPay
+            : CalendarEventKind.moneyReceive,
+        repeatKey: item.schedule == MoneySchedule.installment
+            ? 'calendar.kind.installment'
+            : 'calendar.kind.money',
+      ),
+    );
+  }
+  _sortOccurrences(out);
+  return out;
+}
+
+List<CalendarOccurrence> mergeCalendarOccurrences(
+  Iterable<CalendarOccurrence> left,
+  Iterable<CalendarOccurrence> right,
+) {
+  final out = [...left, ...right];
+  _sortOccurrences(out);
+  return out;
+}
+
+bool includeCalendarOccurrence(
+  CalendarOccurrence row, {
+  required bool showEvents,
+  required bool showBirthdays,
+  required bool showMoney,
+}) {
+  return switch (row.kind) {
+    CalendarEventKind.event => showEvents,
+    CalendarEventKind.birthday => showBirthdays,
+    CalendarEventKind.moneyPay || CalendarEventKind.moneyReceive => showMoney,
+  };
 }
 
 List<DateTime> occurrenceTimes(
@@ -62,6 +139,14 @@ List<DateTime> occurrenceTimes(
     case RepeatRule.yearly:
       return _stepMonths(origin, start, end, 12, calendar);
   }
+}
+
+void _sortOccurrences(List<CalendarOccurrence> out) {
+  out.sort((a, b) {
+    final byTime = a.at.compareTo(b.at);
+    if (byTime != 0) return byTime;
+    return a.title.compareTo(b.title);
+  });
 }
 
 List<DateTime> _stepDays(

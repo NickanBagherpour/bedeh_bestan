@@ -337,7 +337,7 @@ class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
             icon: Icons.warning_amber_rounded,
             summary: amountSummary(
               d.overdue,
-              amountOf: (row) => row.remainingAmount,
+              amountOf: (row) => row.suggestedAmount,
             ),
             expandTooltip: t.home.sectionShowMore,
             collapseTooltip: t.home.sectionCollapse,
@@ -347,7 +347,7 @@ class _HomeDashboardBodyState extends ConsumerState<_HomeDashboardBody> {
               d.overdue,
               enableQuickPay: true,
               emptyLabel: t.home.emptyBody,
-              amountOf: (row) => row.remainingAmount,
+              amountOf: (row) => row.suggestedAmount,
             ),
           ),
         ),

@@ -225,6 +225,16 @@ void main() {
     final dashboard = buildHomeDashboard(
       items: [
         money(
+          id: 'overdue-installment',
+          partyId: shop.id,
+          direction: MoneyDirection.pay,
+          due: now.subtract(const Duration(days: 3)),
+          total: 8000000,
+          schedule: MoneySchedule.installment,
+          installmentCount: 8,
+          installmentAmount: 1000000,
+        ),
+        money(
           id: 'week-installment',
           partyId: shop.id,
           direction: MoneyDirection.pay,
@@ -251,6 +261,9 @@ void main() {
       calendar: CalendarType.gregorian,
     );
 
+    expect(dashboard.overdue.single.id, 'overdue-installment');
+    expect(dashboard.overdue.single.remainingAmount, 8000000);
+    expect(dashboard.overdue.single.suggestedAmount, 1000000);
     expect(dashboard.dueThisWeek.single.id, 'week-installment');
     expect(dashboard.dueThisWeek.single.remainingAmount, 10000000);
     expect(dashboard.dueThisWeek.single.suggestedAmount, 1000000);
@@ -259,7 +272,7 @@ void main() {
     expect(dashboard.dueThisMonth.single.suggestedAmount, 1000000);
     expect(dashboard.report.duePayByPeriodEnd, 1000000);
     expect(dashboard.report.dueReceiveByPeriodEnd, 1000000);
-    expect(dashboard.report.remainingPay, 10000000);
+    expect(dashboard.report.remainingPay, 18000000);
     expect(dashboard.report.remainingReceive, 5000000);
   });
 }

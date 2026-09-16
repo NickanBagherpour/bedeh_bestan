@@ -48,5 +48,12 @@
     "wed": "چ",
     "thu": "پ",
     "fri": "ج"
+  },
+  "kindLabel": "نوع",
+  "kind": {
+    "event": "رویداد",
+    "birthday": "تولد",
+    "money": "حساب",
+    "installment": "قسط"
   }
 }

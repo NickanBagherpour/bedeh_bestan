@@ -270,6 +270,7 @@ Map<String, Object?> _reminderJson(Reminder row) => {
       'startAt': _millis(row.startAt),
       'endAt': row.endAt == null ? null : _millis(row.endAt!),
       'allDay': row.allDay,
+      'kind': row.kind.name,
       'repeatRule': row.repeatRule.name,
       'repeatEveryN': row.repeatEveryN,
       'notifyOnTime': row.notifyOnTime,
@@ -286,6 +287,11 @@ Reminder _reminderFrom(Map<String, Object?> json) {
     startAt: _time(json['startAt']),
     endAt: json['endAt'] == null ? null : _time(json['endAt']),
     allDay: json['allDay'] as bool? ?? false,
+    kind: enumByName(
+      ReminderKind.values,
+      json['kind'] as String? ?? '',
+      ReminderKind.event,
+    ),
     repeatRule: enumByName(
       RepeatRule.values,
       json['repeatRule'] as String? ?? '',

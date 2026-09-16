@@ -10,7 +10,7 @@ import 'package:core/core.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:local_db/local_db.dart' show RepeatRule;
+import 'package:local_db/local_db.dart' show ReminderKind, RepeatRule;
 import 'package:translations/translations.dart'
     show Translations, TranslationsLookup;
 import 'package:ui_kit/ui_kit.dart'
@@ -42,6 +42,7 @@ class _ReminderFormPageState extends ConsumerState<ReminderFormPage> {
   TimeOfDay _time = TimeOfDay.now();
   bool _allDay = false;
   RepeatRule _repeat = RepeatRule.none;
+  ReminderKind _kind = ReminderKind.event;
   bool _notifyOnTime = true;
   bool _notifyDayBefore = false;
   bool _loaded = false;
@@ -84,6 +85,7 @@ class _ReminderFormPageState extends ConsumerState<ReminderFormPage> {
             _day = dateOnly(reminder.startAt);
             _time = TimeOfDay.fromDateTime(reminder.startAt);
             _allDay = reminder.allDay;
+            _kind = reminder.kind;
             _repeat = reminder.repeatRule;
             _everyN.text = '${reminder.repeatEveryN ?? 2}';
             _notifyOnTime = reminder.notifyOnTime;
@@ -145,6 +147,30 @@ class _ReminderFormPageState extends ConsumerState<ReminderFormPage> {
             decoration: InputDecoration(labelText: t.calendar.bodyField),
             minLines: 2,
             maxLines: 4,
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Text(t.calendar.kindLabel, style: Theme.of(context).textTheme.titleSmall),
+          const SizedBox(height: AppSpacing.xs),
+          Wrap(
+            spacing: AppSpacing.xs,
+            runSpacing: AppSpacing.xs,
+            children: [
+              for (final kind in ReminderKind.values)
+                ChoiceChip(
+                  label: Text(_kindLabel(t, kind)),
+                  selected: _kind == kind,
+                  onSelected: (_) {
+                    AppHaptics.selection();
+                    setState(() {
+                      _kind = kind;
+                      if (kind == ReminderKind.birthday &&
+                          _repeat == RepeatRule.none) {
+                        _repeat = RepeatRule.yearly;
+                      }
+                    });
+                  },
+                ),
+            ],
           ),
           const SizedBox(height: AppSpacing.md),
           SwitchListTile(
@@ -277,6 +303,7 @@ class _ReminderFormPageState extends ConsumerState<ReminderFormPage> {
               body: _body.text,
               startAt: startAt,
               allDay: _allDay,
+              kind: _kind,
               repeatRule: _repeat,
               repeatEveryN: everyN,
               notifyOnTime: _notifyOnTime,
@@ -296,6 +323,13 @@ class _ReminderFormPageState extends ConsumerState<ReminderFormPage> {
   void _snack(String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
+}
+
+String _kindLabel(Translations t, ReminderKind kind) {
+  return switch (kind) {
+    ReminderKind.event => t.calendar.kind.event,
+    ReminderKind.birthday => t.calendar.kind.birthday,
+  };
 }
 
 String _repeatLabel(Translations t, RepeatRule rule) {
