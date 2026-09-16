@@ -40,7 +40,6 @@ class SettingsPage extends ConsumerWidget {
           SettingsSection(
             title: t.settings.theme,
             child: SettingsChoiceRow<ThemeMode>(
-              label: t.app.theme.label,
               value: settings.themeMode,
               options: const [
                 ThemeMode.system,
@@ -59,7 +58,6 @@ class SettingsPage extends ConsumerWidget {
             title: t.settings.style,
             footer: t.settings.styleHint,
             child: SettingsChoiceRow<AppStyle>(
-              label: t.app.style.label,
               value: settings.appStyle,
               options: AppStyle.values,
               labelFor: (style) => switch (style) {
@@ -72,7 +70,6 @@ class SettingsPage extends ConsumerWidget {
           SettingsSection(
             title: t.settings.language,
             child: SettingsChoiceRow<String>(
-              label: t.app.language.label,
               value: settings.locale.languageCode,
               options: const ['fa', 'en'],
               labelFor: (code) =>
@@ -84,7 +81,6 @@ class SettingsPage extends ConsumerWidget {
             title: t.settings.calendar,
             footer: t.settings.calendarHint,
             child: SettingsChoiceRow<CalendarPreference>(
-              label: t.settings.calendar,
               value: settings.calendar,
               options: CalendarPreference.values,
               labelFor: (value) => switch (value) {
@@ -98,7 +94,6 @@ class SettingsPage extends ConsumerWidget {
             title: t.settings.currency,
             footer: t.settings.currencyHint,
             child: SettingsChoiceRow<AppCurrency>(
-              label: t.settings.currency,
               value: settings.currency,
               options: AppCurrency.values,
               labelFor: (value) => switch (value) {
@@ -142,7 +137,6 @@ class SettingsPage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 SettingsChoiceRow<MoneyReminderMode>(
-                  label: t.settings.reminders,
                   value: settings.moneyReminderMode,
                   options: MoneyReminderMode.values,
                   labelFor: (mode) => switch (mode) {
