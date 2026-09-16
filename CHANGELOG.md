@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.4] - 2026-09-16
+
+### Added
+- update calendar filter bar and settings choice row for improved UI
+- enhance calendar functionality with money item integration
+
 ## [1.0.4] - 2026-09-15
 
 ### Added
