@@ -11,6 +11,7 @@ export 'src/database/seed.dart';
 export 'src/models/asset_account.dart';
 export 'src/models/enums.dart';
 export 'src/models/library_snapshot.dart';
+export 'src/models/money_installment.dart';
 export 'src/models/money_item.dart';
 export 'src/models/money_payment.dart';
 export 'src/models/note.dart';

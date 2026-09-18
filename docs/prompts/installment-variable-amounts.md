@@ -54,7 +54,21 @@ backup round-trip.
 
 ## Acceptance
 
-- [ ] User can set قسط 3 to a different amount; save survives restart.
-- [ ] Payment advances correct row; remaining totals consistent.
-- [ ] Backup/import includes installment overrides.
-- [ ] `melos run analyze && melos run test` pass.
+- [x] User can set قسط 3 to a different amount; save survives restart.
+- [x] Payment advances correct row; remaining totals consistent.
+- [x] Backup/import includes installment overrides.
+- [x] `melos run analyze && melos run test` pass.
+
+## Implementation notes
+
+- New Drift table `MoneyInstallments` (schema v7): `id`, `moneyItemId`,
+  `index` (1-based), `dueDate`, `amount`. Loaded onto `MoneyItem.installments`.
+- Empty installments list → equal-split generation (legacy items unchanged).
+- Form shows generated schedule; tap / swipe opens edit sheet for amount + due
+  date. Total = sum of rows. Save persists via `replaceInstallmentsFor`.
+- `recordPayment` consumes stored row amounts in order; `suggestedQuickPaymentAmount`
+  / schedule / notifications use stored rows when present.
+- Backup encodes top-level `installments` (and nested under money items).
+- i18n: `money.installments.*` (en + fa).
+- Tests: `packages/local_db/test/installment_variable_test.dart` + schedule
+  / suggested-amount coverage.

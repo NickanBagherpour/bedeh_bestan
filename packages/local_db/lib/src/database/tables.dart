@@ -70,6 +70,19 @@ class MoneyPayments extends Table {
   Set<Column<Object>> get primaryKey => {id};
 }
 
+/// Per-قسط overrides (variable amounts / due dates) for installment items.
+@DataClassName('MoneyInstallmentRow')
+class MoneyInstallments extends Table {
+  TextColumn get id => text()();
+  TextColumn get moneyItemId => text().references(MoneyItems, #id)();
+  IntColumn get index => integer()();
+  DateTimeColumn get dueDate => dateTime()();
+  IntColumn get amount => integer()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
 @DataClassName('ReminderRow')
 class Reminders extends Table {
   TextColumn get id => text()();

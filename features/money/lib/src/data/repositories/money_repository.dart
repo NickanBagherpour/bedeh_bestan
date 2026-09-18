@@ -2,6 +2,7 @@ import 'package:local_db/local_db.dart'
     show
         AppDatabase,
         AssetAccount,
+        MoneyInstallment,
         MoneyItem,
         MoneyPayment,
         Party,
@@ -37,6 +38,13 @@ final class MoneyRepository {
   Future<void> deleteParty(String id) => _database.deleteParty(id);
 
   Future<void> upsertItem(MoneyItem item) => _database.upsertMoneyItem(item);
+
+  Future<void> replaceInstallments(
+    String moneyItemId,
+    List<MoneyInstallment> rows,
+  ) {
+    return _database.replaceInstallmentsFor(moneyItemId, rows);
+  }
 
   Future<void> deleteItem(String id) => _database.deleteMoneyItem(id);
 

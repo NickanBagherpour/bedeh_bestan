@@ -2002,6 +2002,373 @@ class MoneyPaymentsCompanion extends UpdateCompanion<MoneyPaymentRow> {
   }
 }
 
+class $MoneyInstallmentsTable extends MoneyInstallments
+    with TableInfo<$MoneyInstallmentsTable, MoneyInstallmentRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MoneyInstallmentsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _moneyItemIdMeta = const VerificationMeta(
+    'moneyItemId',
+  );
+  @override
+  late final GeneratedColumn<String> moneyItemId = GeneratedColumn<String>(
+    'money_item_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES money_items (id)',
+    ),
+  );
+  static const VerificationMeta _indexMeta = const VerificationMeta('index');
+  @override
+  late final GeneratedColumn<int> index = GeneratedColumn<int>(
+    'index',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _dueDateMeta = const VerificationMeta(
+    'dueDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> dueDate = GeneratedColumn<DateTime>(
+    'due_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _amountMeta = const VerificationMeta('amount');
+  @override
+  late final GeneratedColumn<int> amount = GeneratedColumn<int>(
+    'amount',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    moneyItemId,
+    index,
+    dueDate,
+    amount,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'money_installments';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<MoneyInstallmentRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('money_item_id')) {
+      context.handle(
+        _moneyItemIdMeta,
+        moneyItemId.isAcceptableOrUnknown(
+          data['money_item_id']!,
+          _moneyItemIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_moneyItemIdMeta);
+    }
+    if (data.containsKey('index')) {
+      context.handle(
+        _indexMeta,
+        index.isAcceptableOrUnknown(data['index']!, _indexMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_indexMeta);
+    }
+    if (data.containsKey('due_date')) {
+      context.handle(
+        _dueDateMeta,
+        dueDate.isAcceptableOrUnknown(data['due_date']!, _dueDateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dueDateMeta);
+    }
+    if (data.containsKey('amount')) {
+      context.handle(
+        _amountMeta,
+        amount.isAcceptableOrUnknown(data['amount']!, _amountMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_amountMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  MoneyInstallmentRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MoneyInstallmentRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      moneyItemId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}money_item_id'],
+      )!,
+      index: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}index'],
+      )!,
+      dueDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}due_date'],
+      )!,
+      amount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount'],
+      )!,
+    );
+  }
+
+  @override
+  $MoneyInstallmentsTable createAlias(String alias) {
+    return $MoneyInstallmentsTable(attachedDatabase, alias);
+  }
+}
+
+class MoneyInstallmentRow extends DataClass
+    implements Insertable<MoneyInstallmentRow> {
+  final String id;
+  final String moneyItemId;
+  final int index;
+  final DateTime dueDate;
+  final int amount;
+  const MoneyInstallmentRow({
+    required this.id,
+    required this.moneyItemId,
+    required this.index,
+    required this.dueDate,
+    required this.amount,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['money_item_id'] = Variable<String>(moneyItemId);
+    map['index'] = Variable<int>(index);
+    map['due_date'] = Variable<DateTime>(dueDate);
+    map['amount'] = Variable<int>(amount);
+    return map;
+  }
+
+  MoneyInstallmentsCompanion toCompanion(bool nullToAbsent) {
+    return MoneyInstallmentsCompanion(
+      id: Value(id),
+      moneyItemId: Value(moneyItemId),
+      index: Value(index),
+      dueDate: Value(dueDate),
+      amount: Value(amount),
+    );
+  }
+
+  factory MoneyInstallmentRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MoneyInstallmentRow(
+      id: serializer.fromJson<String>(json['id']),
+      moneyItemId: serializer.fromJson<String>(json['moneyItemId']),
+      index: serializer.fromJson<int>(json['index']),
+      dueDate: serializer.fromJson<DateTime>(json['dueDate']),
+      amount: serializer.fromJson<int>(json['amount']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'moneyItemId': serializer.toJson<String>(moneyItemId),
+      'index': serializer.toJson<int>(index),
+      'dueDate': serializer.toJson<DateTime>(dueDate),
+      'amount': serializer.toJson<int>(amount),
+    };
+  }
+
+  MoneyInstallmentRow copyWith({
+    String? id,
+    String? moneyItemId,
+    int? index,
+    DateTime? dueDate,
+    int? amount,
+  }) => MoneyInstallmentRow(
+    id: id ?? this.id,
+    moneyItemId: moneyItemId ?? this.moneyItemId,
+    index: index ?? this.index,
+    dueDate: dueDate ?? this.dueDate,
+    amount: amount ?? this.amount,
+  );
+  MoneyInstallmentRow copyWithCompanion(MoneyInstallmentsCompanion data) {
+    return MoneyInstallmentRow(
+      id: data.id.present ? data.id.value : this.id,
+      moneyItemId: data.moneyItemId.present
+          ? data.moneyItemId.value
+          : this.moneyItemId,
+      index: data.index.present ? data.index.value : this.index,
+      dueDate: data.dueDate.present ? data.dueDate.value : this.dueDate,
+      amount: data.amount.present ? data.amount.value : this.amount,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MoneyInstallmentRow(')
+          ..write('id: $id, ')
+          ..write('moneyItemId: $moneyItemId, ')
+          ..write('index: $index, ')
+          ..write('dueDate: $dueDate, ')
+          ..write('amount: $amount')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, moneyItemId, index, dueDate, amount);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MoneyInstallmentRow &&
+          other.id == this.id &&
+          other.moneyItemId == this.moneyItemId &&
+          other.index == this.index &&
+          other.dueDate == this.dueDate &&
+          other.amount == this.amount);
+}
+
+class MoneyInstallmentsCompanion extends UpdateCompanion<MoneyInstallmentRow> {
+  final Value<String> id;
+  final Value<String> moneyItemId;
+  final Value<int> index;
+  final Value<DateTime> dueDate;
+  final Value<int> amount;
+  final Value<int> rowid;
+  const MoneyInstallmentsCompanion({
+    this.id = const Value.absent(),
+    this.moneyItemId = const Value.absent(),
+    this.index = const Value.absent(),
+    this.dueDate = const Value.absent(),
+    this.amount = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  MoneyInstallmentsCompanion.insert({
+    required String id,
+    required String moneyItemId,
+    required int index,
+    required DateTime dueDate,
+    required int amount,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       moneyItemId = Value(moneyItemId),
+       index = Value(index),
+       dueDate = Value(dueDate),
+       amount = Value(amount);
+  static Insertable<MoneyInstallmentRow> custom({
+    Expression<String>? id,
+    Expression<String>? moneyItemId,
+    Expression<int>? index,
+    Expression<DateTime>? dueDate,
+    Expression<int>? amount,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (moneyItemId != null) 'money_item_id': moneyItemId,
+      if (index != null) 'index': index,
+      if (dueDate != null) 'due_date': dueDate,
+      if (amount != null) 'amount': amount,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  MoneyInstallmentsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? moneyItemId,
+    Value<int>? index,
+    Value<DateTime>? dueDate,
+    Value<int>? amount,
+    Value<int>? rowid,
+  }) {
+    return MoneyInstallmentsCompanion(
+      id: id ?? this.id,
+      moneyItemId: moneyItemId ?? this.moneyItemId,
+      index: index ?? this.index,
+      dueDate: dueDate ?? this.dueDate,
+      amount: amount ?? this.amount,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (moneyItemId.present) {
+      map['money_item_id'] = Variable<String>(moneyItemId.value);
+    }
+    if (index.present) {
+      map['index'] = Variable<int>(index.value);
+    }
+    if (dueDate.present) {
+      map['due_date'] = Variable<DateTime>(dueDate.value);
+    }
+    if (amount.present) {
+      map['amount'] = Variable<int>(amount.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MoneyInstallmentsCompanion(')
+          ..write('id: $id, ')
+          ..write('moneyItemId: $moneyItemId, ')
+          ..write('index: $index, ')
+          ..write('dueDate: $dueDate, ')
+          ..write('amount: $amount, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $RemindersTable extends Reminders
     with TableInfo<$RemindersTable, ReminderRow> {
   @override
@@ -4039,6 +4406,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $PartiesTable parties = $PartiesTable(this);
   late final $MoneyItemsTable moneyItems = $MoneyItemsTable(this);
   late final $MoneyPaymentsTable moneyPayments = $MoneyPaymentsTable(this);
+  late final $MoneyInstallmentsTable moneyInstallments =
+      $MoneyInstallmentsTable(this);
   late final $RemindersTable reminders = $RemindersTable(this);
   late final $NotesTable notes = $NotesTable(this);
   late final $AssetAccountsTable assetAccounts = $AssetAccountsTable(this);
@@ -4051,6 +4420,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     parties,
     moneyItems,
     moneyPayments,
+    moneyInstallments,
     reminders,
     notes,
     assetAccounts,
@@ -4642,6 +5012,27 @@ final class $$MoneyItemsTableReferences
     );
   }
 
+  static MultiTypedResultKey<$MoneyInstallmentsTable, List<MoneyInstallmentRow>>
+  _moneyInstallmentsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.moneyInstallments,
+        aliasName: 'money_items__id__money_installments__money_item_id',
+      );
+
+  $$MoneyInstallmentsTableProcessedTableManager get moneyInstallmentsRefs {
+    final manager = $$MoneyInstallmentsTableTableManager(
+      $_db,
+      $_db.moneyInstallments,
+    ).filter((f) => f.moneyItemId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _moneyInstallmentsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
   static MultiTypedResultKey<$NotesTable, List<NoteRow>> _notesRefsTable(
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
@@ -4790,6 +5181,31 @@ class $$MoneyItemsTableFilterComposer
           }) => $$MoneyPaymentsTableFilterComposer(
             $db: $db,
             $table: $db.moneyPayments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> moneyInstallmentsRefs(
+    Expression<bool> Function($$MoneyInstallmentsTableFilterComposer f) f,
+  ) {
+    final $$MoneyInstallmentsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.moneyInstallments,
+      getReferencedColumn: (t) => t.moneyItemId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MoneyInstallmentsTableFilterComposer(
+            $db: $db,
+            $table: $db.moneyInstallments,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -5059,6 +5475,32 @@ class $$MoneyItemsTableAnnotationComposer
     return f(composer);
   }
 
+  Expression<T> moneyInstallmentsRefs<T extends Object>(
+    Expression<T> Function($$MoneyInstallmentsTableAnnotationComposer a) f,
+  ) {
+    final $$MoneyInstallmentsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.moneyInstallments,
+          getReferencedColumn: (t) => t.moneyItemId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$MoneyInstallmentsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.moneyInstallments,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
   Expression<T> notesRefs<T extends Object>(
     Expression<T> Function($$NotesTableAnnotationComposer a) f,
   ) {
@@ -5101,6 +5543,7 @@ class $$MoneyItemsTableTableManager
           PrefetchHooks Function({
             bool partyId,
             bool moneyPaymentsRefs,
+            bool moneyInstallmentsRefs,
             bool notesRefs,
           })
         > {
@@ -5207,12 +5650,14 @@ class $$MoneyItemsTableTableManager
               ({
                 partyId = false,
                 moneyPaymentsRefs = false,
+                moneyInstallmentsRefs = false,
                 notesRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (moneyPaymentsRefs) db.moneyPayments,
+                    if (moneyInstallmentsRefs) db.moneyInstallments,
                     if (notesRefs) db.notes,
                   ],
                   addJoins:
@@ -5271,6 +5716,27 @@ class $$MoneyItemsTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (moneyInstallmentsRefs)
+                        await $_getPrefetchedData<
+                          MoneyItemRow,
+                          $MoneyItemsTable,
+                          MoneyInstallmentRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$MoneyItemsTableReferences
+                              ._moneyInstallmentsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$MoneyItemsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).moneyInstallmentsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.moneyItemId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                       if (notesRefs)
                         await $_getPrefetchedData<
                           MoneyItemRow,
@@ -5315,6 +5781,7 @@ typedef $$MoneyItemsTableProcessedTableManager =
       PrefetchHooks Function({
         bool partyId,
         bool moneyPaymentsRefs,
+        bool moneyInstallmentsRefs,
         bool notesRefs,
       })
     >;
@@ -5638,6 +6105,341 @@ typedef $$MoneyPaymentsTableProcessedTableManager =
       $$MoneyPaymentsTableUpdateCompanionBuilder,
       (MoneyPaymentRow, $$MoneyPaymentsTableReferences),
       MoneyPaymentRow,
+      PrefetchHooks Function({bool moneyItemId})
+    >;
+typedef $$MoneyInstallmentsTableCreateCompanionBuilder =
+    MoneyInstallmentsCompanion Function({
+      required String id,
+      required String moneyItemId,
+      required int index,
+      required DateTime dueDate,
+      required int amount,
+      Value<int> rowid,
+    });
+typedef $$MoneyInstallmentsTableUpdateCompanionBuilder =
+    MoneyInstallmentsCompanion Function({
+      Value<String> id,
+      Value<String> moneyItemId,
+      Value<int> index,
+      Value<DateTime> dueDate,
+      Value<int> amount,
+      Value<int> rowid,
+    });
+
+final class $$MoneyInstallmentsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $MoneyInstallmentsTable,
+          MoneyInstallmentRow
+        > {
+  $$MoneyInstallmentsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $MoneyItemsTable _moneyItemIdTable(_$AppDatabase db) => db.moneyItems
+      .createAlias('money_installments__money_item_id__money_items__id');
+
+  $$MoneyItemsTableProcessedTableManager get moneyItemId {
+    final $_column = $_itemColumn<String>('money_item_id')!;
+
+    final manager = $$MoneyItemsTableTableManager(
+      $_db,
+      $_db.moneyItems,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_moneyItemIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$MoneyInstallmentsTableFilterComposer
+    extends Composer<_$AppDatabase, $MoneyInstallmentsTable> {
+  $$MoneyInstallmentsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get index => $composableBuilder(
+    column: $table.index,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get dueDate => $composableBuilder(
+    column: $table.dueDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$MoneyItemsTableFilterComposer get moneyItemId {
+    final $$MoneyItemsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.moneyItemId,
+      referencedTable: $db.moneyItems,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MoneyItemsTableFilterComposer(
+            $db: $db,
+            $table: $db.moneyItems,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$MoneyInstallmentsTableOrderingComposer
+    extends Composer<_$AppDatabase, $MoneyInstallmentsTable> {
+  $$MoneyInstallmentsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get index => $composableBuilder(
+    column: $table.index,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get dueDate => $composableBuilder(
+    column: $table.dueDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$MoneyItemsTableOrderingComposer get moneyItemId {
+    final $$MoneyItemsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.moneyItemId,
+      referencedTable: $db.moneyItems,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MoneyItemsTableOrderingComposer(
+            $db: $db,
+            $table: $db.moneyItems,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$MoneyInstallmentsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $MoneyInstallmentsTable> {
+  $$MoneyInstallmentsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get index =>
+      $composableBuilder(column: $table.index, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get dueDate =>
+      $composableBuilder(column: $table.dueDate, builder: (column) => column);
+
+  GeneratedColumn<int> get amount =>
+      $composableBuilder(column: $table.amount, builder: (column) => column);
+
+  $$MoneyItemsTableAnnotationComposer get moneyItemId {
+    final $$MoneyItemsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.moneyItemId,
+      referencedTable: $db.moneyItems,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MoneyItemsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.moneyItems,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$MoneyInstallmentsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $MoneyInstallmentsTable,
+          MoneyInstallmentRow,
+          $$MoneyInstallmentsTableFilterComposer,
+          $$MoneyInstallmentsTableOrderingComposer,
+          $$MoneyInstallmentsTableAnnotationComposer,
+          $$MoneyInstallmentsTableCreateCompanionBuilder,
+          $$MoneyInstallmentsTableUpdateCompanionBuilder,
+          (MoneyInstallmentRow, $$MoneyInstallmentsTableReferences),
+          MoneyInstallmentRow,
+          PrefetchHooks Function({bool moneyItemId})
+        > {
+  $$MoneyInstallmentsTableTableManager(
+    _$AppDatabase db,
+    $MoneyInstallmentsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$MoneyInstallmentsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$MoneyInstallmentsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$MoneyInstallmentsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> moneyItemId = const Value.absent(),
+                Value<int> index = const Value.absent(),
+                Value<DateTime> dueDate = const Value.absent(),
+                Value<int> amount = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => MoneyInstallmentsCompanion(
+                id: id,
+                moneyItemId: moneyItemId,
+                index: index,
+                dueDate: dueDate,
+                amount: amount,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String moneyItemId,
+                required int index,
+                required DateTime dueDate,
+                required int amount,
+                Value<int> rowid = const Value.absent(),
+              }) => MoneyInstallmentsCompanion.insert(
+                id: id,
+                moneyItemId: moneyItemId,
+                index: index,
+                dueDate: dueDate,
+                amount: amount,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$MoneyInstallmentsTable, MoneyInstallmentRow>(
+                    table,
+                  ),
+                  $$MoneyInstallmentsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({moneyItemId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (moneyItemId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.moneyItemId,
+                                referencedTable:
+                                    $$MoneyInstallmentsTableReferences
+                                        ._moneyItemIdTable(db),
+                                referencedColumn:
+                                    $$MoneyInstallmentsTableReferences
+                                        ._moneyItemIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$MoneyInstallmentsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $MoneyInstallmentsTable,
+      MoneyInstallmentRow,
+      $$MoneyInstallmentsTableFilterComposer,
+      $$MoneyInstallmentsTableOrderingComposer,
+      $$MoneyInstallmentsTableAnnotationComposer,
+      $$MoneyInstallmentsTableCreateCompanionBuilder,
+      $$MoneyInstallmentsTableUpdateCompanionBuilder,
+      (MoneyInstallmentRow, $$MoneyInstallmentsTableReferences),
+      MoneyInstallmentRow,
       PrefetchHooks Function({bool moneyItemId})
     >;
 typedef $$RemindersTableCreateCompanionBuilder =
@@ -6907,6 +7709,8 @@ class $AppDatabaseManager {
       $$MoneyItemsTableTableManager(_db, _db.moneyItems);
   $$MoneyPaymentsTableTableManager get moneyPayments =>
       $$MoneyPaymentsTableTableManager(_db, _db.moneyPayments);
+  $$MoneyInstallmentsTableTableManager get moneyInstallments =>
+      $$MoneyInstallmentsTableTableManager(_db, _db.moneyInstallments);
   $$RemindersTableTableManager get reminders =>
       $$RemindersTableTableManager(_db, _db.reminders);
   $$NotesTableTableManager get notes =>

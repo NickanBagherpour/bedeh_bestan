@@ -116,6 +116,12 @@
   "schedulePaidSummary": "$count قسط پرداخت‌شده",
   "settleInstallment": "تسویه",
   "settleInstallmentConfirm": "قسط $index به مبلغ $amount با سررسید $date ثبت شود؟",
+  "installments": {
+    "editAmount": "ویرایش قسط",
+    "editHint": "برای تغییر مبلغ یا سررسید، روی ردیف بزنید یا آن را بکشید.",
+    "invalidRowAmount": "مبلغ قسط را درست وارد کنید.",
+    "totalMismatch": "جمع اقساط باید با مبلغ کل برابر باشد."
+  },
   "viewParty": "مشاهده طرف حساب",
   "partyLink": "مشاهده طرف‌حساب",
   "jumpToPayment": "برو به پرداخت",

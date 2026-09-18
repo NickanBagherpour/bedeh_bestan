@@ -636,6 +636,8 @@ class Translations$money$en {
 	/// en: 'Record installment $index ($amount) due $date?'
 	String settleInstallmentConfirm({required Object index, required Object amount, required Object date}) => 'Record installment ${index} (${amount}) due ${date}?';
 
+	late final Translations$money$installments$en installments = Translations$money$installments$en.internal(_root);
+
 	/// en: 'View party'
 	String get viewParty => 'View party';
 
@@ -1264,6 +1266,27 @@ class Translations$money$installmentState$en {
 	String get upcoming => 'Upcoming';
 }
 
+// Path: money.installments
+class Translations$money$installments$en {
+	Translations$money$installments$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Edit installment'
+	String get editAmount => 'Edit installment';
+
+	/// en: 'Tap or swipe a row to change its amount or due date.'
+	String get editHint => 'Tap or swipe a row to change its amount or due date.';
+
+	/// en: 'Enter a valid installment amount.'
+	String get invalidRowAmount => 'Enter a valid installment amount.';
+
+	/// en: 'Installment amounts must add up to the total.'
+	String get totalMismatch => 'Installment amounts must add up to the total.';
+}
+
 // Path: money.reminder
 class Translations$money$reminder$en {
 	Translations$money$reminder$en.internal(this._root);
@@ -1636,6 +1659,10 @@ extension on Translations {
 			'money.schedulePaidSummary' => ({required Object count}) => '${count} paid installments',
 			'money.settleInstallment' => 'Settle',
 			'money.settleInstallmentConfirm' => ({required Object index, required Object amount, required Object date}) => 'Record installment ${index} (${amount}) due ${date}?',
+			'money.installments.editAmount' => 'Edit installment',
+			'money.installments.editHint' => 'Tap or swipe a row to change its amount or due date.',
+			'money.installments.invalidRowAmount' => 'Enter a valid installment amount.',
+			'money.installments.totalMismatch' => 'Installment amounts must add up to the total.',
 			'money.viewParty' => 'View party',
 			'money.partyLink' => 'Open party',
 			'money.jumpToPayment' => 'Jump to payment',

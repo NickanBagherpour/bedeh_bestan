@@ -13,6 +13,7 @@ void main() {
     int? installmentAmount = 1000,
     int? installmentCount = 12,
     int periodsPaid = 0,
+    List<MoneyInstallment> installments = const [],
   }) {
     return MoneyItem(
       id: 'i',
@@ -29,6 +30,7 @@ void main() {
       installmentCount: installmentCount,
       installmentAmount: installmentAmount,
       periodsPaid: periodsPaid,
+      installments: installments,
     );
   }
 
@@ -132,5 +134,51 @@ void main() {
     expect(installmentRowSettleAmount(due, 500), 500);
     expect(installmentRowSettleAmount(due, 1000), 1000);
     expect(installmentRowSettleAmount(due, 0), 0);
+  });
+
+  test('uses stored per-قسط amounts and due dates when present', () {
+    final stored = item(
+      total: 6000,
+      installmentCount: 3,
+      installmentAmount: 2000,
+      installments: [
+        MoneyInstallment(
+          id: 'a',
+          moneyItemId: 'i',
+          index: 1,
+          dueDate: DateTime(2026, 1, 10),
+          amount: 3000,
+        ),
+        MoneyInstallment(
+          id: 'b',
+          moneyItemId: 'i',
+          index: 2,
+          dueDate: DateTime(2026, 2, 15),
+          amount: 2000,
+        ),
+        MoneyInstallment(
+          id: 'c',
+          moneyItemId: 'i',
+          index: 3,
+          dueDate: DateTime(2026, 3, 20),
+          amount: 1000,
+        ),
+      ],
+    );
+    final rows = installmentSchedule(stored, CalendarType.gregorian);
+    expect(rows.map((row) => row.amount), [3000, 2000, 1000]);
+    expect(rows[1].dueDate, DateTime(2026, 2, 15));
+  });
+
+  test('buildEqualInstallmentDraft makes monthly rows', () {
+    final rows = buildEqualInstallmentDraft(
+      count: 3,
+      amount: 1000,
+      startDate: start,
+      calendar: CalendarType.gregorian,
+    );
+    expect(rows, hasLength(3));
+    expect(installmentDraftTotal(rows), 3000);
+    expect(rows[2].dueDate, DateTime(2026, 3, 10));
   });
 }

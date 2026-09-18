@@ -60,6 +60,42 @@ void main() {
       installment.copyWith(paidAmount: 4200).suggestedQuickPaymentAmount(),
       800,
     );
+
+    final variable = installment.copyWith(
+      totalAmount: 6000,
+      paidAmount: 0,
+      installmentCount: 3,
+      installmentAmount: 2000,
+      installments: [
+        MoneyInstallment(
+          id: '1',
+          moneyItemId: 'x',
+          index: 1,
+          dueDate: now,
+          amount: 3500,
+        ),
+        MoneyInstallment(
+          id: '2',
+          moneyItemId: 'x',
+          index: 2,
+          dueDate: now.add(const Duration(days: 30)),
+          amount: 1500,
+        ),
+        MoneyInstallment(
+          id: '3',
+          moneyItemId: 'x',
+          index: 3,
+          dueDate: now.add(const Duration(days: 60)),
+          amount: 1000,
+        ),
+      ],
+    );
+    expect(variable.suggestedQuickPaymentAmount(), 3500);
+    expect(
+      variable.copyWith(periodsPaid: 1, paidAmount: 3500)
+          .suggestedQuickPaymentAmount(),
+      1500,
+    );
   });
 
   test('addCalendarMonths clamps the day', () {

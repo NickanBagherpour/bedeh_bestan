@@ -273,6 +273,7 @@ class _Translations$money$fa extends Translations$money$en {
 	@override String schedulePaidSummary({required Object count}) => '${count} قسط پرداخت‌شده';
 	@override String get settleInstallment => 'تسویه';
 	@override String settleInstallmentConfirm({required Object index, required Object amount, required Object date}) => 'قسط ${index} به مبلغ ${amount} با سررسید ${date} ثبت شود؟';
+	@override late final _Translations$money$installments$fa installments = _Translations$money$installments$fa._(_root);
 	@override String get viewParty => 'مشاهده طرف حساب';
 	@override String get partyLink => 'مشاهده طرف‌حساب';
 	@override String get jumpToPayment => 'برو به پرداخت';
@@ -587,6 +588,19 @@ class _Translations$money$installmentState$fa extends Translations$money$install
 	@override String get upcoming => 'آینده';
 }
 
+// Path: money.installments
+class _Translations$money$installments$fa extends Translations$money$installments$en {
+	_Translations$money$installments$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get editAmount => 'ویرایش قسط';
+	@override String get editHint => 'برای تغییر مبلغ یا سررسید، روی ردیف بزنید یا آن را بکشید.';
+	@override String get invalidRowAmount => 'مبلغ قسط را درست وارد کنید.';
+	@override String get totalMismatch => 'جمع اقساط باید با مبلغ کل برابر باشد.';
+}
+
 // Path: money.reminder
 class _Translations$money$reminder$fa extends Translations$money$reminder$en {
 	_Translations$money$reminder$fa._(TranslationsFa root) : this._root = root, super.internal(root);
@@ -885,6 +899,10 @@ extension on TranslationsFa {
 			'money.schedulePaidSummary' => ({required Object count}) => '${count} قسط پرداخت‌شده',
 			'money.settleInstallment' => 'تسویه',
 			'money.settleInstallmentConfirm' => ({required Object index, required Object amount, required Object date}) => 'قسط ${index} به مبلغ ${amount} با سررسید ${date} ثبت شود؟',
+			'money.installments.editAmount' => 'ویرایش قسط',
+			'money.installments.editHint' => 'برای تغییر مبلغ یا سررسید، روی ردیف بزنید یا آن را بکشید.',
+			'money.installments.invalidRowAmount' => 'مبلغ قسط را درست وارد کنید.',
+			'money.installments.totalMismatch' => 'جمع اقساط باید با مبلغ کل برابر باشد.',
 			'money.viewParty' => 'مشاهده طرف حساب',
 			'money.partyLink' => 'مشاهده طرف‌حساب',
 			'money.jumpToPayment' => 'برو به پرداخت',

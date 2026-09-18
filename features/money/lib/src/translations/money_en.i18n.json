@@ -116,6 +116,12 @@
   "schedulePaidSummary": "$count paid installments",
   "settleInstallment": "Settle",
   "settleInstallmentConfirm": "Record installment $index ($amount) due $date?",
+  "installments": {
+    "editAmount": "Edit installment",
+    "editHint": "Tap or swipe a row to change its amount or due date.",
+    "invalidRowAmount": "Enter a valid installment amount.",
+    "totalMismatch": "Installment amounts must add up to the total."
+  },
   "viewParty": "View party",
   "partyLink": "Open party",
   "jumpToPayment": "Jump to payment",
