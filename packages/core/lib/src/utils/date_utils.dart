@@ -145,25 +145,19 @@ DateRange monthBounds(DateTime now, CalendarType calendar) {
   }
 }
 
-/// Week that contains [now]: Saturday–Friday (Jalali) or Monday–Sunday (Gregorian).
+/// Week that contains [now]: **Saturday through Friday** (Iranian week).
+///
+/// [calendar] does not change the week window; it is only used where callers
+/// pass calendar alongside month bounds. Month boundaries still follow
+/// [calendar] via [monthBounds].
 DateRange weekBounds(DateTime now, CalendarType calendar) {
   final today = dateOnly(now);
-  switch (calendar) {
-    case CalendarType.jalali:
-      final sinceSaturday = (today.weekday + 1) % 7;
-      final start = today.subtract(Duration(days: sinceSaturday));
-      return DateRange(
-        start: start,
-        endInclusive: start.add(const Duration(days: 6)),
-      );
-    case CalendarType.gregorian:
-      final sinceMonday = today.weekday - 1;
-      final start = today.subtract(Duration(days: sinceMonday));
-      return DateRange(
-        start: start,
-        endInclusive: start.add(const Duration(days: 6)),
-      );
-  }
+  final sinceSaturday = (today.weekday + 1) % 7;
+  final start = today.subtract(Duration(days: sinceSaturday));
+  return DateRange(
+    start: start,
+    endInclusive: start.add(const Duration(days: 6)),
+  );
 }
 
 /// English Gregorian month names (January = index 0).

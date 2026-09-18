@@ -1,5 +1,5 @@
 import 'package:core/core.dart'
-    show CalendarType, DateRange, dateOnly, monthBounds;
+    show CalendarType, DateRange, dateOnly, monthBounds, weekBounds;
 import 'package:local_db/local_db.dart'
     show MoneyDirection, MoneyItem, MoneyPayment, MoneyStatus, Party;
 
@@ -79,19 +79,6 @@ final class HomeDashboard {
   final DateRange weekRange;
 }
 
-/// Today through six days ahead — the window listed as «this week».
-DateRange rollingDueWeek(DateTime now) {
-  final today = dateOnly(now);
-  return DateRange(
-    start: today,
-    endInclusive: today.add(const Duration(days: 6)),
-  );
-}
-
-bool isDueThisWeek(DateTime due, DateTime now) {
-  return rollingDueWeek(now).containsDate(due);
-}
-
 bool isDueInMonth(DateTime due, DateTime monthStart, DateTime monthEnd) {
   final day = dateOnly(due);
   return !day.isBefore(monthStart) && !day.isAfter(monthEnd);
@@ -162,7 +149,7 @@ HomeDashboard buildHomeDashboard({
 }) {
   final names = {for (final party in parties) party.id: party.name};
   final month = monthBounds(now, calendar);
-  final week = rollingDueWeek(now);
+  final week = weekBounds(now, calendar);
   HomeDueRow rowFor(MoneyItem item) {
     return HomeDueRow(
       id: item.id,
@@ -194,6 +181,7 @@ HomeDashboard buildHomeDashboard({
       .toList()
     ..sort((a, b) => a.dueDate.compareTo(b.dueDate));
 
+  // Calendar month only; rows in the current Sat–Fri week appear under «این هفته».
   final dueThisMonth = items
       .where(
         (item) =>

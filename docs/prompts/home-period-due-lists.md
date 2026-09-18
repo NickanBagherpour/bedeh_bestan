@@ -1,49 +1,40 @@
-# Feature: home «this month» + clearer period due lists
+# Feature: home «this week» + «this month» due lists
 
 **Package:** `features/home`
-**Type:** feature
+**Type:** feature (shipped; semantics below are canonical)
 
 ## Read first
 
 - `features/home/lib/src/application/home_dashboard.dart`
+- `packages/core/lib/src/utils/date_utils.dart` — `weekBounds`, `monthBounds`
 - `docs/project/bedeh-bestan/PHASES.md` (Phase 5 report semantics)
 
-## Problem (user feedback)
+## Section rules
 
-- **This week** already lists **items** (`HomeDueList`), but there is no parallel
-  **this month** section.
-- The **month report card** emphasizes **totals** (paid out/in, still owe globally,
-  due by period end) — users want to see **which accounts** to pay or collect
-  **in the period**, not only aggregate numbers.
-- Totals like `remainingPay` sum **all** open بدهی everywhere, which can feel
-  disconnected from «this month».
+| Section | FA | Window | Listed items |
+|---------|-----|--------|----------------|
+| Overdue | معوق | Due **before today**, unsettled | `MoneyStatus.overdue` only |
+| This week | این هفته | **Saturday–Friday** week containing today (`weekBounds`) | Unsettled, not overdue, `nextDueDate` in that week |
+| This month | سررسید این ماه | **First–last day** of current month per calendar setting (`monthBounds`) | Unsettled, not overdue, due in month, **not** already in this week |
+| Who owes | کی چقدر؟ | — | Per-party open pay/receive totals |
 
-## Goal
+### Why week and month do not overlap
 
-1. Add **`dueThisMonth`**: unsettled items whose `nextDueDate` falls in the
-   current month per **calendar setting** (same bounds as `buildHomePeriodReport`).
-   Exclude items already shown in `overdue` (or show overdue only in overdue section).
-2. Render with existing `HomeDueList` (or shared row widget) — **per item**:
-   title, party, direction, **remaining or قسط amount**, due date, status.
-3. **Report card copy/clarity (light touch):**
-   - Keep the four metrics but label them clearly as **month activity** vs **all open debt**.
-   - Optional subtitle on card: period range (Jalali/Gregorian per settings).
+The Iranian week (شنبه–جمعه) can **cross a month boundary** (e.g. چهارشنبه ۱ مهر still in the same week as days in شهریور). An item due on the first day of the new month may belong to **این هفته** but not **این ماه** (Gregorian/Jalali month). So month **excludes** any row already shown under this week.
 
-## Data
+### Month length
 
-- Extend `HomeDashboard` + `buildHomeDashboard` with `dueThisMonth` list.
-- Pure helpers + tests in `features/home/test/` (sort by due date).
+Jalali and Gregorian months use real month length (29 / 30 / 31) via `monthBounds` — not a fixed 30-day window.
 
-## Out of scope
+## UI
 
-- Replacing the report card with only lists (keep both: summary + lists).
-
-## i18n
-
-`dueThisMonth` section title; clarify report captions if changed (en + fa).
+- `HomeCollapsibleSection` + `HomeDueList` for overdue / week / month.
+- Week subtitle: formatted `weekRange` (from–to).
+- `HomeBalancesCard` for کی چقدر؟
 
 ## Acceptance
 
-- [ ] Month section lists correct items for Jalali and Gregorian settings.
-- [ ] Week + month sections show items, not party-level totals.
-- [ ] `melos run analyze && melos run test` pass.
+- [x] Week = Sat–Fri containing today.
+- [x] Month = calendar month minus overdue minus this-week rows.
+- [x] Jalali and Gregorian month boundaries tested.
+- [x] `melos run analyze && melos run test` pass.

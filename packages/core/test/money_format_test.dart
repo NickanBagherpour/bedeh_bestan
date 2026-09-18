@@ -69,15 +69,16 @@ void main() {
     );
   });
 
-  test('weekBounds start Saturday for Jalali and Monday for Gregorian', () {
+  test('weekBounds is Saturday–Friday for Jalali and Gregorian', () {
     final friday = DateTime(2026, 9, 11);
     expect(friday.weekday, DateTime.friday);
-    final jalali = weekBounds(friday, CalendarType.jalali);
-    expect(jalali.start.weekday, DateTime.saturday);
-    expect(jalali.endInclusive.weekday, DateTime.friday);
-    final gregorian = weekBounds(friday, CalendarType.gregorian);
-    expect(gregorian.start.weekday, DateTime.monday);
-    expect(gregorian.endInclusive.weekday, DateTime.sunday);
+    for (final calendar in CalendarType.values) {
+      final range = weekBounds(friday, calendar);
+      expect(range.start.weekday, DateTime.saturday);
+      expect(range.endInclusive.weekday, DateTime.friday);
+      expect(range.start, DateTime(2026, 9, 5));
+      expect(range.endInclusive, DateTime(2026, 9, 11));
+    }
   });
 
   test('calendarDayOfMonth uses Jalali day, not Gregorian DateTime.day', () {
@@ -102,8 +103,9 @@ void main() {
 
     final gregorian = monthGridCells(focus, CalendarType.gregorian);
     expect(gregorian.length % 7, 0);
-    expect(gregorian.first.weekday, DateTime.monday);
-    expect(gregorian.last.weekday, DateTime.sunday);
+    expect(gregorian.first.weekday, DateTime.saturday);
+    expect(gregorian.last.weekday, DateTime.friday);
+    expect(gregorian.length, lessThanOrEqualTo(42));
   });
 
   test('formatRangeEnds uses day numbers in the same month', () {

@@ -63,7 +63,7 @@ void main() {
           id: 'week',
           partyId: ali.id,
           direction: MoneyDirection.receive,
-          due: now.add(const Duration(days: 2)),
+          due: now,
           total: 2500,
         ),
         money(
@@ -164,13 +164,53 @@ void main() {
     expect(dashboard.report.remainingReceive, 800);
     expect(dashboard.report.duePayByPeriodEnd, 4000);
     expect(dashboard.report.dueReceiveByPeriodEnd, 800);
-    expect(dashboard.dueThisWeek.map((row) => row.id), ['receive']);
-    expect(dashboard.dueThisMonth.map((row) => row.id), ['open-pay']);
-    expect(dashboard.dueThisMonth.single.suggestedAmount, 4000);
+    expect(dashboard.dueThisWeek, isEmpty);
+    expect(
+      dashboard.dueThisMonth.map((row) => row.id),
+      containsAll(['open-pay', 'receive']),
+    );
+    final openPayRow =
+        dashboard.dueThisMonth.firstWhere((row) => row.id == 'open-pay');
+    expect(openPayRow.suggestedAmount, 4000);
     expect(dashboard.report.periodStart, DateTime(2026, 9, 1));
     expect(dashboard.report.periodEnd, DateTime(2026, 9, 30));
-    expect(dashboard.weekRange.start, DateTime(2026, 9, 11));
-    expect(dashboard.weekRange.endInclusive, DateTime(2026, 9, 17));
+    expect(dashboard.weekRange.start, DateTime(2026, 9, 5));
+    expect(dashboard.weekRange.endInclusive, DateTime(2026, 9, 11));
+  });
+
+  test('week and month are exclusive when week crosses month start', () {
+    final shop = Party(
+      id: 'shop',
+      name: 'فروشگاه',
+      kind: PartyKind.shop,
+      createdAt: now,
+      updatedAt: now,
+    );
+    final friday = DateTime(2026, 10, 2);
+    final dashboard = buildHomeDashboard(
+      items: [
+        money(
+          id: 'in-week-october',
+          partyId: shop.id,
+          direction: MoneyDirection.pay,
+          due: friday,
+          total: 100,
+        ),
+        money(
+          id: 'in-month-only',
+          partyId: shop.id,
+          direction: MoneyDirection.receive,
+          due: DateTime(2026, 10, 10),
+          total: 200,
+        ),
+      ],
+      parties: [shop],
+      payments: const [],
+      now: friday,
+      calendar: CalendarType.gregorian,
+    );
+    expect(dashboard.dueThisWeek.map((row) => row.id), ['in-week-october']);
+    expect(dashboard.dueThisMonth.map((row) => row.id), ['in-month-only']);
   });
 
   test('jalali month lists items in Shahrivar not Mehr', () {
@@ -238,7 +278,7 @@ void main() {
           id: 'week-installment',
           partyId: shop.id,
           direction: MoneyDirection.pay,
-          due: now.add(const Duration(days: 1)),
+          due: now,
           total: 10000000,
           schedule: MoneySchedule.installment,
           installmentCount: 10,
@@ -267,9 +307,10 @@ void main() {
     expect(dashboard.dueThisWeek.single.id, 'week-installment');
     expect(dashboard.dueThisWeek.single.remainingAmount, 10000000);
     expect(dashboard.dueThisWeek.single.suggestedAmount, 1000000);
-    expect(dashboard.dueThisMonth.single.id, 'month-installment');
-    expect(dashboard.dueThisMonth.single.remainingAmount, 5000000);
-    expect(dashboard.dueThisMonth.single.suggestedAmount, 1000000);
+    expect(dashboard.dueThisMonth.map((row) => row.id), ['month-installment']);
+    final monthRow = dashboard.dueThisMonth.single;
+    expect(monthRow.remainingAmount, 5000000);
+    expect(monthRow.suggestedAmount, 1000000);
     expect(dashboard.report.duePayByPeriodEnd, 1000000);
     expect(dashboard.report.dueReceiveByPeriodEnd, 1000000);
     expect(dashboard.report.remainingPay, 18000000);
