@@ -36,14 +36,11 @@ Android reads these automatically (`flutter.versionName` / `flutter.versionCode`
 `android/app/build.gradle.kts`). **Never edit the Android files by hand.**
 
 - **versionName** — bump per [SemVer](https://semver.org/): `patch` for fixes, `minor`
-  for features, `major` for breaking changes.
-- **versionCode** (`W` in `X.Y.Z+W`) — every store upload needs a strictly higher
-  value. `release.sh` picks it like this:
-  - same `X.Y.Z` as current (`--version 1.0.4` while already on `1.0.4+2`) → `W+1`
-  - new `X.Y.Z` (`--version 1.0.5` or `--bump`) → `W` starts at `1` again
-  - override with `--version 1.0.5+4` or `--build 4`
-  - if the new `W` is not greater than the current one, the script warns: Bazaar /
-    Play / Myket will reject the upload (pass `--build N` with `N` higher)
+  for features, `major` for breaking changes. Pass only `X.Y.Z` to `--version`
+  (never hand-edit `+N` in the release command).
+- **versionCode** (`W` in `X.Y.Z+W`) — `release.sh` **always** sets
+  `W = previous W + 1`. Do not set it by hand; Cafe Bazaar / Play / Myket reject
+  any code that is not strictly higher than the last upload.
 
 The melos sub-packages are `publish_to: none`; only the app version matters for stores.
 
@@ -80,8 +77,8 @@ copies them to `store/builds/`, then commits and tags.
 
 ### What it does, in order
 
-1. Compute versions (`--version X.Y.Z[+W]` or `--bump patch|minor|major`).
-   Same name increments `W`; a new name starts `W` at 1 (`--build` overrides).
+1. Compute versions (`--version X.Y.Z` or `--bump patch|minor|major`).
+   Build number is always `previous + 1` (never passed on the CLI).
 2. Guard against a dirty working tree (`--allow-dirty` stages only release files).
 3. Verify gate: `flutter pub get && flutter analyze && flutter test --exclude-tags store`.
    Store screenshots stay off unless you pass `--screenshots`.
@@ -97,9 +94,8 @@ copies them to `store/builds/`, then commits and tags.
 
 | Flag | Meaning |
 |---|---|
-| `--version X.Y.Z[+W]` | Explicit version name, optional build |
+| `--version X.Y.Z` | Explicit version name (`+N` is automatic) |
 | `--bump patch\|minor\|major` | Bump instead of explicit (default `patch`) |
-| `--build N` | Explicit build number (default: `W+1` on the same name, `1` on a new name) |
 | `--apk` / `--aab` / `--web` | Pick build targets (default: `apk`+`aab`) |
 | `--all` | apk + aab + web |
 | `--bazaar` | After the AAB, produce the Bazaar `.bin` |

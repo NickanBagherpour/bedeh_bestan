@@ -10,6 +10,7 @@
 
 ### Changed
 - refresh launcher icon, favicon, splash, and adaptive foreground (full-bleed indigo mark)
+- bump Android versionCode to 4 (Bazaar requires monotonic codes; `1.0.5+1` was below prior uploads)
 
 ## [1.0.4] - 2026-09-16
 
