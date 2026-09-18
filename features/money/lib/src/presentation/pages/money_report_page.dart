@@ -114,15 +114,47 @@ class MoneyReportPage extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.md),
       children: [
-        _filters(
-          context: context,
-          ref: ref,
+        _ReportFiltersCard(
           t: t,
           theme: theme,
           state: state,
-          calendar: calendar,
-          persian: persian,
           date: date,
+          onPickStart: () => _pickBound(
+            context: context,
+            ref: ref,
+            t: t,
+            calendar: calendar,
+            persian: persian,
+            isStart: true,
+            current: state.rangeStart!,
+            other: state.rangeEnd!,
+          ),
+          onPickEnd: () => _pickBound(
+            context: context,
+            ref: ref,
+            t: t,
+            calendar: calendar,
+            persian: persian,
+            isStart: false,
+            current: state.rangeEnd!,
+            other: state.rangeStart!,
+          ),
+          onPickParty: () {
+            final parties = state.parties.values.toList()
+              ..sort((a, b) => a.name.compareTo(b.name));
+            _pickParty(
+              context,
+              t,
+              parties,
+              ref.read(moneyReportControllerProvider.notifier),
+            );
+          },
+          onDirectionChanged: (value) {
+            AppHaptics.selection();
+            ref
+                .read(moneyReportControllerProvider.notifier)
+                .setDirection(value);
+          },
         ),
         const SizedBox(height: AppSpacing.lg),
         Text(
@@ -319,125 +351,6 @@ class MoneyReportPage extends ConsumerWidget {
     );
   }
 
-  Widget _filters({
-    required BuildContext context,
-    required WidgetRef ref,
-    required Translations t,
-    required ThemeData theme,
-    required MoneyReportState state,
-    required CalendarType calendar,
-    required bool persian,
-    required String Function(DateTime) date,
-  }) {
-    final controller = ref.read(moneyReportControllerProvider.notifier);
-    final parties = state.parties.values.toList()
-      ..sort((a, b) => a.name.compareTo(b.name));
-    final selectedParty =
-        state.partyId == null ? null : state.parties[state.partyId!];
-
-    return KitCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            t.money.reports.filters,
-            style: theme.textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Row(
-            children: [
-              Expanded(
-                child: _dateChip(
-                  label: t.money.reports.fromDate,
-                  value: date(state.rangeStart!),
-                  onTap: () => _pickBound(
-                    context: context,
-                    ref: ref,
-                    t: t,
-                    calendar: calendar,
-                    persian: persian,
-                    isStart: true,
-                    current: state.rangeStart!,
-                    other: state.rangeEnd!,
-                  ),
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: _dateChip(
-                  label: t.money.reports.toDate,
-                  value: date(state.rangeEnd!),
-                  onTap: () => _pickBound(
-                    context: context,
-                    ref: ref,
-                    t: t,
-                    calendar: calendar,
-                    persian: persian,
-                    isStart: false,
-                    current: state.rangeEnd!,
-                    other: state.rangeStart!,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(t.money.reports.partyFilter),
-            subtitle: Text(
-              selectedParty?.name ?? t.money.reports.allParties,
-            ),
-            trailing: const Icon(Icons.arrow_drop_down_rounded),
-            onTap: () => _pickParty(context, t, parties, controller),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          SegmentedButton<MoneyReportDirectionFilter>(
-            showSelectedIcon: false,
-            segments: [
-              ButtonSegment(
-                value: MoneyReportDirectionFilter.all,
-                label: Text(t.money.filterAll),
-              ),
-              ButtonSegment(
-                value: MoneyReportDirectionFilter.pay,
-                label: Text(t.money.filterPay),
-              ),
-              ButtonSegment(
-                value: MoneyReportDirectionFilter.receive,
-                label: Text(t.money.filterReceive),
-              ),
-            ],
-            selected: {state.direction},
-            onSelectionChanged: (value) {
-              AppHaptics.selection();
-              controller.setDirection(value.first);
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _dateChip({
-    required String label,
-    required String value,
-    required VoidCallback onTap,
-  }) {
-    return OutlinedButton(
-      onPressed: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label),
-          Text(value, maxLines: 1, overflow: TextOverflow.ellipsis),
-        ],
-      ),
-    );
-  }
-
   Widget _summaryCard({
     required ThemeData theme,
     required String title,
@@ -553,6 +466,216 @@ class MoneyReportPage extends ConsumerWidget {
       MoneyStatus.overdue => t.money.status.overdue,
       MoneyStatus.settled => t.money.status.settled,
     };
+  }
+}
+
+class _ReportFiltersCard extends StatefulWidget {
+  const _ReportFiltersCard({
+    required this.t,
+    required this.theme,
+    required this.state,
+    required this.date,
+    required this.onPickStart,
+    required this.onPickEnd,
+    required this.onPickParty,
+    required this.onDirectionChanged,
+  });
+
+  final Translations t;
+  final ThemeData theme;
+  final MoneyReportState state;
+  final String Function(DateTime) date;
+  final VoidCallback onPickStart;
+  final VoidCallback onPickEnd;
+  final VoidCallback onPickParty;
+  final ValueChanged<MoneyReportDirectionFilter> onDirectionChanged;
+
+  @override
+  State<_ReportFiltersCard> createState() => _ReportFiltersCardState();
+}
+
+class _ReportFiltersCardState extends State<_ReportFiltersCard> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = widget.t;
+    final theme = widget.theme;
+    final state = widget.state;
+    final selectedParty =
+        state.partyId == null ? null : state.parties[state.partyId!];
+    final directionLabel = switch (state.direction) {
+      MoneyReportDirectionFilter.all => t.money.filterAll,
+      MoneyReportDirectionFilter.pay => t.money.filterPay,
+      MoneyReportDirectionFilter.receive => t.money.filterReceive,
+    };
+    final summary = [
+      '${widget.date(state.rangeStart!)} – ${widget.date(state.rangeEnd!)}',
+      selectedParty?.name ?? t.money.reports.allParties,
+      directionLabel,
+    ].join(' · ');
+
+    return KitCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          InkWell(
+            onTap: () {
+              AppHaptics.selection();
+              setState(() => _expanded = !_expanded);
+            },
+            borderRadius: BorderRadius.circular(8),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          t.money.reports.filters,
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        if (!_expanded) ...[
+                          const SizedBox(height: AppSpacing.xxs),
+                          Text(
+                            summary,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    _expanded
+                        ? Icons.expand_less_rounded
+                        : Icons.expand_more_rounded,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          AnimatedCrossFade(
+            duration: const Duration(milliseconds: 200),
+            sizeCurve: Curves.easeInOut,
+            crossFadeState: _expanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            firstChild: const SizedBox(width: double.infinity),
+            secondChild: Padding(
+              padding: const EdgeInsets.only(top: AppSpacing.sm),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _ReportDateField(
+                    label: t.money.reports.fromDate,
+                    value: widget.date(state.rangeStart!),
+                    onTap: widget.onPickStart,
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  _ReportDateField(
+                    label: t.money.reports.toDate,
+                    value: widget.date(state.rangeEnd!),
+                    onTap: widget.onPickEnd,
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(t.money.reports.partyFilter),
+                    subtitle: Text(
+                      selectedParty?.name ?? t.money.reports.allParties,
+                    ),
+                    trailing: const Icon(Icons.arrow_drop_down_rounded),
+                    onTap: widget.onPickParty,
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  SegmentedButton<MoneyReportDirectionFilter>(
+                    showSelectedIcon: false,
+                    segments: [
+                      ButtonSegment(
+                        value: MoneyReportDirectionFilter.all,
+                        label: Text(t.money.filterAll),
+                      ),
+                      ButtonSegment(
+                        value: MoneyReportDirectionFilter.pay,
+                        label: Text(t.money.filterPay),
+                      ),
+                      ButtonSegment(
+                        value: MoneyReportDirectionFilter.receive,
+                        label: Text(t.money.filterReceive),
+                      ),
+                    ],
+                    selected: {state.direction},
+                    onSelectionChanged: (value) {
+                      widget.onDirectionChanged(value.first);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReportDateField extends StatelessWidget {
+  const _ReportDateField({
+    required this.label,
+    required this.value,
+    required this.onTap,
+  });
+
+  final String label;
+  final String value;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: InputDecorator(
+          decoration: InputDecoration(
+            labelText: label,
+            border: const OutlineInputBorder(),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: theme.colorScheme.outlineVariant),
+            ),
+            suffixIcon: Icon(
+              Icons.event_rounded,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+            alignLabelWithHint: true,
+            contentPadding: const EdgeInsetsDirectional.fromSTEB(
+              AppSpacing.md,
+              AppSpacing.sm,
+              AppSpacing.xs,
+              AppSpacing.sm,
+            ),
+          ),
+          child: Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.start,
+            style: theme.textTheme.bodyLarge,
+          ),
+        ),
+      ),
+    );
   }
 }
 
