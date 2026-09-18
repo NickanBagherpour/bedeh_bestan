@@ -26,6 +26,19 @@ enum MoneyStatus {
   settled,
 }
 
+enum AssetAccountKind {
+  cash,
+  bank,
+  gold,
+  other,
+}
+
+/// Calendar reminder type (money due dates overlay separately).
+enum ReminderKind {
+  event,
+  birthday,
+}
+
 /// Reminder recurrence.
 enum RepeatRule {
   none,

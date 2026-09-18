@@ -4,10 +4,15 @@ import 'package:core/core.dart'
         AppRoutes,
         CalendarType,
         GroupedAmountFormatter,
+        MoneyItemReminderPolicy,
         appSettingsProvider,
+        decodeDaysBeforeJson,
+        encodeDaysBeforeJson,
         formatLongDate,
         formatMoney,
         groupAmount,
+        moneyItemReminderPolicyFromStorage,
+        moneyItemReminderPolicyToStorage,
         overlayAppBar,
         parseStoredAmount,
         parseTomanInput,
@@ -24,10 +29,12 @@ import 'package:ui_kit/ui_kit.dart'
         AppHaptics,
         AppSpacing,
         KitCard,
+        KitReminderDaysPicker,
         KitSearchSelect,
         showKitDatePicker;
 
 import '../../application/controllers/money_list_controller.dart';
+import '../../application/money_query.dart';
 import '../../application/state/money_list_state.dart';
 import '../money_style.dart';
 
@@ -62,6 +69,11 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
   DateTime _due = DateTime.now();
   bool _loaded = false;
   bool _saving = false;
+  MoneyItemReminderPolicy _reminderPolicy = MoneyItemReminderPolicy.defaultPolicy;
+  List<int> _reminderDays = const [7, 2];
+  List<InstallmentDraftRow> _installmentRows = const [];
+  bool _scheduleCustomized = false;
+  String? _lastScheduleSeed;
 
   bool get _isEdit => widget.itemId != null;
 
@@ -90,6 +102,7 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
     Party? party, {
     required AppCurrency currency,
     required bool persian,
+    required CalendarType calendar,
   }) {
     if (_loaded) return;
     _loaded = true;
@@ -104,14 +117,81 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
     _note.text = item.note ?? '';
     _start = item.startDate;
     _due = item.nextDueDate;
+    _reminderPolicy = moneyItemReminderPolicyFromStorage(item.reminderPolicy);
+    final customDays = decodeDaysBeforeJson(item.reminderDaysBeforeJson);
+    _reminderDays = customDays.isEmpty ? const [7, 2] : customDays;
     if (item.schedule == MoneySchedule.installment) {
       _periods.text = '${item.installmentCount ?? ''}';
       final each = item.installmentAmount;
       _installmentAmount.text = each == null
           ? ''
           : groupAmount(currency.toDisplay(each), persianDigits: persian);
+      if (item.installments.isNotEmpty) {
+        _installmentRows = [
+          for (final row in item.installments)
+            InstallmentDraftRow(
+              id: row.id,
+              index: row.index,
+              dueDate: row.dueDate,
+              amount: row.amount,
+            ),
+        ];
+        final baseline = each ?? _installmentRows.first.amount;
+        _scheduleCustomized =
+            _installmentRows.any((row) => row.amount != baseline);
+      } else {
+        final count = item.installmentCount;
+        final amount = each ??
+            (count != null && count > 0
+                ? (item.totalAmount / count).round()
+                : null);
+        if (count != null && amount != null && amount > 0) {
+          _installmentRows = buildEqualInstallmentDraft(
+            count: count,
+            amount: amount,
+            startDate: item.startDate,
+            calendar: calendar,
+          );
+        }
+      }
+      _lastScheduleSeed = _scheduleSeed(calendar, currency);
     }
     if (party != null) _partyKind = party.kind;
+  }
+
+  String _scheduleSeed(CalendarType calendar, AppCurrency currency) {
+    final count = parseTomanInput(_periods.text) ?? 0;
+    final each = parseStoredAmount(_installmentAmount.text, currency) ?? 0;
+    return '$count|$each|${_due.toIso8601String()}|${calendar.name}';
+  }
+
+  void _syncInstallmentSchedule(CalendarType calendar, AppCurrency currency) {
+    if (_schedule != MoneySchedule.installment || _scheduleCustomized) return;
+    final count = parseTomanInput(_periods.text);
+    final each = parseStoredAmount(_installmentAmount.text, currency);
+    if (count == null || each == null || count < 2 || each <= 0) {
+      if (_installmentRows.isNotEmpty) {
+        setState(() {
+          _installmentRows = const [];
+          _lastScheduleSeed = null;
+        });
+      }
+      return;
+    }
+    final seed = _scheduleSeed(calendar, currency);
+    if (seed == _lastScheduleSeed && _installmentRows.length == count) {
+      return;
+    }
+    setState(() {
+      _installmentRows = buildEqualInstallmentDraft(
+        count: count,
+        amount: each,
+        startDate: _due,
+        calendar: calendar,
+        previous: _installmentRows,
+      );
+      _lastScheduleSeed = seed;
+    });
   }
 
   @override
@@ -137,6 +217,7 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
               list.partyFor(item.partyId),
               currency: currency,
               persian: persian,
+              calendar: calendar,
             ),
           );
         });
@@ -145,6 +226,13 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted || _partyId != null || _newParty) return;
         setState(() => _partyId = parties.first.id);
+      });
+    }
+
+    if (_schedule == MoneySchedule.installment && !_scheduleCustomized) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _syncInstallmentSchedule(calendar, currency);
       });
     }
 
@@ -220,7 +308,7 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
                   ),
               ],
             ),
-          ] else
+          ] else ...[
             KitSearchSelect<Party>(
               label: t.money.party,
               searchHint: t.money.searchParty,
@@ -233,6 +321,16 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
                 setState(() => _partyId = party.id);
               },
             ),
+            if (_isEdit && _partyId != null && _partyId!.isNotEmpty)
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: TextButton(
+                  onPressed: () =>
+                      context.push(AppRoutes.partyItemPath(_partyId!)),
+                  child: Text(t.money.viewParty),
+                ),
+              ),
+          ],
           const SizedBox(height: AppSpacing.md),
           TextField(
             controller: _title,
@@ -255,7 +353,14 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
             selected: {_schedule},
             onSelectionChanged: (value) {
               AppHaptics.selection();
-              setState(() => _schedule = value.first);
+              setState(() {
+                _schedule = value.first;
+                if (_schedule != MoneySchedule.installment) {
+                  _installmentRows = const [];
+                  _scheduleCustomized = false;
+                  _lastScheduleSeed = null;
+                }
+              });
             },
           ),
           const SizedBox(height: AppSpacing.md),
@@ -276,7 +381,10 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
               controller: _periods,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(labelText: t.money.periods),
-              onChanged: (_) => setState(() {}),
+              onChanged: (_) {
+                _scheduleCustomized = false;
+                setState(() {});
+              },
             ),
             const SizedBox(height: AppSpacing.sm),
             TextField(
@@ -289,7 +397,10 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
                 labelText: t.money.installmentAmount,
                 suffixText: currencyLabel,
               ),
-              onChanged: (_) => setState(() {}),
+              onChanged: (_) {
+                _scheduleCustomized = false;
+                setState(() {});
+              },
             ),
             if (_computedTotal() != null) ...[
               const SizedBox(height: AppSpacing.sm),
@@ -306,6 +417,82 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
                   fontWeight: FontWeight.w700,
                 ),
               ),
+            ],
+            if (_installmentRows.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                t.money.scheduleTitle,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                t.money.installments.editHint,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              for (final row in _installmentRows)
+                Dismissible(
+                  key: ValueKey('draft-inst-${row.index}'),
+                  direction: DismissDirection.endToStart,
+                  confirmDismiss: (_) async {
+                    await _editInstallmentRow(
+                      row,
+                      t: t,
+                      currency: currency,
+                      calendar: calendar,
+                      persian: persian,
+                      currencyLabel: currencyLabel,
+                    );
+                    return false;
+                  },
+                  background: Container(
+                    alignment: AlignmentDirectional.centerEnd,
+                    padding: const EdgeInsetsDirectional.only(
+                      end: AppSpacing.md,
+                    ),
+                    color: theme.colorScheme.primaryContainer,
+                    child: Text(
+                      t.money.installments.editAmount,
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: theme.colorScheme.onPrimaryContainer,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(t.money.installmentRow(index: '${row.index}')),
+                    subtitle: Text(
+                      persian
+                          ? toPersianDigits(
+                              formatLongDate(row.dueDate, calendar),
+                            )
+                          : formatLongDate(row.dueDate, calendar),
+                    ),
+                    trailing: Text(
+                      formatMoney(
+                        row.amount,
+                        currencyLabel: currencyLabel,
+                        persianDigits: persian,
+                      ),
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    onTap: () => _editInstallmentRow(
+                      row,
+                      t: t,
+                      currency: currency,
+                      calendar: calendar,
+                      persian: persian,
+                      currencyLabel: currencyLabel,
+                    ),
+                  ),
+                ),
             ],
           ],
           const SizedBox(height: AppSpacing.md),
@@ -327,6 +514,51 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
             onPick: () => _pickDate(isDue: false),
           ),
           const SizedBox(height: AppSpacing.md),
+          Text(
+            t.money.reminder.title,
+            style: theme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Wrap(
+            spacing: AppSpacing.xs,
+            children: [
+              for (final policy in MoneyItemReminderPolicy.values)
+                ChoiceChip(
+                  label: Text(switch (policy) {
+                    MoneyItemReminderPolicy.defaultPolicy =>
+                      t.money.reminder.defaultPolicy,
+                    MoneyItemReminderPolicy.exactDay => t.money.reminder.exactDay,
+                    MoneyItemReminderPolicy.customRange =>
+                      t.money.reminder.customRange,
+                  }),
+                  selected: _reminderPolicy == policy,
+                  onSelected: (_) {
+                    AppHaptics.selection();
+                    setState(() => _reminderPolicy = policy);
+                  },
+                ),
+            ],
+          ),
+          if (_reminderPolicy == MoneyItemReminderPolicy.customRange) ...[
+            const SizedBox(height: AppSpacing.sm),
+            KitReminderDaysPicker(
+              selected: _reminderDays,
+              onChanged: (days) => setState(() => _reminderDays = days),
+              daysBeforeLabel: t.money.reminder.daysBefore,
+              customLabel: t.settings.reminderCustomDay,
+              addLabel: t.settings.reminderAddDay,
+              labelFor: (day) => switch (day) {
+                7 => t.money.reminder.day7,
+                3 => t.money.reminder.day3,
+                2 => t.money.reminder.day2,
+                1 => t.money.reminder.day1,
+                _ => t.money.reminder.day1.replaceFirst('1', '$day'),
+              },
+            ),
+          ],
+          const SizedBox(height: AppSpacing.md),
           TextField(
             controller: _note,
             maxLines: 3,
@@ -337,7 +569,7 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
           ),
           const SizedBox(height: AppSpacing.lg),
           FilledButton(
-            onPressed: _saving ? null : () => _save(t, currency),
+            onPressed: _saving ? null : () => _save(t, currency, calendar),
             child: Text(t.money.save),
           ),
         ],
@@ -364,10 +596,143 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
   }
 
   int? _computedTotal() {
+    if (_installmentRows.isNotEmpty) {
+      final sum = installmentDraftTotal(_installmentRows);
+      return sum > 0 ? sum : null;
+    }
     final count = parseTomanInput(_periods.text);
     final each = parseTomanInput(_installmentAmount.text);
     if (count == null || each == null || count <= 0 || each <= 0) return null;
     return count * each;
+  }
+
+  Future<void> _editInstallmentRow(
+    InstallmentDraftRow row, {
+    required Translations t,
+    required AppCurrency currency,
+    required CalendarType calendar,
+    required bool persian,
+    required String currencyLabel,
+  }) async {
+    final amountController = TextEditingController(
+      text: groupAmount(
+        currency.toDisplay(row.amount),
+        persianDigits: persian,
+      ),
+    );
+    var dueDate = row.dueDate;
+    final result = await showModalBottomSheet<_InstallmentEditResult>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (sheetContext) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: AppSpacing.md,
+            right: AppSpacing.md,
+            top: AppSpacing.sm,
+            bottom:
+                MediaQuery.viewInsetsOf(sheetContext).bottom + AppSpacing.md,
+          ),
+          child: StatefulBuilder(
+            builder: (context, setSheetState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    t.money.installments.editAmount,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(t.money.installmentRow(index: '${row.index}')),
+                  const SizedBox(height: AppSpacing.md),
+                  TextField(
+                    controller: amountController,
+                    autofocus: true,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      GroupedAmountFormatter(persianDigits: persian),
+                    ],
+                    decoration: InputDecoration(
+                      labelText: t.money.amount,
+                      suffixText: currencyLabel,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(t.money.dueDate),
+                    subtitle: Text(
+                      persian
+                          ? toPersianDigits(formatLongDate(dueDate, calendar))
+                          : formatLongDate(dueDate, calendar),
+                    ),
+                    trailing: const Icon(Icons.event_rounded),
+                    onTap: () async {
+                      final picked = await showKitDatePicker(
+                        context: context,
+                        initialDate: dueDate,
+                        calendar: calendar,
+                        persian: persian,
+                        weekdayLabels: _pickerWeekdays(t, calendar),
+                        confirmLabel: t.app.actions.confirm,
+                        cancelLabel: t.app.actions.cancel,
+                      );
+                      if (picked == null) return;
+                      setSheetState(() {
+                        dueDate = DateTime(
+                          picked.year,
+                          picked.month,
+                          picked.day,
+                        );
+                      });
+                    },
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  FilledButton(
+                    onPressed: () {
+                      final amount =
+                          parseStoredAmount(amountController.text, currency);
+                      if (amount == null || amount <= 0) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content:
+                                Text(t.money.installments.invalidRowAmount),
+                          ),
+                        );
+                        return;
+                      }
+                      Navigator.of(sheetContext).pop(
+                        _InstallmentEditResult(
+                          amount: amount,
+                          dueDate: dueDate,
+                        ),
+                      );
+                    },
+                    child: Text(t.app.actions.confirm),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+      },
+    );
+    amountController.dispose();
+    if (result == null || !mounted) return;
+    setState(() {
+      _scheduleCustomized = true;
+      _installmentRows = [
+        for (final existing in _installmentRows)
+          if (existing.index == row.index)
+            existing.copyWith(amount: result.amount, dueDate: result.dueDate)
+          else
+            existing,
+      ];
+    });
   }
 
   Future<void> _pickDate({required bool isDue}) async {
@@ -388,13 +753,20 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
     setState(() {
       if (isDue) {
         _due = DateTime(picked.year, picked.month, picked.day);
+        if (!_scheduleCustomized) {
+          _lastScheduleSeed = null;
+        }
       } else {
         _start = DateTime(picked.year, picked.month, picked.day);
       }
     });
   }
 
-  Future<void> _save(Translations t, AppCurrency currency) async {
+  Future<void> _save(
+    Translations t,
+    AppCurrency currency,
+    CalendarType calendar,
+  ) async {
     final title = _title.text.trim();
     if (title.isEmpty) {
       _snack(t.money.missingTitle);
@@ -419,12 +791,32 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
     int? total;
     int? installmentCount;
     int? installmentAmount;
+    var installmentRows = _installmentRows;
     if (_schedule == MoneySchedule.oneTime) {
       total = parseStoredAmount(_amount.text, currency);
+      installmentRows = const [];
     } else {
       installmentCount = parseTomanInput(_periods.text);
       installmentAmount = parseStoredAmount(_installmentAmount.text, currency);
-      if (installmentCount != null && installmentAmount != null) {
+      if (installmentRows.isEmpty &&
+          installmentCount != null &&
+          installmentAmount != null &&
+          installmentCount >= 2 &&
+          installmentAmount > 0) {
+        installmentRows = buildEqualInstallmentDraft(
+          count: installmentCount,
+          amount: installmentAmount,
+          startDate: _due,
+          calendar: calendar,
+        );
+      }
+      if (installmentRows.isNotEmpty) {
+        total = installmentDraftTotal(installmentRows);
+        installmentCount = installmentRows.length;
+        if (installmentAmount == null || installmentAmount <= 0) {
+          installmentAmount = installmentRows.first.amount;
+        }
+      } else if (installmentCount != null && installmentAmount != null) {
         total = installmentCount * installmentAmount;
       }
     }
@@ -436,8 +828,14 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
         (installmentCount == null ||
             installmentCount < 2 ||
             installmentAmount == null ||
-            installmentAmount <= 0)) {
+            installmentAmount <= 0 ||
+            installmentRows.length != installmentCount)) {
       _snack(t.money.invalidAmount);
+      return;
+    }
+    if (_schedule == MoneySchedule.installment &&
+        installmentDraftTotal(installmentRows) != total) {
+      _snack(t.money.installments.totalMismatch);
       return;
     }
 
@@ -455,7 +853,10 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
               nextDueDate: _due,
               installmentCount: installmentCount,
               installmentAmount: installmentAmount,
+              installments: installmentRows,
               note: _note.text.trim().isEmpty ? null : _note.text.trim(),
+              reminderPolicy: moneyItemReminderPolicyToStorage(_reminderPolicy),
+              reminderDaysBeforeJson: encodeDaysBeforeJson(_reminderDays),
             ),
           );
       if (!mounted) return;
@@ -471,6 +872,16 @@ class _MoneyFormPageState extends ConsumerState<MoneyFormPage> {
   void _snack(String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
+}
+
+final class _InstallmentEditResult {
+  const _InstallmentEditResult({
+    required this.amount,
+    required this.dueDate,
+  });
+
+  final int amount;
+  final DateTime dueDate;
 }
 
 class _DirectionCard extends StatelessWidget {

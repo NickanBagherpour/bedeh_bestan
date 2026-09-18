@@ -22,6 +22,7 @@ import 'package:ui_kit/ui_kit.dart'
     show
         AppColors,
         AppHaptics,
+        AppMotion,
         AppSpacing,
         KitCard,
         KitError,
@@ -45,10 +46,15 @@ class MoneyDetailPage extends ConsumerStatefulWidget {
 
 class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
   final _amount = TextEditingController();
+  final _paymentSectionKey = GlobalKey();
 
   /// Remaining balance we last pre-filled the payment field for. Prevents
   /// re-filling on unrelated rebuilds while still refreshing after each قسط.
   int? _prefilledForRemaining;
+
+  /// When the schedule is longer than [installmentScheduleCollapseThreshold],
+  /// start collapsed (paid summary + next 5 unpaid) until the user expands.
+  bool _scheduleExpanded = false;
 
   @override
   void dispose() {
@@ -148,11 +154,10 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
               Row(
                 children: [
                   Expanded(
-                    child: Text(
-                      state.party?.name ?? item.partyId,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
+                    child: _PartyNameLink(
+                      name: state.party?.name ?? item.partyId,
+                      partyId: item.partyId,
+                      tooltip: t.money.partyLink,
                     ),
                   ),
                   MoneyStatusChip(
@@ -217,37 +222,47 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
             calendar,
             persian,
             currency,
+            busy: state.busy,
           ),
-        if (!item.isSettled) ...[
-          const SizedBox(height: AppSpacing.lg),
-          Text(
-            t.money.recordPayment,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w800,
+        if (!item.isSettled)
+          KeyedSubtree(
+            key: _paymentSectionKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: AppSpacing.lg),
+                Text(
+                  t.money.recordPayment,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                  TextField(
+                    controller: _amount,
+                    keyboardType: TextInputType.number,
+                    scrollPadding: const EdgeInsets.only(bottom: 120),
+                    inputFormatters: [
+                      GroupedAmountFormatter(persianDigits: persian),
+                    ],
+                  decoration: InputDecoration(
+                    labelText: t.money.paymentAmount,
+                    suffixText: currencyLabelOf(t, currency),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                FilledButton(
+                  onPressed:
+                      state.busy ? null : () => _pay(context, t, currency),
+                  child: Text(
+                    item.direction == MoneyDirection.pay
+                        ? t.money.payCta
+                        : t.money.receiveCta,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: AppSpacing.sm),
-          TextField(
-            controller: _amount,
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              GroupedAmountFormatter(persianDigits: persian),
-            ],
-            decoration: InputDecoration(
-              labelText: t.money.paymentAmount,
-              suffixText: currencyLabelOf(t, currency),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          FilledButton(
-            onPressed: state.busy ? null : () => _pay(context, t, currency),
-            child: Text(
-              item.direction == MoneyDirection.pay
-                  ? t.money.payCta
-                  : t.money.receiveCta,
-            ),
-          ),
-        ],
         const SizedBox(height: AppSpacing.lg),
         Text(
           t.money.payments,
@@ -308,8 +323,8 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
     );
   }
 
-  /// Per-قسط schedule for installment items: a progress header plus one row per
-  /// قسط with its due date, amount, and paid / due / upcoming state.
+  /// Per-قسط schedule: progress header, optional paid summary, visible rows,
+  /// and expand / collapse when the list is long.
   List<Widget> _installmentSection(
     BuildContext context,
     Translations t,
@@ -317,10 +332,18 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
     MoneyItem item,
     CalendarType calendar,
     bool persian,
-    AppCurrency currency,
-  ) {
+    AppCurrency currency, {
+    required bool busy,
+  }) {
     final rows = installmentSchedule(item, calendar);
     if (rows.isEmpty) return const [];
+    final collapsible = rows.length > installmentScheduleCollapseThreshold;
+    final expanded = !collapsible || _scheduleExpanded;
+    final visible = visibleInstallmentRows(rows, expanded: expanded);
+    var paidCount = 0;
+    for (final row in rows) {
+      if (row.state == InstallmentState.paid) paidCount++;
+    }
     final progress = t.money.periodsProgress(
       paid: _count(item.periodsPaid, persian),
       total: _count(item.installmentCount ?? rows.length, persian),
@@ -355,63 +378,74 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
         ],
       ),
       const SizedBox(height: AppSpacing.xxs),
-      Text(
-        remaining,
-        style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
+      Row(
+        children: [
+          Expanded(
+            child: Text(
+              remaining,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+          if (!item.isSettled)
+            TextButton(
+              onPressed: _jumpToPayment,
+              child: Text(t.money.jumpToPayment),
+            ),
+        ],
       ),
       const SizedBox(height: AppSpacing.sm),
-      for (final row in rows)
+      if (!expanded && paidCount > 0)
         Padding(
           padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-          child: KitCard(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-              vertical: AppSpacing.sm,
+          child: Text(
+            t.money.schedulePaidSummary(count: _count(paidCount, persian)),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
             ),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 88,
-                  child: Text(
-                    t.money.installmentRow(index: _count(row.index, persian)),
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        persian
-                            ? toPersianDigits(
-                                formatLongDate(row.dueDate, calendar),
-                              )
-                            : formatLongDate(row.dueDate, calendar),
-                        style: theme.textTheme.bodyMedium,
-                      ),
-                      Text(
-                        formatItemMoney(
-                          row.amount,
-                          t: t,
-                          currency: currency,
-                          persianDigits: persian,
-                        ),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                MoneyStatusChip(
-                  label: _installmentStateLabel(t, row.state),
-                  color: _installmentStateColor(row.state, theme.colorScheme),
-                ),
-              ],
+          ),
+        ),
+      for (final row in visible)
+        Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+          child: _InstallmentRowCard(
+            title: t.money.installmentRow(index: _count(row.index, persian)),
+            dateLabel: persian
+                ? toPersianDigits(formatLongDate(row.dueDate, calendar))
+                : formatLongDate(row.dueDate, calendar),
+            amountLabel: formatItemMoney(
+              row.amount,
+              t: t,
+              currency: currency,
+              persianDigits: persian,
+            ),
+            stateLabel: _installmentStateLabel(t, row.state),
+            stateColor: _installmentStateColor(row.state, theme.colorScheme),
+            settleLabel: t.money.settleInstallment,
+            onSettle: row.state == InstallmentState.due && !item.isSettled
+                ? () => _settleInstallment(
+                      context,
+                      t,
+                      currency,
+                      calendar,
+                      persian,
+                      item,
+                      row,
+                    )
+                : null,
+            busy: busy,
+          ),
+        ),
+      if (collapsible)
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: TextButton(
+            onPressed: () {
+              setState(() => _scheduleExpanded = !_scheduleExpanded);
+            },
+            child: Text(
+              expanded ? t.money.scheduleCollapse : t.money.scheduleShowAll,
             ),
           ),
         ),
@@ -477,6 +511,47 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
       );
       return;
     }
+    await _recordPayment(context, t, amount);
+  }
+
+  Future<void> _settleInstallment(
+    BuildContext context,
+    Translations t,
+    AppCurrency currency,
+    CalendarType calendar,
+    bool persian,
+    MoneyItem item,
+    InstallmentRow row,
+  ) async {
+    final amount = installmentRowSettleAmount(row, item.remainingAmount);
+    if (amount <= 0) return;
+    final date = formatLongDate(row.dueDate, calendar);
+    final ok = await showKitConfirmDialog(
+      context: context,
+      title: t.money.settleInstallment,
+      body: t.money.settleInstallmentConfirm(
+        index: _count(row.index, persian),
+        amount: formatItemMoney(
+          amount,
+          t: t,
+          currency: currency,
+          persianDigits: persian,
+        ),
+        date: persian ? toPersianDigits(date) : date,
+      ),
+      confirmLabel: t.money.settleInstallment,
+      cancelLabel: t.app.actions.cancel,
+      destructive: false,
+    );
+    if (!ok || !context.mounted) return;
+    await _recordPayment(context, t, amount);
+  }
+
+  Future<void> _recordPayment(
+    BuildContext context,
+    Translations t,
+    int amount,
+  ) async {
     final error = await ref
         .read(moneyDetailControllerProvider(widget.itemId).notifier)
         .recordPayment(amount);
@@ -491,6 +566,17 @@ class _MoneyDetailPageState extends ConsumerState<MoneyDetailPage> {
     // Re-fill for the next قسط (or leave settled items with the section hidden).
     // The stream emits the new remaining balance, which drives `_syncPrefill`.
     _prefilledForRemaining = null;
+  }
+
+  void _jumpToPayment() {
+    final target = _paymentSectionKey.currentContext;
+    if (target == null) return;
+    Scrollable.ensureVisible(
+      target,
+      duration: AppMotion.normal,
+      curve: AppMotion.easeOut,
+      alignment: 0.08,
+    );
   }
 }
 
@@ -541,4 +627,132 @@ Color _installmentStateColor(InstallmentState state, ColorScheme scheme) {
 String _count(int value, bool persian) {
   final raw = value.toString();
   return persian ? toPersianDigits(raw) : raw;
+}
+
+class _PartyNameLink extends StatelessWidget {
+  const _PartyNameLink({
+    required this.name,
+    required this.partyId,
+    required this.tooltip,
+  });
+
+  final String name;
+  final String partyId;
+  final String tooltip;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final text = Text(
+      name,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: theme.textTheme.titleMedium?.copyWith(
+        fontWeight: FontWeight.w800,
+        color: partyId.isEmpty ? null : theme.colorScheme.primary,
+      ),
+    );
+    if (partyId.isEmpty) return text;
+    return Tooltip(
+      message: tooltip,
+      child: InkWell(
+        onTap: () => context.push(AppRoutes.partyItemPath(partyId)),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+        child: Row(
+          children: [
+            Flexible(child: text),
+            Icon(
+              Icons.chevron_right_rounded,
+              color: theme.colorScheme.primary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _InstallmentRowCard extends StatelessWidget {
+  const _InstallmentRowCard({
+    required this.title,
+    required this.dateLabel,
+    required this.amountLabel,
+    required this.stateLabel,
+    required this.stateColor,
+    required this.settleLabel,
+    required this.onSettle,
+    required this.busy,
+  });
+
+  final String title;
+  final String dateLabel;
+  final String amountLabel;
+  final String stateLabel;
+  final Color stateColor;
+  final String settleLabel;
+  final VoidCallback? onSettle;
+  final bool busy;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return KitCard(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 88,
+            child: Text(
+              title,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(dateLabel, style: theme.textTheme.bodyMedium),
+                Text(
+                  amountLabel,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (onSettle != null) ...[
+                TextButton(
+                  style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    minimumSize: Size.zero,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.xs,
+                      vertical: AppSpacing.xxs,
+                    ),
+                    textStyle: theme.textTheme.labelMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  onPressed: busy ? null : onSettle,
+                  child: Text(settleLabel),
+                ),
+                const SizedBox(width: AppSpacing.xxs),
+              ],
+              MoneyStatusChip(label: stateLabel, color: stateColor),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }

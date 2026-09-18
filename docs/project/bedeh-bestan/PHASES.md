@@ -53,7 +53,7 @@ Home card on `features/home`. Period bounds from **settings calendar**, not loca
 2. **Remaining** — open بدهی `remainingAmount` (what I still owe, any due date).
 3. **Still to pay until period end** — open بدهی whose `nextDueDate` is in `[today, periodEnd]`.
 
-`periodStart` / `periodEnd` = first and last day of the current month in the chosen calendar. Week helpers live in `core` `date_utils` (`weekBounds`) for later use; Home “this week” is still a rolling seven days.
+`periodStart` / `periodEnd` = first and last day of the current month in the chosen calendar. Home «این هفته» uses `weekBounds` (Saturday–Friday); «سررسید این ماه» uses `monthBounds` and excludes items already in the current week (see [home-period-due-lists.md](../../prompts/home-period-due-lists.md)).
 
 No charts in v1. No calendar/notes product UI.
 

@@ -1,6 +1,8 @@
 {
   "title": "Settings",
   "theme": "Theme",
+  "style": "Style",
+  "styleHint": "Glass gives translucent, blurred surfaces. Classic keeps solid surfaces. Independent of light/dark.",
   "language": "Language",
   "calendar": "Calendar",
   "calendarHint": "First and last day of the month and week follow this calendar — not the language.",
@@ -20,5 +22,22 @@
   "about": "About",
   "version": "Version $version",
   "privacy": "Privacy",
-  "privacyBody": "Everything stays on this phone. No account, no cloud, no tracking."
+  "privacyBody": "Everything stays on this phone. No account, no cloud, no tracking.",
+  "reminders": "Due reminders",
+  "remindersHint": "Default for money items. You can override per item when editing. Calendar reminders still use their own on-time / day-before switches.",
+  "reminderExactDay": "Due day only",
+  "reminderRange": "Before + due day",
+  "reminderDaysBefore": "Days before",
+  "reminderDay7": "7 days",
+  "reminderDay3": "3 days",
+  "reminderDay2": "2 days",
+  "reminderDay1": "1 day",
+  "reminderCustomDay": "Custom (1–30)",
+  "reminderAddDay": "Add",
+  "reminderTimeHint": "Fires at 09:00.",
+  "calendarItems": "On the calendar",
+  "calendarItemsHint": "Choose which items appear on the month grid and agenda. Colors: gold events, rose birthdays, coral debts, teal receivables.",
+  "showEvents": "Events",
+  "showBirthdays": "Birthdays",
+  "showMoney": "Money due dates"
 }

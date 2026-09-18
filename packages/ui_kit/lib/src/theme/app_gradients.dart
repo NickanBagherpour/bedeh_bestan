@@ -75,13 +75,16 @@ abstract final class AppGradients {
   }
 
   /// Colored glow shadow for a floating accent surface.
-  static List<BoxShadow> glow(Color color, {double strength = 0.34}) {
+  ///
+  /// Kept relatively tight (moderate blur) so it stays cheap to paint even
+  /// when several accented surfaces are on screen at once.
+  static List<BoxShadow> glow(Color color, {double strength = 0.28}) {
     return [
       BoxShadow(
         color: color.withValues(alpha: strength),
-        blurRadius: 26,
-        spreadRadius: -4,
-        offset: const Offset(0, 12),
+        blurRadius: 16,
+        spreadRadius: -2,
+        offset: const Offset(0, 8),
       ),
     ];
   }

@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_db/local_db.dart'
     show
+        MoneyInstallment,
         MoneyItem,
+        MoneySchedule,
         Party,
         PartyException,
         PartyFailure,
@@ -132,8 +134,19 @@ final class MoneyListController extends Notifier<MoneyListState> {
     final now = DateTime.now();
     final existing =
         draft.id == null ? null : await repo.getItem(draft.id!);
+    final itemId = draft.id ?? repo.nextId('money');
+    final storedInstallments = [
+      for (final row in draft.installments)
+        MoneyInstallment(
+          id: row.id ?? repo.nextId('inst'),
+          moneyItemId: itemId,
+          index: row.index,
+          dueDate: row.dueDate,
+          amount: row.amount,
+        ),
+    ];
     final item = MoneyItem(
-      id: draft.id ?? repo.nextId('money'),
+      id: itemId,
       partyId: draft.partyId,
       direction: draft.direction,
       title: draft.title.trim(),
@@ -146,10 +159,18 @@ final class MoneyListController extends Notifier<MoneyListState> {
       startDate: draft.startDate,
       nextDueDate: draft.nextDueDate,
       note: draft.note,
+      reminderPolicy: draft.reminderPolicy,
+      reminderDaysBeforeJson: draft.reminderDaysBeforeJson,
       createdAt: existing?.createdAt ?? now,
       updatedAt: now,
+      installments: storedInstallments,
     );
     await repo.upsertItem(item);
+    if (draft.schedule == MoneySchedule.installment) {
+      await repo.replaceInstallments(itemId, storedInstallments);
+    } else {
+      await repo.replaceInstallments(itemId, const []);
+    }
     return item.id;
   }
 

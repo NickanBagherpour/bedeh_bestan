@@ -34,10 +34,11 @@ AppBar overlayAppBar({
   );
 }
 
-/// Platform-aware page transition for every [GoRoute].
+/// Platform-aware page transition for overlay [GoRoute]s (detail, form, settings).
 ///
-/// Web gets a short fade + slight Y slide; native mobile fades only
-/// (less motion on small screens).
+/// Web gets a short fade + slight Y slide; native fades only. Primary tabs
+/// must use [buildTabPage] instead — fading a transparent tab over the previous
+/// one stacks both for a beat and feels laggy.
 Page<void> buildRoutePage({
   required GoRouterState state,
   required Widget child,
@@ -62,5 +63,16 @@ Page<void> buildRoutePage({
         ),
       );
     },
+  );
+}
+
+/// Instant swap for bottom-nav destinations. No stacked fade of the last tab.
+Page<void> buildTabPage({
+  required GoRouterState state,
+  required Widget child,
+}) {
+  return NoTransitionPage<void>(
+    key: state.pageKey,
+    child: child,
   );
 }

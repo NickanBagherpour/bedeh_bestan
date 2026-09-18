@@ -20,6 +20,7 @@ import 'package:translations/translations.dart'
         useAppDefaultLocale;
 
 import 'src/app.dart';
+import 'src/notifications/notification_background.dart';
 import 'src/notifications/pending_notification.dart';
 import 'src/notifications/plugin_notifications.dart';
 
@@ -47,9 +48,11 @@ Future<void> main() async {
   final notifications = PluginNotifications(
     channelName: t.calendar.title,
     channelDescription: t.app.appName,
+    payActionLabel: t.money.notificationActionMarkPaid,
+    snoozeActionLabel: t.money.notificationActionRemindTomorrow,
     onTap: tapSink.emit,
   );
-  await notifications.initialize();
+  await notifications.initialize(onBackground: notificationTapBackground);
 
   final container = ProviderContainer(
     overrides: [

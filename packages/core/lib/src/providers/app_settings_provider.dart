@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../storage/app_storage.dart';
 import '../storage/storage_providers.dart';
+import '../reminders/reminder_schedule_policy.dart';
+import '../utils/app_style.dart';
 import '../utils/calendar_type.dart';
 import '../utils/currency.dart';
 import 'app_settings.dart';
@@ -28,6 +30,13 @@ final class AppSettingsController extends Notifier<AppSettings> {
     await ref
         .read(appStorageProvider)
         .writeString(AppSettingsKeys.themeMode, mode.name);
+  }
+
+  Future<void> setAppStyle(AppStyle style) async {
+    state = state.copyWith(appStyle: style);
+    await ref
+        .read(appStorageProvider)
+        .writeString(AppSettingsKeys.appStyle, style.name);
   }
 
   Future<void> setLocale(Locale locale) async {
@@ -66,6 +75,51 @@ final class AppSettingsController extends Notifier<AppSettings> {
         .writeString(AppSettingsKeys.currency, currency.name);
   }
 
+  Future<void> setMoneyReminderMode(MoneyReminderMode mode) async {
+    state = state.copyWith(moneyReminderMode: mode);
+    await ref
+        .read(appStorageProvider)
+        .writeString(AppSettingsKeys.moneyReminderMode, mode.name);
+  }
+
+  Future<void> setMoneyReminderDaysBefore(List<int> days) async {
+    final sorted = normalizeDaysBefore(days);
+    state = state.copyWith(moneyReminderDaysBefore: sorted);
+    await ref.read(appStorageProvider).writeString(
+          AppSettingsKeys.moneyReminderDaysBefore,
+          encodeDaysBeforeJson(sorted),
+        );
+  }
+
+  Future<void> setShowCalendarEvents(bool value) {
+    return _setFlag(
+      AppSettingsKeys.showCalendarEvents,
+      value,
+      () => state = state.copyWith(showCalendarEvents: value),
+    );
+  }
+
+  Future<void> setShowCalendarBirthdays(bool value) {
+    return _setFlag(
+      AppSettingsKeys.showCalendarBirthdays,
+      value,
+      () => state = state.copyWith(showCalendarBirthdays: value),
+    );
+  }
+
+  Future<void> setShowCalendarMoney(bool value) {
+    return _setFlag(
+      AppSettingsKeys.showCalendarMoney,
+      value,
+      () => state = state.copyWith(showCalendarMoney: value),
+    );
+  }
+
+  Future<void> _setFlag(String key, bool value, void Function() apply) async {
+    apply();
+    await ref.read(appStorageProvider).writeString(key, value ? 'true' : 'false');
+  }
+
   Future<void> reloadFromStorage() async {
     state = loadAppSettings(storage: ref.read(appStorageProvider));
   }
@@ -80,6 +134,11 @@ AppSettings loadAppSettings({required AppStorage storage}) {
     themeMode:
         _enumByName(ThemeMode.values, storage.readString(AppSettingsKeys.themeMode)) ??
             ThemeMode.system,
+    appStyle: _enumByName(
+          AppStyle.values,
+          storage.readString(AppSettingsKeys.appStyle),
+        ) ??
+        AppStyle.classic,
     locale: locale,
     direction: directionForLocale(locale),
     calendar: _enumByName(
@@ -92,7 +151,42 @@ AppSettings loadAppSettings({required AppStorage storage}) {
           storage.readString(AppSettingsKeys.currency),
         ) ??
         defaultCurrencyForLocale(locale.languageCode),
+    moneyReminderMode: _enumByName(
+          MoneyReminderMode.values,
+          storage.readString(AppSettingsKeys.moneyReminderMode),
+        ) ??
+        MoneyReminderMode.range,
+    moneyReminderDaysBefore: _loadReminderDays(storage),
+    showCalendarEvents: _loadBool(
+      storage,
+      AppSettingsKeys.showCalendarEvents,
+      fallback: true,
+    ),
+    showCalendarBirthdays: _loadBool(
+      storage,
+      AppSettingsKeys.showCalendarBirthdays,
+      fallback: true,
+    ),
+    showCalendarMoney: _loadBool(
+      storage,
+      AppSettingsKeys.showCalendarMoney,
+      fallback: true,
+    ),
   );
+}
+
+List<int> _loadReminderDays(AppStorage storage) {
+  final raw = storage.readString(AppSettingsKeys.moneyReminderDaysBefore);
+  if (raw == null || raw.trim().isEmpty) {
+    return ReminderSchedulePolicy.defaultDaysBefore;
+  }
+  return decodeDaysBeforeJson(raw);
+}
+
+bool _loadBool(AppStorage storage, String key, {required bool fallback}) {
+  final raw = storage.readString(key);
+  if (raw == null || raw.trim().isEmpty) return fallback;
+  return raw == 'true';
 }
 
 TextDirection directionForLocale(Locale locale) {

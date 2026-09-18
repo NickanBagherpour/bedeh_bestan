@@ -1,10 +1,13 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 
+import '../models/asset_account.dart';
 import '../models/enums.dart';
 import '../models/library_snapshot.dart';
+import '../models/money_installment.dart';
 import '../models/money_item.dart';
 import '../models/money_payment.dart';
 import '../models/note.dart';
@@ -25,8 +28,10 @@ part 'app_database.g.dart';
     Parties,
     MoneyItems,
     MoneyPayments,
+    MoneyInstallments,
     Reminders,
     Notes,
+    AssetAccounts,
     MetaEntries,
   ],
 )
@@ -59,7 +64,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration {
@@ -104,9 +109,39 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Stream<List<MoneyItem>> watchMoneyItems() {
-    return select(moneyItems).watch().map(
-      (rows) => [for (final row in rows) moneyFromRow(row)],
+    late StreamSubscription<List<MoneyItemRow>> itemsSub;
+    late StreamSubscription<List<MoneyInstallmentRow>> installmentsSub;
+    var itemRows = <MoneyItemRow>[];
+    var installmentRows = <MoneyInstallmentRow>[];
+    var itemsReady = false;
+    var installmentsReady = false;
+
+    late final StreamController<List<MoneyItem>> controller;
+    void emit() {
+      if (!itemsReady || !installmentsReady) return;
+      if (controller.isClosed) return;
+      controller.add(_moneyItemsWithInstallments(itemRows, installmentRows));
+    }
+
+    controller = StreamController<List<MoneyItem>>(
+      onListen: () {
+        itemsSub = select(moneyItems).watch().listen((rows) {
+          itemRows = rows;
+          itemsReady = true;
+          emit();
+        });
+        installmentsSub = select(moneyInstallments).watch().listen((rows) {
+          installmentRows = rows;
+          installmentsReady = true;
+          emit();
+        });
+      },
+      onCancel: () async {
+        await itemsSub.cancel();
+        await installmentsSub.cancel();
+      },
     );
+    return controller.stream;
   }
 
   Stream<List<MoneyPayment>> watchPayments() {
@@ -139,13 +174,47 @@ class AppDatabase extends _$AppDatabase {
 
   Future<List<MoneyItem>> listMoneyItems() async {
     final rows = await select(moneyItems).get();
-    return [for (final row in rows) moneyFromRow(row)];
+    final installmentRows = await select(moneyInstallments).get();
+    return _moneyItemsWithInstallments(rows, installmentRows);
   }
 
   Future<MoneyItem?> getMoneyItem(String id) async {
     final row = await (select(moneyItems)..where((table) => table.id.equals(id)))
         .getSingleOrNull();
-    return row == null ? null : moneyFromRow(row);
+    if (row == null) return null;
+    final installments = await listInstallmentsFor(id);
+    return moneyFromRow(row, installments: installments);
+  }
+
+  Future<List<MoneyInstallment>> listInstallmentsFor(String moneyItemId) async {
+    final rows = await (select(moneyInstallments)
+          ..where((row) => row.moneyItemId.equals(moneyItemId))
+          ..orderBy([(row) => OrderingTerm.asc(row.index)]))
+        .get();
+    return [for (final row in rows) installmentFromRow(row)];
+  }
+
+  /// Replaces all قسط rows for [moneyItemId]. Empty [rows] clears overrides.
+  Future<void> replaceInstallmentsFor(
+    String moneyItemId,
+    List<MoneyInstallment> rows,
+  ) {
+    return transaction(() async {
+      await (delete(moneyInstallments)
+            ..where((row) => row.moneyItemId.equals(moneyItemId)))
+          .go();
+      for (final row in rows) {
+        await into(moneyInstallments).insert(
+          MoneyInstallmentsCompanion.insert(
+            id: row.id,
+            moneyItemId: moneyItemId,
+            index: row.index,
+            dueDate: row.dueDate,
+            amount: row.amount,
+          ),
+        );
+      }
+    });
   }
 
   Future<List<MoneyPayment>> listPaymentsFor(String moneyItemId) async {
@@ -212,6 +281,8 @@ class AppDatabase extends _$AppDatabase {
         'UPDATE notes SET money_item_id = NULL WHERE money_item_id = ?',
         [id],
       );
+      await (delete(moneyInstallments)..where((row) => row.moneyItemId.equals(id)))
+          .go();
       await (delete(moneyPayments)..where((row) => row.moneyItemId.equals(id)))
           .go();
       await (delete(moneyItems)..where((row) => row.id.equals(id))).go();
@@ -234,10 +305,42 @@ class AppDatabase extends _$AppDatabase {
         startDate: Value(item.startDate),
         nextDueDate: Value(item.nextDueDate),
         note: Value(item.note),
+        reminderPolicy: Value(item.reminderPolicy),
+        reminderDaysBeforeJson: Value(item.reminderDaysBeforeJson),
         createdAt: Value(item.createdAt),
         updatedAt: Value(item.updatedAt),
       ),
     );
+  }
+
+  Future<AssetAccount?> getAssetAccount(String id) async {
+    final row = await (select(assetAccounts)..where((table) => table.id.equals(id)))
+        .getSingleOrNull();
+    return row == null ? null : assetFromRow(row);
+  }
+
+  Stream<List<AssetAccount>> watchAssetAccounts() {
+    return select(assetAccounts).watch().map(
+      (rows) => [for (final row in rows) assetFromRow(row)],
+    );
+  }
+
+  Future<void> upsertAssetAccount(AssetAccount account) {
+    return into(assetAccounts).insertOnConflictUpdate(
+      AssetAccountsCompanion(
+        id: Value(account.id),
+        name: Value(account.name),
+        kind: Value(account.kind.name),
+        balance: Value(account.balance),
+        note: Value(account.note),
+        createdAt: Value(account.createdAt),
+        updatedAt: Value(account.updatedAt),
+      ),
+    );
+  }
+
+  Future<void> deleteAssetAccount(String id) async {
+    await (delete(assetAccounts)..where((row) => row.id.equals(id))).go();
   }
 
   /// Records a (possibly partial) payment and updates remaining / installments.
@@ -277,14 +380,40 @@ class AppDatabase extends _$AppDatabase {
 
       var periodsPaid = item.periodsPaid;
       var nextDue = item.nextDueDate;
-      if (item.schedule == MoneySchedule.installment &&
-          item.installmentAmount != null &&
-          item.installmentAmount! > 0) {
-        final extra = amount ~/ item.installmentAmount!;
-        if (extra > 0) {
-          final cap = item.installmentCount ?? (periodsPaid + extra);
-          periodsPaid = math.min(cap, periodsPaid + extra);
-          nextDue = addCalendarMonths(item.nextDueDate, extra);
+      if (item.schedule == MoneySchedule.installment) {
+        final schedule = item.installments.isNotEmpty
+            ? ([...item.installments]
+              ..sort((a, b) => a.index.compareTo(b.index)))
+            : await listInstallmentsFor(moneyItemId);
+        if (schedule.isNotEmpty) {
+          var remainingPay = amount;
+          var advanced = 0;
+          for (var i = periodsPaid; i < schedule.length && remainingPay > 0; i++) {
+            final rowAmount = schedule[i].amount;
+            if (rowAmount <= 0) break;
+            if (remainingPay >= rowAmount) {
+              remainingPay -= rowAmount;
+              advanced++;
+            } else {
+              break;
+            }
+          }
+          if (advanced > 0) {
+            periodsPaid = periodsPaid + advanced;
+            if (periodsPaid < schedule.length) {
+              nextDue = schedule[periodsPaid].dueDate;
+            } else {
+              nextDue = schedule.last.dueDate;
+            }
+          }
+        } else if (item.installmentAmount != null &&
+            item.installmentAmount! > 0) {
+          final extra = amount ~/ item.installmentAmount!;
+          if (extra > 0) {
+            final cap = item.installmentCount ?? (periodsPaid + extra);
+            periodsPaid = math.min(cap, periodsPaid + extra);
+            nextDue = addCalendarMonths(item.nextDueDate, extra);
+          }
         }
       }
 
@@ -327,6 +456,7 @@ class AppDatabase extends _$AppDatabase {
         startAt: Value(reminder.startAt),
         endAt: Value(reminder.endAt),
         allDay: Value(reminder.allDay),
+        kind: Value(reminder.kind.name),
         repeatRule: Value(reminder.repeatRule.name),
         repeatEveryN: Value(reminder.repeatEveryN),
         notifyOnTime: Value(reminder.notifyOnTime),
@@ -382,17 +512,33 @@ class AppDatabase extends _$AppDatabase {
   Future<LibraryDump> captureLibrary() async {
     final partyRows = await select(parties).get();
     final moneyRows = await select(moneyItems).get();
+    final installmentRows = await select(moneyInstallments).get();
     final paymentRows = await select(moneyPayments).get();
     final reminderRows = await select(reminders).get();
     final noteRows = await select(notes).get();
+    final assetRows = await select(assetAccounts).get();
     final metaRows = await select(metaEntries).get();
+    final byItem = <String, List<MoneyInstallment>>{};
+    for (final row in installmentRows) {
+      (byItem[row.moneyItemId] ??= []).add(installmentFromRow(row));
+    }
+    for (final list in byItem.values) {
+      list.sort((a, b) => a.index.compareTo(b.index));
+    }
     return LibraryDump(
       schemaVersion: schemaVersion,
       parties: [for (final row in partyRows) partyFromRow(row)],
-      moneyItems: [for (final row in moneyRows) moneyFromRow(row)],
+      moneyItems: [
+        for (final row in moneyRows)
+          moneyFromRow(row, installments: byItem[row.id] ?? const []),
+      ],
+      installments: [
+        for (final row in installmentRows) installmentFromRow(row),
+      ],
       payments: [for (final row in paymentRows) paymentFromRow(row)],
       reminders: [for (final row in reminderRows) reminderFromRow(row)],
       notes: [for (final row in noteRows) noteFromRow(row)],
+      assetAccounts: [for (final row in assetRows) assetFromRow(row)],
       meta: {for (final row in metaRows) row.key: row.value},
     );
   }
@@ -410,8 +556,10 @@ class AppDatabase extends _$AppDatabase {
       await customStatement('PRAGMA foreign_keys = OFF');
       await delete(notes).go();
       await delete(moneyPayments).go();
+      await delete(moneyInstallments).go();
       await delete(reminders).go();
       await delete(moneyItems).go();
+      await delete(assetAccounts).go();
       await delete(parties).go();
       await delete(metaEntries).go();
       for (final party in dump.parties) {
@@ -419,6 +567,23 @@ class AppDatabase extends _$AppDatabase {
       }
       for (final item in dump.moneyItems) {
         await upsertMoneyItem(item);
+      }
+      final installments = dump.installments.isNotEmpty
+          ? dump.installments
+          : [
+              for (final item in dump.moneyItems)
+                ...item.installments,
+            ];
+      for (final row in installments) {
+        await into(moneyInstallments).insertOnConflictUpdate(
+          MoneyInstallmentsCompanion(
+            id: Value(row.id),
+            moneyItemId: Value(row.moneyItemId),
+            index: Value(row.index),
+            dueDate: Value(row.dueDate),
+            amount: Value(row.amount),
+          ),
+        );
       }
       for (final payment in dump.payments) {
         await into(moneyPayments).insertOnConflictUpdate(
@@ -436,6 +601,9 @@ class AppDatabase extends _$AppDatabase {
       }
       for (final note in dump.notes) {
         await upsertNote(note);
+      }
+      for (final asset in dump.assetAccounts) {
+        await upsertAssetAccount(asset);
       }
       for (final entry in dump.meta.entries) {
         await into(metaEntries).insertOnConflictUpdate(
@@ -491,6 +659,11 @@ class AppDatabase extends _$AppDatabase {
       'notify_day_before',
       'INTEGER NOT NULL DEFAULT 0',
     );
+    await _ensureColumn(
+      'reminders',
+      'kind',
+      "TEXT NOT NULL DEFAULT 'event'",
+    );
     await _ensureColumn('notes', 'body', "TEXT NOT NULL DEFAULT ''");
     await _ensureColumn('notes', 'tags_json', "TEXT NOT NULL DEFAULT '[]'");
     await _ensureColumn(
@@ -501,6 +674,16 @@ class AppDatabase extends _$AppDatabase {
     await _ensureColumn('notes', 'pinned', 'INTEGER NOT NULL DEFAULT 0');
     await _ensureColumn('notes', 'party_id', 'TEXT NULL');
     await _ensureColumn('notes', 'money_item_id', 'TEXT NULL');
+    await _ensureColumn(
+      'money_items',
+      'reminder_policy',
+      "TEXT NOT NULL DEFAULT 'default'",
+    );
+    await _ensureColumn(
+      'money_items',
+      'reminder_days_before_json',
+      "TEXT NOT NULL DEFAULT '[]'",
+    );
   }
 
   Future<void> _ensureColumn(
@@ -514,6 +697,23 @@ class AppDatabase extends _$AppDatabase {
     if (exists) return;
     await customStatement('ALTER TABLE $table ADD COLUMN $column $spec');
   }
+}
+
+List<MoneyItem> _moneyItemsWithInstallments(
+  List<MoneyItemRow> itemRows,
+  List<MoneyInstallmentRow> installmentRows,
+) {
+  final byItem = <String, List<MoneyInstallment>>{};
+  for (final row in installmentRows) {
+    (byItem[row.moneyItemId] ??= []).add(installmentFromRow(row));
+  }
+  for (final list in byItem.values) {
+    list.sort((a, b) => a.index.compareTo(b.index));
+  }
+  return [
+    for (final row in itemRows)
+      moneyFromRow(row, installments: byItem[row.id] ?? const []),
+  ];
 }
 
 String? _optionalFk(String? id) {
@@ -537,7 +737,10 @@ Party partyFromRow(PartyRow row) {
   );
 }
 
-MoneyItem moneyFromRow(MoneyItemRow row) {
+MoneyItem moneyFromRow(
+  MoneyItemRow row, {
+  List<MoneyInstallment> installments = const [],
+}) {
   return MoneyItem(
     id: row.id,
     partyId: row.partyId,
@@ -559,6 +762,31 @@ MoneyItem moneyFromRow(MoneyItemRow row) {
     periodsPaid: row.periodsPaid,
     startDate: row.startDate,
     nextDueDate: row.nextDueDate,
+    note: row.note,
+    reminderPolicy: row.reminderPolicy,
+    reminderDaysBeforeJson: row.reminderDaysBeforeJson,
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
+    installments: installments,
+  );
+}
+
+MoneyInstallment installmentFromRow(MoneyInstallmentRow row) {
+  return MoneyInstallment(
+    id: row.id,
+    moneyItemId: row.moneyItemId,
+    index: row.index,
+    dueDate: row.dueDate,
+    amount: row.amount,
+  );
+}
+
+AssetAccount assetFromRow(AssetAccountRow row) {
+  return AssetAccount(
+    id: row.id,
+    name: row.name,
+    kind: enumByName(AssetAccountKind.values, row.kind, AssetAccountKind.other),
+    balance: row.balance,
     note: row.note,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
@@ -583,6 +811,7 @@ Reminder reminderFromRow(ReminderRow row) {
     startAt: row.startAt,
     endAt: row.endAt,
     allDay: row.allDay,
+    kind: enumByName(ReminderKind.values, row.kind, ReminderKind.event),
     repeatRule: enumByName(RepeatRule.values, row.repeatRule, RepeatRule.none),
     repeatEveryN: row.repeatEveryN,
     notifyOnTime: row.notifyOnTime,

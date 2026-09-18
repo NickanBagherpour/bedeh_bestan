@@ -139,48 +139,84 @@ class PartyDetailPage extends ConsumerWidget {
                 ),
               ),
               _contactRow(
-                context: context,
                 theme: theme,
                 label: t.money.phone,
                 value: party.phone,
-                actionIcon: Icons.call_outlined,
-                actionTooltip: t.money.callAction,
-                onAction: () => _call(context, t, party.phone!),
+                actions: [
+                  _ContactAction(
+                    icon: Icons.call_outlined,
+                    tooltip: t.money.callAction,
+                    onPressed: () => _call(context, t, party.phone!),
+                  ),
+                  _ContactAction(
+                    icon: Icons.copy_outlined,
+                    tooltip: t.money.copyAction,
+                    onPressed: () => _copy(context, t, party.phone!),
+                  ),
+                ],
               ),
               _contactRow(
-                context: context,
                 theme: theme,
                 label: t.money.cardNumber,
                 value: party.cardNumber,
-                actionIcon: Icons.copy_outlined,
-                actionTooltip: t.money.copyAction,
-                onAction: () => _copy(context, t, party.cardNumber!),
+                actions: [
+                  _ContactAction(
+                    icon: Icons.copy_outlined,
+                    tooltip: t.money.copyAction,
+                    onPressed: () => _copy(context, t, party.cardNumber!),
+                  ),
+                ],
               ),
               _contactRow(
-                context: context,
                 theme: theme,
                 label: t.money.sheba,
                 value: party.sheba,
-                actionIcon: Icons.copy_outlined,
-                actionTooltip: t.money.copyAction,
-                onAction: () => _copy(context, t, party.sheba!),
+                actions: [
+                  _ContactAction(
+                    icon: Icons.copy_outlined,
+                    tooltip: t.money.copyAction,
+                    onPressed: () => _copy(context, t, party.sheba!),
+                  ),
+                ],
               ),
               _contactRow(
-                context: context,
                 theme: theme,
                 label: t.money.nationalCode,
                 value: party.nationalCode,
+                actions: [
+                  _ContactAction(
+                    icon: Icons.copy_outlined,
+                    tooltip: t.money.copyAction,
+                    onPressed: () => _copy(context, t, party.nationalCode!),
+                  ),
+                ],
               ),
               _contactRow(
-                context: context,
                 theme: theme,
                 label: t.money.birthDate,
                 value: party.birthDate,
+                ltr: false,
+                actions: [
+                  _ContactAction(
+                    icon: Icons.copy_outlined,
+                    tooltip: t.money.copyAction,
+                    onPressed: () => _copy(context, t, party.birthDate!),
+                  ),
+                ],
               ),
-              if (party.note != null && party.note!.isNotEmpty) ...[
-                const SizedBox(height: AppSpacing.md),
-                Text(party.note!),
-              ],
+              _contactRow(
+                theme: theme,
+                label: t.money.note,
+                value: party.note,
+                ltr: false,
+                actions: [
+                  _ContactAction(
+                    icon: Icons.copy_outlined,
+                    tooltip: t.money.copyAction,
+                    onPressed: () => _copy(context, t, party.note!),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -375,13 +411,11 @@ class PartyDetailPage extends ConsumerWidget {
   }
 
   Widget _contactRow({
-    required BuildContext context,
     required ThemeData theme,
     required String label,
     required String? value,
-    IconData? actionIcon,
-    String? actionTooltip,
-    VoidCallback? onAction,
+    List<_ContactAction> actions = const [],
+    bool ltr = true,
   }) {
     if (value == null || value.trim().isEmpty) {
       return const SizedBox.shrink();
@@ -389,6 +423,7 @@ class PartyDetailPage extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.only(top: AppSpacing.md),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Column(
@@ -403,18 +438,18 @@ class PartyDetailPage extends ConsumerWidget {
                 const SizedBox(height: AppSpacing.xxs),
                 Text(
                   value,
-                  textDirection: TextDirection.ltr,
+                  textDirection: ltr ? TextDirection.ltr : null,
                   textAlign: TextAlign.start,
                   style: theme.textTheme.bodyLarge,
                 ),
               ],
             ),
           ),
-          if (actionIcon != null && onAction != null)
+          for (final action in actions)
             IconButton(
-              tooltip: actionTooltip,
-              onPressed: onAction,
-              icon: Icon(actionIcon),
+              tooltip: action.tooltip,
+              onPressed: action.onPressed,
+              icon: Icon(action.icon),
             ),
         ],
       ),
@@ -551,4 +586,16 @@ String _balanceLabel(Translations t, int net) {
   if (net > 0) return t.money.direction.receive;
   if (net < 0) return t.money.direction.pay;
   return t.money.status.settled;
+}
+
+class _ContactAction {
+  const _ContactAction({
+    required this.icon,
+    required this.tooltip,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onPressed;
 }

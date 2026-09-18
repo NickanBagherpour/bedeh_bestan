@@ -13,7 +13,8 @@
     "home": "Home",
     "money": "Accounts",
     "calendar": "Calendar",
-    "notes": "Notes"
+    "notes": "Notes",
+    "profile": "Profile"
   },
   "language": {
     "label": "Language",
@@ -25,6 +26,11 @@
     "light": "Light",
     "dark": "Dark",
     "system": "System"
+  },
+  "style": {
+    "label": "Style",
+    "classic": "Classic",
+    "glass": "Glass"
   },
   "errors": {
     "unknown": "An unexpected error occurred"

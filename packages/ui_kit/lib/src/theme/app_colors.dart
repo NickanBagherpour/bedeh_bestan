@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 ///
 /// * [pay] (coral)      — بدهی: money I must pay.
 /// * [receive] (emerald)— طلب: money owed to me.
-/// * [reminder] (gold)  — یادآوری / تقویم.
+/// * [reminder] (gold)  — یادآوری / رویداد تقویم.
+/// * [birthday] (rose)  — تولد.
 /// * [note] (peach)     — یادداشت.
 ///
 /// Prefer `Theme.of(context).colorScheme` in feature code; use the semantic
@@ -27,6 +28,9 @@ abstract final class AppColors {
 
   /// یادآوری / تقویم.
   static const Color reminder = Color(0xFFE0A01A);
+
+  /// تولد on the calendar.
+  static const Color birthday = Color(0xFFD4537E);
 
   /// یادداشت (paper).
   static const Color note = Color(0xFFFFF1D6);

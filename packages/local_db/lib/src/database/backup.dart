@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import '../models/asset_account.dart';
 import '../models/enums.dart';
+import '../models/money_installment.dart';
 import '../models/money_item.dart';
 import '../models/money_payment.dart';
 import '../models/note.dart';
@@ -21,15 +23,19 @@ final class LibraryDump {
     required this.payments,
     required this.reminders,
     required this.notes,
+    required this.assetAccounts,
     required this.meta,
+    this.installments = const [],
   });
 
   final int schemaVersion;
   final List<Party> parties;
   final List<MoneyItem> moneyItems;
+  final List<MoneyInstallment> installments;
   final List<MoneyPayment> payments;
   final List<Reminder> reminders;
   final List<Note> notes;
+  final List<AssetAccount> assetAccounts;
   final Map<String, String> meta;
 }
 
@@ -45,6 +51,11 @@ final class BackupException implements Exception {
 }
 
 String encodeLibraryDump(LibraryDump dump) {
+  final installmentRows = dump.installments.isNotEmpty
+      ? dump.installments
+      : [
+          for (final item in dump.moneyItems) ...item.installments,
+        ];
   return jsonEncode({
     'format': libraryBackupFormat,
     'formatVersion': libraryBackupFormatVersion,
@@ -52,9 +63,13 @@ String encodeLibraryDump(LibraryDump dump) {
     'exportedAt': DateTime.now().toUtc().millisecondsSinceEpoch,
     'parties': [for (final row in dump.parties) _partyJson(row)],
     'moneyItems': [for (final row in dump.moneyItems) _moneyJson(row)],
+    'installments': [
+      for (final row in installmentRows) _installmentJson(row),
+    ],
     'payments': [for (final row in dump.payments) _paymentJson(row)],
     'reminders': [for (final row in dump.reminders) _reminderJson(row)],
     'notes': [for (final row in dump.notes) _noteJson(row)],
+    'assetAccounts': [for (final row in dump.assetAccounts) _assetJson(row)],
     'meta': dump.meta,
   });
 }
@@ -75,23 +90,48 @@ LibraryDump decodeLibraryDump(String raw) {
   }
   final parties = _objectList(map['parties']).map(_partyFrom).toList();
   final moneyItems = _objectList(map['moneyItems']).map(_moneyFrom).toList();
+  final topLevelInstallments =
+      _objectList(map['installments']).map(_installmentFrom).toList();
+  final nestedInstallments = [
+    for (final item in moneyItems) ...item.installments,
+  ];
+  final installments =
+      topLevelInstallments.isNotEmpty ? topLevelInstallments : nestedInstallments;
+  final byItem = <String, List<MoneyInstallment>>{};
+  for (final row in installments) {
+    (byItem[row.moneyItemId] ??= []).add(row);
+  }
+  for (final list in byItem.values) {
+    list.sort((a, b) => a.index.compareTo(b.index));
+  }
+  final moneyWithInstallments = [
+    for (final item in moneyItems)
+      item.installments.isNotEmpty
+          ? item
+          : item.copyWith(installments: byItem[item.id] ?? const []),
+  ];
   final payments = _objectList(map['payments']).map(_paymentFrom).toList();
   final reminders = _objectList(map['reminders']).map(_reminderFrom).toList();
   final notes = _objectList(map['notes']).map(_noteFrom).toList();
+  final assets =
+      _objectList(map['assetAccounts']).map(_assetFrom).toList();
   if (parties.isEmpty &&
       moneyItems.isEmpty &&
       payments.isEmpty &&
       reminders.isEmpty &&
-      notes.isEmpty) {
+      notes.isEmpty &&
+      assets.isEmpty) {
     throw const BackupException(BackupFailure.empty);
   }
   return LibraryDump(
     schemaVersion: (map['schemaVersion'] as num?)?.toInt() ?? 1,
     parties: parties,
-    moneyItems: moneyItems,
+    moneyItems: moneyWithInstallments,
+    installments: installments,
     payments: payments,
     reminders: reminders,
     notes: notes,
+    assetAccounts: assets,
     meta: _stringMap(map['meta']),
   );
 }
@@ -174,11 +214,20 @@ Map<String, Object?> _moneyJson(MoneyItem row) => {
       'startDate': _millis(row.startDate),
       'nextDueDate': _millis(row.nextDueDate),
       'note': row.note,
+      'reminderPolicy': row.reminderPolicy,
+      'reminderDaysBeforeJson': row.reminderDaysBeforeJson,
       'createdAt': _millis(row.createdAt),
       'updatedAt': _millis(row.updatedAt),
+      if (row.installments.isNotEmpty)
+        'installments': [
+          for (final installment in row.installments)
+            _installmentJson(installment),
+        ],
     };
 
 MoneyItem _moneyFrom(Map<String, Object?> json) {
+  final nested = _objectList(json['installments']).map(_installmentFrom).toList()
+    ..sort((a, b) => a.index.compareTo(b.index));
   return MoneyItem(
     id: json['id'] as String,
     partyId: json['partyId'] as String,
@@ -200,6 +249,54 @@ MoneyItem _moneyFrom(Map<String, Object?> json) {
     periodsPaid: (json['periodsPaid'] as num?)?.toInt() ?? 0,
     startDate: _time(json['startDate']),
     nextDueDate: _time(json['nextDueDate']),
+    note: _blankToNull(json['note'] as String?),
+    reminderPolicy: json['reminderPolicy'] as String? ?? 'default',
+    reminderDaysBeforeJson:
+        json['reminderDaysBeforeJson'] as String? ?? '[]',
+    createdAt: _time(json['createdAt']),
+    updatedAt: _time(json['updatedAt']),
+    installments: nested,
+  );
+}
+
+Map<String, Object?> _installmentJson(MoneyInstallment row) => {
+      'id': row.id,
+      'moneyItemId': row.moneyItemId,
+      'index': row.index,
+      'dueDate': _millis(row.dueDate),
+      'amount': row.amount,
+    };
+
+MoneyInstallment _installmentFrom(Map<String, Object?> json) {
+  return MoneyInstallment(
+    id: json['id'] as String,
+    moneyItemId: json['moneyItemId'] as String,
+    index: (json['index'] as num).toInt(),
+    dueDate: _time(json['dueDate']),
+    amount: (json['amount'] as num).toInt(),
+  );
+}
+
+Map<String, Object?> _assetJson(AssetAccount row) => {
+      'id': row.id,
+      'name': row.name,
+      'kind': row.kind.name,
+      'balance': row.balance,
+      'note': row.note,
+      'createdAt': _millis(row.createdAt),
+      'updatedAt': _millis(row.updatedAt),
+    };
+
+AssetAccount _assetFrom(Map<String, Object?> json) {
+  return AssetAccount(
+    id: json['id'] as String,
+    name: json['name'] as String,
+    kind: enumByName(
+      AssetAccountKind.values,
+      json['kind'] as String? ?? '',
+      AssetAccountKind.other,
+    ),
+    balance: (json['balance'] as num).toInt(),
     note: _blankToNull(json['note'] as String?),
     createdAt: _time(json['createdAt']),
     updatedAt: _time(json['updatedAt']),
@@ -231,6 +328,7 @@ Map<String, Object?> _reminderJson(Reminder row) => {
       'startAt': _millis(row.startAt),
       'endAt': row.endAt == null ? null : _millis(row.endAt!),
       'allDay': row.allDay,
+      'kind': row.kind.name,
       'repeatRule': row.repeatRule.name,
       'repeatEveryN': row.repeatEveryN,
       'notifyOnTime': row.notifyOnTime,
@@ -247,6 +345,11 @@ Reminder _reminderFrom(Map<String, Object?> json) {
     startAt: _time(json['startAt']),
     endAt: json['endAt'] == null ? null : _time(json['endAt']),
     allDay: json['allDay'] as bool? ?? false,
+    kind: enumByName(
+      ReminderKind.values,
+      json['kind'] as String? ?? '',
+      ReminderKind.event,
+    ),
     repeatRule: enumByName(
       RepeatRule.values,
       json['repeatRule'] as String? ?? '',

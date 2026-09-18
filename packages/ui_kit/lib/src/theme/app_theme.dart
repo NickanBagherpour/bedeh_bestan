@@ -1,25 +1,44 @@
+import 'package:core/core.dart' show AppStyle;
 import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
 import 'app_fonts.dart';
 import 'app_spacing.dart';
 import 'app_typography.dart';
+import 'kit_surface_style.dart';
 
 /// Builds light/dark [ThemeData] for BedeBestan — calm, premium, RTL-first.
+///
+/// The [style] selects the visual skin (classic vs glass) independently of
+/// light/dark. All skin-specific tuning is derived from [KitSurfaceStyle] so
+/// surfaces stay consistent across the app.
 abstract final class AppTheme {
-  static ThemeData lightFor(String languageCode) =>
-      _build(languageCode, AppColors.lightScheme(), Brightness.light);
+  static ThemeData lightFor(
+    String languageCode, {
+    AppStyle style = AppStyle.classic,
+  }) =>
+      _build(languageCode, AppColors.lightScheme(), Brightness.light, style);
 
-  static ThemeData darkFor(String languageCode) =>
-      _build(languageCode, AppColors.darkScheme(), Brightness.dark);
+  static ThemeData darkFor(
+    String languageCode, {
+    AppStyle style = AppStyle.classic,
+  }) =>
+      _build(languageCode, AppColors.darkScheme(), Brightness.dark, style);
 
   static ThemeData _build(
     String languageCode,
     ColorScheme scheme,
     Brightness brightness,
+    AppStyle style,
   ) {
     final fontFamily = AppFonts.familyFor(languageCode);
     final isDark = brightness == Brightness.dark;
+    final surfaceStyle = KitSurfaceStyle.forStyle(style);
+    final glass = surfaceStyle.isGlass;
+    // Softly translucent chrome for the glass skin so the ambient aurora
+    // reads through. Kept subtle where blur is unavailable (theme-level fills).
+    Color glassy(Color base, double alpha) =>
+        glass ? base.withValues(alpha: alpha) : base;
     final textTheme = AppTypography.textTheme(fontFamily).apply(
       bodyColor: scheme.onSurface,
       displayColor: scheme.onSurface,
@@ -53,8 +72,9 @@ abstract final class AppTheme {
           TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
         },
       ),
+      extensions: [surfaceStyle],
       cardTheme: CardThemeData(
-        color: scheme.surface,
+        color: glassy(scheme.surface, surfaceStyle.surfaceAlpha),
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
@@ -66,7 +86,7 @@ abstract final class AppTheme {
       appBarTheme: AppBarTheme(
         elevation: 0,
         scrolledUnderElevation: 0,
-        backgroundColor: appBarColor,
+        backgroundColor: glassy(appBarColor, 0.6),
         surfaceTintColor: Colors.transparent,
         foregroundColor: scheme.onSurface,
         centerTitle: false,
@@ -77,7 +97,7 @@ abstract final class AppTheme {
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: navColor,
+        backgroundColor: glassy(navColor, 0.82),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         height: 68,
@@ -100,7 +120,10 @@ abstract final class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: isDark ? surfaceAlt : AppColors.lightSurface,
+        fillColor: glassy(
+          isDark ? surfaceAlt : AppColors.lightSurface,
+          0.7,
+        ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
           vertical: AppSpacing.sm,
@@ -119,7 +142,7 @@ abstract final class AppTheme {
         ),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: surfaceAlt,
+        backgroundColor: glassy(surfaceAlt, 0.55),
         selectedColor: scheme.secondary.withValues(alpha: isDark ? 0.28 : 0.22),
         side: BorderSide(color: outline),
         labelStyle: textTheme.labelMedium,

@@ -1,8 +1,11 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:flutter/material.dart';
 
 import '../haptics/app_haptics.dart';
-import '../theme/app_gradients.dart';
 import '../theme/app_spacing.dart';
+import '../theme/kit_glass.dart';
+import '../theme/kit_surface_style.dart';
 
 /// Surface card for interactive or content groupings.
 ///
@@ -35,33 +38,54 @@ class KitCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final surface = KitSurfaceStyle.of(context);
+    // Gradient (hero/CTA) cards stay opaque even in glass — blurring behind an
+    // opaque fill is wasted work — so they fall through to the classic path.
+    if (surface.isGlass && gradient == null) {
+      return _buildGlass(context, surface);
+    }
+
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final radius = BorderRadius.circular(AppSpacing.radiusLg);
     final bg = color ?? theme.cardTheme.color ?? theme.colorScheme.surface;
 
     final shadow = accent != null
-        ? AppGradients.glow(accent!, strength: isDark ? 0.30 : 0.24)
+        ? [
+            BoxShadow(
+              color: accent!.withValues(alpha: isDark ? 0.22 : 0.16),
+              blurRadius: 14,
+              offset: const Offset(0, 6),
+            ),
+          ]
         : [
             BoxShadow(
               color: isDark
-                  ? Colors.black.withValues(alpha: 0.34)
-                  : const Color(0x333F3AA8),
-              blurRadius: 22,
-              offset: const Offset(0, 8),
+                  ? Colors.black.withValues(alpha: 0.28)
+                  : const Color(0x1F3F3AA8),
+              blurRadius: 14,
+              offset: const Offset(0, 6),
             ),
           ];
 
     Widget content = Padding(padding: padding, child: child);
     if (accent != null) {
-      content = IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(width: 5, color: accent),
-            Expanded(child: content),
-          ],
-        ),
+      // A leading accent strip drawn via a Stack — no IntrinsicHeight, so no
+      // extra layout pass per list item.
+      content = Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsetsDirectional.only(start: 5),
+            child: content,
+          ),
+          PositionedDirectional(
+            start: 0,
+            top: 0,
+            bottom: 0,
+            width: 5,
+            child: ColoredBox(color: accent!),
+          ),
+        ],
       );
     }
 
@@ -91,6 +115,125 @@ class KitCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+
+    if (margin == null) return card;
+    return Padding(padding: margin!, child: card);
+  }
+
+  /// Translucent, backdrop-blurred surface for the glass skin.
+  ///
+  /// The ambient aurora behind the page shows through the blur, and a bright
+  /// diagonal sheen + luminous top edge sell the “pane of frosted glass” feel
+  /// in both light and dark.
+  Widget _buildGlass(BuildContext context, KitSurfaceStyle surface) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final radius = BorderRadius.circular(AppSpacing.radiusLg);
+
+    // Very translucent fill so the colorful background reads through the blur.
+    final base = color ?? theme.colorScheme.surface;
+    final fill = base.withValues(
+      alpha: isDark ? surface.surfaceAlpha + 0.06 : surface.surfaceAlpha,
+    );
+
+    // Luminous gradient rim — bright top-left, faint through the body, soft
+    // glow at the far edge. Tinted by [accent] when the card is categorized.
+    final borderGradient = kitGlassBorderGradient(
+      accent ?? Colors.white,
+      isDark: isDark,
+    );
+
+    // Diagonal glass sheen laid over the fill (behind the content).
+    final sheen = LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        Colors.white.withValues(alpha: (isDark ? 0.16 : 0.42) * surface.sheenAlpha),
+        Colors.white.withValues(alpha: (isDark ? 0.03 : 0.10) * surface.sheenAlpha),
+        Colors.white.withValues(alpha: 0),
+      ],
+      stops: const [0, 0.35, 0.75],
+    );
+
+    Widget content = Padding(padding: padding, child: child);
+    if (accent != null) {
+      content = Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsetsDirectional.only(start: 5),
+            child: content,
+          ),
+          PositionedDirectional(
+            start: 0,
+            top: 0,
+            bottom: 0,
+            width: 5,
+            child: ColoredBox(color: accent!),
+          ),
+        ],
+      );
+    }
+
+    final interactive = Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap == null
+            ? null
+            : () {
+                AppHaptics.selection();
+                onTap!();
+              },
+        child: content,
+      ),
+    );
+
+    final glassBody = ClipRRect(
+      borderRadius: radius,
+      child: BackdropFilter(
+        filter: ImageFilter.blur(
+          sigmaX: surface.blurSigma,
+          sigmaY: surface.blurSigma,
+        ),
+        child: Stack(
+          children: [
+            Positioned.fill(child: ColoredBox(color: fill)),
+            Positioned.fill(
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(gradient: sheen),
+                ),
+              ),
+            ),
+            interactive,
+          ],
+        ),
+      ),
+    );
+
+    // Gradient rim drawn on top (foreground) so the blur can't soften it.
+    final bordered = DecoratedBox(
+      position: DecorationPosition.foreground,
+      decoration: ShapeDecoration(
+        shape: KitGlassBorder(borderRadius: radius, gradient: borderGradient),
+      ),
+      child: glassBody,
+    );
+
+    final card = DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: radius,
+        boxShadow: [
+          BoxShadow(
+            color: (accent ?? theme.colorScheme.shadow).withValues(
+              alpha: (isDark ? 0.34 : 0.18) * surface.shadowAlpha,
+            ),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: bordered,
     );
 
     if (margin == null) return card;

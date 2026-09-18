@@ -1,5 +1,55 @@
 # Changelog
 
+## [1.0.6] - 2026-09-18
+
+- Maintenance release.
+
+## [1.0.5] - 2026-09-18
+
+### Added
+- refactor money report filters into a dedicated widget
+- implement per-installment customization and storage for money items
+- implement money period report feature with UI enhancements
+- enhance home dashboard and reporting features
+
+### Changed
+- refresh launcher icon, favicon, splash, and adaptive foreground (full-bleed indigo mark)
+- bump Android versionCode to 4 (Bazaar requires monotonic codes; `1.0.5+1` was below prior uploads)
+
+## [1.0.4] - 2026-09-16
+
+### Added
+- update calendar filter bar and settings choice row for improved UI
+- enhance calendar functionality with money item integration
+
+## [1.0.4] - 2026-09-15
+
+### Added
+- enhance home dashboard with week range and payment summaries
+
+## [1.0.4] - 2026-09-14
+
+### Added
+- enhance notification handling with new action receiver and background processing
+
+## [1.0.4] - 2026-09-14
+
+### Added
+- integrate profile feature into bottom navigation and enhance UI
+
+## [1.0.3] - 2026-09-13
+
+### Added
+- introduce app style customization with classic and glass themes
+- enhance notification system with background handling and action support
+- integrate profile feature into the app
+
+## [1.0.1] - 2026-09-13
+
+### Added
+- update routing to use buildTabPage for improved navigation
+- enhance money management UX with installment features
+
 ## [1.0.0] - 2026-09-12
 
 ### Added

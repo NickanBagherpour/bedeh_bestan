@@ -19,6 +19,8 @@ abstract final class AppRoutes {
     name: 'moneyEdit',
     path: '/money/item/:id/edit',
   );
+  static const moneyReports =
+      AppRoute(name: 'moneyReports', path: '/money/reports');
   static const parties = AppRoute(name: 'parties', path: '/money/parties');
   static const partyNew = AppRoute(name: 'partyNew', path: '/money/parties/new');
   static const partyItem = AppRoute(
@@ -47,9 +49,12 @@ abstract final class AppRoutes {
     path: '/notes/item/:id/edit',
   );
   static const settings = AppRoute(name: 'settings', path: '/settings');
+  static const profile = AppRoute(name: 'profile', path: '/profile');
+  static const profileAssets =
+      AppRoute(name: 'profileAssets', path: '/profile/assets');
 
   /// Primary destinations in bottom-nav order.
-  static const List<AppRoute> primary = [home, money, calendar, notes];
+  static const List<AppRoute> primary = [home, money, calendar, notes, profile];
 
   static const List<AppRoute> all = [
     home,
@@ -57,6 +62,7 @@ abstract final class AppRoutes {
     moneyNew,
     moneyItem,
     moneyEdit,
+    moneyReports,
     parties,
     partyNew,
     partyItem,
@@ -70,6 +76,8 @@ abstract final class AppRoutes {
     notesItem,
     notesEdit,
     settings,
+    profile,
+    profileAssets,
   ];
 
   static String moneyItemPath(String id) => '/money/item/$id';
@@ -118,6 +126,10 @@ abstract final class AppRoutes {
     if (normalized == notes.path ||
         normalized.startsWith('${notes.path}/')) {
       return notes;
+    }
+    if (normalized == profile.path ||
+        normalized.startsWith('${profile.path}/')) {
+      return profile;
     }
     return home;
   }

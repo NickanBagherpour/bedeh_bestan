@@ -86,13 +86,15 @@ List<PartyLedgerEntry> partyLedger({
 
 /// Suggested payment prefill (stored Toman) for an installment item.
 ///
-/// Returns the per-installment amount, capped at the remaining balance so the
-/// final قسط never over-fills. `null` for one-time items, settled items, or
-/// installment items without a stored installment amount (no forced prefill).
+/// Uses the current unpaid قسط amount when stored rows exist; otherwise the
+/// uniform [MoneyItem.installmentAmount]. Capped at remaining. `null` for
+/// one-time / settled items or when no amount can be derived.
 int? installmentPrefillAmount(MoneyItem item) {
   if (item.schedule != MoneySchedule.installment) return null;
   if (item.isSettled) return null;
-  final each = item.installmentAmount;
+  final each = item.installments.isNotEmpty
+      ? item.currentInstallmentAmount()
+      : item.installmentAmount;
   if (each == null || each <= 0) return null;
   final remaining = item.remainingAmount;
   return each < remaining ? each : remaining;
@@ -116,21 +118,102 @@ final class InstallmentRow {
   /// Due date of this قسط in the active calendar.
   final DateTime dueDate;
 
-  /// Amount for this قسط, stored Toman (equal installments in v1).
+  /// Amount for this قسط, stored Toman.
   final int amount;
 
   final InstallmentState state;
 }
 
+/// Editable draft row while creating / editing a قسطی account.
+final class InstallmentDraftRow {
+  const InstallmentDraftRow({
+    required this.index,
+    required this.dueDate,
+    required this.amount,
+    this.id,
+  });
+
+  final String? id;
+  final int index;
+  final DateTime dueDate;
+  final int amount;
+
+  InstallmentDraftRow copyWith({
+    String? id,
+    int? index,
+    DateTime? dueDate,
+    int? amount,
+  }) {
+    return InstallmentDraftRow(
+      id: id ?? this.id,
+      index: index ?? this.index,
+      dueDate: dueDate ?? this.dueDate,
+      amount: amount ?? this.amount,
+    );
+  }
+}
+
+/// Equal monthly draft schedule from count / default amount / first due.
+///
+/// Pure; used by the money form before save. Unit-tested.
+List<InstallmentDraftRow> buildEqualInstallmentDraft({
+  required int count,
+  required int amount,
+  required DateTime startDate,
+  required CalendarType calendar,
+  List<InstallmentDraftRow>? previous,
+}) {
+  if (count <= 0 || amount <= 0) return const [];
+  return [
+    for (var i = 0; i < count; i++)
+      InstallmentDraftRow(
+        id: previous != null && i < previous.length ? previous[i].id : null,
+        index: i + 1,
+        dueDate: shiftCalendarMonths(startDate, i, calendar),
+        amount: amount,
+      ),
+  ];
+}
+
+/// Sum of draft قسط amounts (stored Toman).
+int installmentDraftTotal(Iterable<InstallmentDraftRow> rows) {
+  var sum = 0;
+  for (final row in rows) {
+    sum += row.amount;
+  }
+  return sum;
+}
+
 /// Per-قسط schedule for an installment [item] in [calendar].
 ///
-/// Row `i` (1-based) is due `startDate` shifted by `i-1` periods (equal monthly
-/// installments). The first `periodsPaid` rows are [InstallmentState.paid], the
-/// next unpaid one is [InstallmentState.due], and the rest are
-/// [InstallmentState.upcoming]. Empty for non-installment items or when the
-/// count is missing. Pure; unit-tested.
+/// When [MoneyItem.installments] is non-empty, uses stored amounts and due
+/// dates. Otherwise generates equal monthly rows from count /
+/// [MoneyItem.installmentAmount] (or total/count). The first [periodsPaid]
+/// rows are [InstallmentState.paid], the next unpaid one is
+/// [InstallmentState.due], and the rest are [InstallmentState.upcoming].
+/// Empty for non-installment items or when the count is missing. Pure;
+/// unit-tested.
 List<InstallmentRow> installmentSchedule(MoneyItem item, CalendarType calendar) {
   if (item.schedule != MoneySchedule.installment) return const [];
+
+  if (item.installments.isNotEmpty) {
+    final sorted = [...item.installments]
+      ..sort((a, b) => a.index.compareTo(b.index));
+    return [
+      for (var i = 0; i < sorted.length; i++)
+        InstallmentRow(
+          index: sorted[i].index,
+          dueDate: sorted[i].dueDate,
+          amount: sorted[i].amount,
+          state: i < item.periodsPaid
+              ? InstallmentState.paid
+              : (i == item.periodsPaid
+                    ? InstallmentState.due
+                    : InstallmentState.upcoming),
+        ),
+    ];
+  }
+
   final count = item.installmentCount;
   if (count == null || count <= 0) return const [];
   final each = item.installmentAmount ?? (item.totalAmount / count).round();
@@ -151,6 +234,40 @@ List<InstallmentRow> installmentSchedule(MoneyItem item, CalendarType calendar) 
     );
   }
   return rows;
+}
+
+/// Collapse the schedule UI when there are more than this many قسط rows.
+const installmentScheduleCollapseThreshold = 5;
+
+/// Rows to render in the installment schedule list.
+///
+/// When [expanded] is false and there are more than
+/// [installmentScheduleCollapseThreshold] rows, paid قسط‌ها are omitted (the
+/// UI shows a count summary) and at most the next 5 unpaid rows (due +
+/// upcoming) are returned. Smaller schedules and the expanded view return
+/// every row. Pure; unit-tested.
+List<InstallmentRow> visibleInstallmentRows(
+  List<InstallmentRow> rows, {
+  required bool expanded,
+}) {
+  if (expanded || rows.length <= installmentScheduleCollapseThreshold) {
+    return rows;
+  }
+  final unpaid = <InstallmentRow>[];
+  for (final row in rows) {
+    if (row.state == InstallmentState.paid) continue;
+    unpaid.add(row);
+    if (unpaid.length == installmentScheduleCollapseThreshold) break;
+  }
+  return unpaid;
+}
+
+/// Amount to record when settling one schedule row (stored Toman).
+///
+/// One full قسط, capped at remaining so a last odd قسط never overpays.
+int installmentRowSettleAmount(InstallmentRow row, int remainingAmount) {
+  if (remainingAmount <= 0) return 0;
+  return row.amount < remainingAmount ? row.amount : remainingAmount;
 }
 
 int moneyStatusRank(MoneyStatus status) {

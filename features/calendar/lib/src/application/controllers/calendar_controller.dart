@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:local_db/local_db.dart' show Reminder, RepeatRule;
+import 'package:local_db/local_db.dart' show MoneyItem, Reminder, RepeatRule;
 
 import '../../data/repositories/calendar_repository_provider.dart';
 import '../state/calendar_state.dart';
@@ -10,25 +10,44 @@ final calendarControllerProvider =
 );
 
 final class CalendarController extends Notifier<CalendarState> {
+  List<Reminder> _reminders = const [];
+  List<MoneyItem> _moneyItems = const [];
+
   @override
   CalendarState build() {
     final repo = ref.watch(calendarRepositoryProvider);
-    final sub = repo.watchReminders().listen(
+    final remSub = repo.watchReminders().listen(
       (value) {
-        state = CalendarState(
-          status: CalendarStatus.loaded,
-          reminders: value,
-        );
+        _reminders = value;
+        _emitLoaded();
       },
-      onError: (_) {
-        state = const CalendarState(
-          status: CalendarStatus.error,
-          errorKey: 'calendar.loadError',
-        );
-      },
+      onError: (_) => _emitError(),
     );
-    ref.onDispose(sub.cancel);
+    final moneySub = repo.watchMoneyItems().listen(
+      (value) {
+        _moneyItems = value;
+        _emitLoaded();
+      },
+      onError: (_) => _emitError(),
+    );
+    ref.onDispose(remSub.cancel);
+    ref.onDispose(moneySub.cancel);
     return const CalendarState(status: CalendarStatus.loading);
+  }
+
+  void _emitLoaded() {
+    state = CalendarState(
+      status: CalendarStatus.loaded,
+      reminders: _reminders,
+      moneyItems: _moneyItems,
+    );
+  }
+
+  void _emitError() {
+    state = const CalendarState(
+      status: CalendarStatus.error,
+      errorKey: 'calendar.loadError',
+    );
   }
 
   void retry() => ref.invalidateSelf();
@@ -45,6 +64,7 @@ final class CalendarController extends Notifier<CalendarState> {
       body: (body == null || body.isEmpty) ? null : body,
       startAt: draft.startAt,
       allDay: draft.allDay,
+      kind: draft.kind,
       repeatRule: draft.repeatRule,
       repeatEveryN: draft.repeatRule == RepeatRule.everyNDays
           ? draft.repeatEveryN

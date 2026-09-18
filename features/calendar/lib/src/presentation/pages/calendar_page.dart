@@ -25,7 +25,9 @@ import 'package:ui_kit/ui_kit.dart'
 import '../../application/controllers/calendar_controller.dart';
 import '../../application/occurrences.dart';
 import '../../application/state/calendar_state.dart';
+import '../calendar_style.dart';
 import '../widgets/calendar_agenda_list.dart';
+import '../widgets/calendar_filter_bar.dart';
 import '../widgets/calendar_month_grid.dart';
 
 class CalendarPage extends ConsumerStatefulWidget {
@@ -52,27 +54,48 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
   Widget build(BuildContext context) {
     final t = Translations.of(context);
     final state = ref.watch(calendarControllerProvider);
-    final calendar = ref.watch(appSettingsProvider).resolvedCalendar;
+    final settings = ref.watch(appSettingsProvider);
+    final calendar = settings.resolvedCalendar;
     final persian = Localizations.localeOf(context).languageCode == 'fa';
     final today = dateOnly(DateTime.now());
     final month = monthBounds(_focus, calendar);
     final cells = monthGridCells(_focus, calendar);
-    final gridOccurrences = expandOccurrences(
-      reminders: state.reminders,
-      rangeStart: cells.first,
-      rangeEnd: cells.last,
-      calendar: calendar,
-    );
-    final eventDays = {
-      for (final row in gridOccurrences) dateOnly(row.at),
-    };
+    final gridOccurrences = mergeCalendarOccurrences(
+      expandOccurrences(
+        reminders: state.reminders,
+        rangeStart: cells.first,
+        rangeEnd: cells.last,
+        calendar: calendar,
+      ),
+      expandMoneyDueOccurrences(
+        items: state.moneyItems,
+        rangeStart: cells.first,
+        rangeEnd: cells.last,
+      ),
+    ).where(
+      (row) => includeCalendarOccurrence(
+        row,
+        showEvents: settings.showCalendarEvents,
+        showBirthdays: settings.showCalendarBirthdays,
+        showMoney: settings.showCalendarMoney,
+      ),
+    ).toList();
+    final colorsByDay = <DateTime, List<Color>>{};
+    for (final row in gridOccurrences) {
+      final day = dateOnly(row.at);
+      final color = calendarEventColor(row.kind);
+      final existing = colorsByDay.putIfAbsent(day, () => <Color>[]);
+      if (!existing.contains(color)) existing.add(color);
+    }
     CalendarAgendaRow agendaRowOf(CalendarOccurrence row) {
       return CalendarAgendaRow(
-        id: row.reminder.id,
-        title: row.reminder.title,
+        id: row.id,
+        title: row.title,
         at: row.at,
-        allDay: row.reminder.allDay,
-        repeatKey: 'calendar.repeatRule.${row.reminder.repeatRule.name}',
+        allDay: row.allDay,
+        repeatKey: row.repeatKey,
+        accent: calendarEventColor(row.kind),
+        isMoney: row.isMoney,
       );
     }
 
@@ -148,6 +171,23 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
               setState(() => _monthOpen = !_monthOpen);
             },
           ),
+          CalendarFilterBar(
+            eventsLabel: t.calendar.kind.event,
+            birthdaysLabel: t.calendar.kind.birthday,
+            moneyLabel: t.calendar.kind.money,
+            showEvents: settings.showCalendarEvents,
+            showBirthdays: settings.showCalendarBirthdays,
+            showMoney: settings.showCalendarMoney,
+            onEvents: (value) => ref
+                .read(appSettingsProvider.notifier)
+                .setShowCalendarEvents(value),
+            onBirthdays: (value) => ref
+                .read(appSettingsProvider.notifier)
+                .setShowCalendarBirthdays(value),
+            onMoney: (value) => ref
+                .read(appSettingsProvider.notifier)
+                .setShowCalendarMoney(value),
+          ),
           if (_monthOpen) ...[
             CalendarWeekdayRow(labels: _weekdayLabels(t, calendar)),
             CalendarMonthGrid(
@@ -155,7 +195,7 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
               inMonth: month.containsDate,
               isToday: (day) => isSameDate(day, today),
               isSelected: (day) => isSameDate(day, _selected),
-              hasEvents: eventDays.contains,
+              eventColorsOf: (day) => colorsByDay[dateOnly(day)] ?? const [],
               labelOf: (day) {
                 final raw = '${calendarDayOfMonth(day, calendar)}';
                 return persian ? toPersianDigits(raw) : raw;
@@ -194,7 +234,7 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
               onAdd: () => _openNew(context),
               timeOf: timeLabel,
               repeatOf: repeatLabel,
-              onTap: (row) => context.push(AppRoutes.reminderPath(row.id)),
+              onTap: (row) => _openRow(context, row),
             ),
             const SizedBox(height: AppSpacing.lg),
             CalendarAgendaList(
@@ -206,12 +246,21 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
               repeatOf: repeatLabel,
               onTap: (row) {
                 setState(() => _selected = dateOnly(row.at));
-                context.push(AppRoutes.reminderPath(row.id));
+                _openRow(context, row);
               },
             ),
           ],
         ],
       ),
+    );
+  }
+
+  void _openRow(BuildContext context, CalendarAgendaRow row) {
+    AppHaptics.selection();
+    context.push(
+      row.isMoney
+          ? AppRoutes.moneyItemPath(row.id)
+          : AppRoutes.reminderPath(row.id),
     );
   }
 

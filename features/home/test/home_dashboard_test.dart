@@ -13,6 +13,9 @@ void main() {
     required DateTime due,
     int total = 1000,
     int paid = 0,
+    MoneySchedule schedule = MoneySchedule.oneTime,
+    int? installmentCount,
+    int? installmentAmount,
   }) {
     return MoneyItem(
       id: id,
@@ -21,7 +24,9 @@ void main() {
       title: id,
       totalAmount: total,
       paidAmount: paid,
-      schedule: MoneySchedule.oneTime,
+      schedule: schedule,
+      installmentCount: installmentCount,
+      installmentAmount: installmentAmount,
       startDate: due,
       nextDueDate: due,
       createdAt: now,
@@ -58,7 +63,7 @@ void main() {
           id: 'week',
           partyId: ali.id,
           direction: MoneyDirection.receive,
-          due: now.add(const Duration(days: 2)),
+          due: now,
           total: 2500,
         ),
         money(
@@ -156,8 +161,159 @@ void main() {
     expect(dashboard.report.paidOut, 1000);
     expect(dashboard.report.paidIn, 300);
     expect(dashboard.report.remainingPay, 6000);
-    expect(dashboard.report.dueByPeriodEnd, 4000);
+    expect(dashboard.report.remainingReceive, 800);
+    expect(dashboard.report.duePayByPeriodEnd, 4000);
+    expect(dashboard.report.dueReceiveByPeriodEnd, 800);
+    expect(dashboard.dueThisWeek, isEmpty);
+    expect(
+      dashboard.dueThisMonth.map((row) => row.id),
+      containsAll(['open-pay', 'receive']),
+    );
+    final openPayRow =
+        dashboard.dueThisMonth.firstWhere((row) => row.id == 'open-pay');
+    expect(openPayRow.suggestedAmount, 4000);
     expect(dashboard.report.periodStart, DateTime(2026, 9, 1));
     expect(dashboard.report.periodEnd, DateTime(2026, 9, 30));
+    expect(dashboard.weekRange.start, DateTime(2026, 9, 5));
+    expect(dashboard.weekRange.endInclusive, DateTime(2026, 9, 11));
+  });
+
+  test('week and month are exclusive when week crosses month start', () {
+    final shop = Party(
+      id: 'shop',
+      name: 'فروشگاه',
+      kind: PartyKind.shop,
+      createdAt: now,
+      updatedAt: now,
+    );
+    final friday = DateTime(2026, 10, 2);
+    final dashboard = buildHomeDashboard(
+      items: [
+        money(
+          id: 'in-week-october',
+          partyId: shop.id,
+          direction: MoneyDirection.pay,
+          due: friday,
+          total: 100,
+        ),
+        money(
+          id: 'in-month-only',
+          partyId: shop.id,
+          direction: MoneyDirection.receive,
+          due: DateTime(2026, 10, 10),
+          total: 200,
+        ),
+      ],
+      parties: [shop],
+      payments: const [],
+      now: friday,
+      calendar: CalendarType.gregorian,
+    );
+    expect(dashboard.dueThisWeek.map((row) => row.id), ['in-week-october']);
+    expect(dashboard.dueThisMonth.map((row) => row.id), ['in-month-only']);
+  });
+
+  test('jalali month lists items in Shahrivar not Mehr', () {
+    final shop = Party(
+      id: 'shop',
+      name: 'فروشگاه',
+      kind: PartyKind.shop,
+      createdAt: now,
+      updatedAt: now,
+    );
+    final dashboard = buildHomeDashboard(
+      items: [
+        money(
+          id: 'in-month',
+          partyId: shop.id,
+          direction: MoneyDirection.pay,
+          due: DateTime(2026, 9, 20),
+          total: 1000,
+        ),
+        money(
+          id: 'next-month',
+          partyId: shop.id,
+          direction: MoneyDirection.pay,
+          due: DateTime(2026, 10, 5),
+          total: 500,
+        ),
+      ],
+      parties: [shop],
+      payments: const [],
+      now: now,
+      calendar: CalendarType.jalali,
+    );
+    expect(dashboard.dueThisMonth.map((row) => row.id), ['in-month']);
+    expect(dashboard.report.remainingPay, 1500);
+  });
+
+  test('section collapse defaults follow the spec thresholds', () {
+    expect(homeSectionExpandedByDefault(5), isTrue);
+    expect(homeSectionExpandedByDefault(6), isFalse);
+    expect(homeBalancesCollapsedByDefault(4), isFalse);
+    expect(homeBalancesCollapsedByDefault(5), isTrue);
+  });
+
+  test('week and month due amounts use current installment not remaining', () {
+    final shop = Party(
+      id: 'shop',
+      name: 'فروشگاه',
+      kind: PartyKind.shop,
+      createdAt: now,
+      updatedAt: now,
+    );
+    final dashboard = buildHomeDashboard(
+      items: [
+        money(
+          id: 'overdue-installment',
+          partyId: shop.id,
+          direction: MoneyDirection.pay,
+          due: now.subtract(const Duration(days: 3)),
+          total: 8000000,
+          schedule: MoneySchedule.installment,
+          installmentCount: 8,
+          installmentAmount: 1000000,
+        ),
+        money(
+          id: 'week-installment',
+          partyId: shop.id,
+          direction: MoneyDirection.pay,
+          due: now,
+          total: 10000000,
+          schedule: MoneySchedule.installment,
+          installmentCount: 10,
+          installmentAmount: 1000000,
+        ),
+        money(
+          id: 'month-installment',
+          partyId: shop.id,
+          direction: MoneyDirection.receive,
+          due: DateTime(2026, 9, 25),
+          total: 5000000,
+          schedule: MoneySchedule.installment,
+          installmentCount: 5,
+          installmentAmount: 1000000,
+        ),
+      ],
+      parties: [shop],
+      payments: const [],
+      now: now,
+      calendar: CalendarType.gregorian,
+    );
+
+    expect(dashboard.overdue.single.id, 'overdue-installment');
+    expect(dashboard.overdue.single.remainingAmount, 8000000);
+    expect(dashboard.overdue.single.suggestedAmount, 1000000);
+    expect(dashboard.dueThisWeek.single.id, 'week-installment');
+    expect(dashboard.dueThisWeek.single.remainingAmount, 10000000);
+    expect(dashboard.dueThisWeek.single.suggestedAmount, 1000000);
+    expect(dashboard.dueThisMonth.map((row) => row.id), ['month-installment']);
+    final monthRow = dashboard.dueThisMonth.single;
+    expect(monthRow.remainingAmount, 5000000);
+    expect(monthRow.suggestedAmount, 1000000);
+    expect(dashboard.report.duePayByPeriodEnd, 1000000);
+    expect(dashboard.report.dueReceiveByPeriodEnd, 1000000);
+    expect(dashboard.report.remainingPay, 18000000);
+    expect(dashboard.report.remainingReceive, 5000000);
   });
 }

@@ -45,8 +45,10 @@ void main() {
     expect(find.text('حساب'), findsOneWidget);
     expect(find.text('تقویم'), findsOneWidget);
     expect(find.text('یادداشت'), findsOneWidget);
-    expect(find.text('این ماه'), findsOneWidget);
+    expect(find.textContaining('این ماه'), findsWidgets);
     expect(find.byTooltip('تنظیمات'), findsOneWidget);
+    // Profile is now a primary bottom-nav destination.
+    expect(find.text('پروفایل'), findsWidgets);
 
     await tester.tap(find.byIcon(Icons.calendar_month_outlined));
     await tester.pump();
@@ -64,6 +66,12 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
 
     await tester.tap(find.byTooltip('تنظیمات'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.drag(
+      find.byType(Scrollable).first,
+      const Offset(0, -300),
+    );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.text('گاه‌شماری'), findsWidgets);

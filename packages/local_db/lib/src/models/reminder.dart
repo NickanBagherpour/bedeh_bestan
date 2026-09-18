@@ -11,6 +11,7 @@ final class Reminder {
     required this.notifyDayBefore,
     required this.createdAt,
     required this.updatedAt,
+    this.kind = ReminderKind.event,
     this.body,
     this.endAt,
     this.repeatEveryN,
@@ -23,6 +24,7 @@ final class Reminder {
     DateTime? startAt,
     DateTime? endAt,
     bool? allDay,
+    ReminderKind? kind,
     RepeatRule? repeatRule,
     int? repeatEveryN,
     bool? notifyOnTime,
@@ -40,6 +42,7 @@ final class Reminder {
       startAt: startAt ?? this.startAt,
       endAt: clearEndAt ? null : (endAt ?? this.endAt),
       allDay: allDay ?? this.allDay,
+      kind: kind ?? this.kind,
       repeatRule: repeatRule ?? this.repeatRule,
       repeatEveryN:
           clearRepeatEveryN ? null : (repeatEveryN ?? this.repeatEveryN),
@@ -56,6 +59,7 @@ final class Reminder {
   final DateTime startAt;
   final DateTime? endAt;
   final bool allDay;
+  final ReminderKind kind;
   final RepeatRule repeatRule;
   final int? repeatEveryN;
   final bool notifyOnTime;

@@ -1,6 +1,6 @@
 # Store listing — بده‌بستان (BedeBestan)
 
-Copy-paste for Cafe Bazaar, Myket, and Google Play. Package: `com.nickapp.bedebestan`. Version **1.0.0** (build 2).
+Copy-paste for Cafe Bazaar, Myket, and Google Play. Package: `com.nickapp.bedebestan`. Version **1.0.6** (build 6).
 
 ## Titles (ads + store)
 
@@ -73,12 +73,12 @@ Currency label: Toman, Rial, or Dollar. Amounts stay on the device.
 
 ## Screenshots
 
-Phone captures (seeded demo UI, RTL):
+Phone captures (seeded demo UI, RTL, 1080×2400). Light and dark for each tab:
 
-- `store/screenshots/01-home.png` — خانه (این هفته / این ماه)
-- `store/screenshots/02-money.png` — حساب
-- `store/screenshots/03-calendar.png` — تقویم
-- `store/screenshots/04-notes.png` — یادداشت
+- `store/screenshots/01-home-light.png` / `01-home-dark.png` — خانه
+- `store/screenshots/02-money-light.png` / `02-money-dark.png` — حساب
+- `store/screenshots/03-calendar-light.png` / `03-calendar-dark.png` — تقویم
+- `store/screenshots/04-notes-light.png` / `04-notes-dark.png` — یادداشت
 
 Promo art:
 
@@ -86,10 +86,11 @@ Promo art:
 - `store/promo/ad-square.png` — square ad / Instagram
 - `store/promo/ad-story.png` — story / 9:16 ad
 
-Regenerate phone shots:
+Regenerate phone shots (not part of a normal release):
 
 ```bash
-cd apps/bedeh_bestan && flutter test --tags store
+melos run store:screenshots
+# or: ./store/release.sh --screenshots --no-build --no-tag --no-verify
 ```
 
 ## Privacy blurb (stores)

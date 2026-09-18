@@ -26,4 +26,13 @@ void main() {
     expect(AppRoutes.settings.path, '/settings');
     expect(AppRoutes.primary.contains(AppRoutes.settings), isFalse);
   });
+
+  test('profile is a primary tab; its nested screens stay on it', () {
+    expect(AppRoutes.profile.path, '/profile');
+    expect(AppRoutes.profileAssets.path, '/profile/assets');
+    expect(AppRoutes.primary.contains(AppRoutes.profile), isTrue);
+    expect(AppRoutes.fromPath('/profile'), AppRoutes.profile);
+    expect(AppRoutes.fromPath('/profile/assets'), AppRoutes.profile);
+    expect(AppRoutes.indexOfPath('/profile'), 4);
+  });
 }

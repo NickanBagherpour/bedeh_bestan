@@ -1,3 +1,5 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:core/core.dart' show AppRoute, AppRoutes;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -8,7 +10,10 @@ import 'package:ui_kit/ui_kit.dart'
         AppHaptics,
         AppMotion,
         AppSpacing,
-        KitScreenBackground;
+        KitGlassBorder,
+        KitScreenBackground,
+        KitSurfaceStyle,
+        kitGlassBorderGradient;
 
 /// A single primary destination in the bottom navigation bar.
 class _Destination {
@@ -56,12 +61,24 @@ const List<_Destination> _destinations = [
     selectedIcon: Icons.sticky_note_2_rounded,
     gradient: AppGradients.pay,
   ),
+  _Destination(
+    route: AppRoutes.profile,
+    labelOf: _profileLabel,
+    icon: Icons.person_outline_rounded,
+    selectedIcon: Icons.person_rounded,
+    gradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFF7C6CF0), Color(0xFF5B56C7)],
+    ),
+  ),
 ];
 
 String _homeLabel(Translations t) => t.app.nav.home;
 String _moneyLabel(Translations t) => t.app.nav.money;
 String _calendarLabel(Translations t) => t.app.nav.calendar;
 String _notesLabel(Translations t) => t.app.nav.notes;
+String _profileLabel(Translations t) => t.app.nav.profile;
 
 /// Persistent navigation chrome shared by the four primary destinations.
 ///
@@ -124,6 +141,72 @@ class _FloatingNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final surface = KitSurfaceStyle.of(context);
+    final glass = surface.isGlass;
+    final radius = BorderRadius.circular(AppSpacing.radiusXl);
+
+    final bgAlpha = glass
+        ? (isDark ? 0.42 : 0.55)
+        : (isDark ? 0.92 : 0.96);
+
+    Widget bar = DecoratedBox(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface.withValues(alpha: bgAlpha),
+        borderRadius: radius,
+        border: glass ? null : Border.all(color: theme.dividerColor),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.42)
+                : const Color(0x2A2A2870),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.xs,
+          vertical: AppSpacing.xs,
+        ),
+        child: Row(
+          children: [
+            for (var i = 0; i < _destinations.length; i++)
+              Expanded(
+                child: _NavItem(
+                  destination: _destinations[i],
+                  label: labels[i],
+                  selected: i == selectedIndex,
+                  onTap: () => onSelected(i),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+
+    if (glass) {
+      bar = DecoratedBox(
+        position: DecorationPosition.foreground,
+        decoration: ShapeDecoration(
+          shape: KitGlassBorder(
+            borderRadius: radius,
+            gradient: kitGlassBorderGradient(Colors.white, isDark: isDark),
+          ),
+        ),
+        child: ClipRRect(
+          borderRadius: radius,
+          child: BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: surface.blurSigma,
+              sigmaY: surface.blurSigma,
+            ),
+            child: bar,
+          ),
+        ),
+      );
+    }
+
     return SafeArea(
       top: false,
       child: Padding(
@@ -133,41 +216,7 @@ class _FloatingNavBar extends StatelessWidget {
           AppSpacing.md,
           AppSpacing.sm,
         ),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface.withValues(alpha: isDark ? 0.92 : 0.96),
-            borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-            border: Border.all(color: theme.dividerColor),
-            boxShadow: [
-              BoxShadow(
-                color: isDark
-                    ? Colors.black.withValues(alpha: 0.42)
-                    : const Color(0x2A2A2870),
-                blurRadius: 24,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.xs,
-              vertical: AppSpacing.xs,
-            ),
-            child: Row(
-              children: [
-                for (var i = 0; i < _destinations.length; i++)
-                  Expanded(
-                    child: _NavItem(
-                      destination: _destinations[i],
-                      label: labels[i],
-                      selected: i == selectedIndex,
-                      onTap: () => onSelected(i),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
+        child: bar,
       ),
     );
   }

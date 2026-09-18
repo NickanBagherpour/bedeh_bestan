@@ -65,7 +65,10 @@ final class MoneyDraft {
     required this.nextDueDate,
     this.installmentCount,
     this.installmentAmount,
+    this.installments = const [],
     this.note,
+    this.reminderPolicy = 'default',
+    this.reminderDaysBeforeJson = '[]',
   });
 
   final String? id;
@@ -78,5 +81,8 @@ final class MoneyDraft {
   final DateTime nextDueDate;
   final int? installmentCount;
   final int? installmentAmount;
+  final List<InstallmentDraftRow> installments;
   final String? note;
+  final String reminderPolicy;
+  final String reminderDaysBeforeJson;
 }

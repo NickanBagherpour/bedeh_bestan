@@ -1,0 +1,23 @@
+{
+  "title": "پروفایل",
+  "assets": "حساب‌ها",
+  "assetsHint": "موجودی حساب‌های شما",
+  "totalBalance": "موجودی کل",
+  "emptyAssets": "هنوز حسابی ندارید.",
+  "addAsset": "افزودن حساب",
+  "editAsset": "ویرایش حساب",
+  "deleteAsset": "حذف حساب",
+  "deleteAssetConfirm": "این حساب دارایی حذف شود؟",
+  "assetName": "نام",
+  "assetBalance": "موجودی",
+  "assetKind": "نوع",
+  "kindCash": "نقد",
+  "kindBank": "بانک",
+  "kindGold": "طلا",
+  "kindOther": "سایر",
+  "accountSoon": "حساب کاربری",
+  "accountSoonHint": "ورود بعداً همین‌جا می‌آید. فعلاً همه‌چیز روی همین دستگاه است.",
+  "privacyLock": "قفل حریم خصوصی",
+  "privacyLockHint": "قفل اختیاری فقط برای پروفایل — هنوز فعال نیست.",
+  "version": "نسخه $version"
+}

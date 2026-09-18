@@ -1,4 +1,5 @@
-import 'package:core/core.dart' show CalendarType, dateOnly, monthBounds;
+import 'package:core/core.dart'
+    show CalendarType, DateRange, dateOnly, monthBounds, weekBounds;
 import 'package:local_db/local_db.dart'
     show MoneyDirection, MoneyItem, MoneyPayment, MoneyStatus, Party;
 
@@ -9,6 +10,7 @@ final class HomeDueRow {
     required this.partyName,
     required this.direction,
     required this.remainingAmount,
+    required this.suggestedAmount,
     required this.dueDate,
     required this.status,
   });
@@ -18,6 +20,7 @@ final class HomeDueRow {
   final String partyName;
   final MoneyDirection direction;
   final int remainingAmount;
+  final int suggestedAmount;
   final DateTime dueDate;
   final MoneyStatus status;
 }
@@ -41,7 +44,9 @@ final class HomePeriodReport {
     required this.paidOut,
     required this.paidIn,
     required this.remainingPay,
-    required this.dueByPeriodEnd,
+    required this.remainingReceive,
+    required this.duePayByPeriodEnd,
+    required this.dueReceiveByPeriodEnd,
     required this.periodStart,
     required this.periodEnd,
   });
@@ -49,7 +54,9 @@ final class HomePeriodReport {
   final int paidOut;
   final int paidIn;
   final int remainingPay;
-  final int dueByPeriodEnd;
+  final int remainingReceive;
+  final int duePayByPeriodEnd;
+  final int dueReceiveByPeriodEnd;
   final DateTime periodStart;
   final DateTime periodEnd;
 }
@@ -57,22 +64,24 @@ final class HomePeriodReport {
 final class HomeDashboard {
   const HomeDashboard({
     required this.dueThisWeek,
+    required this.dueThisMonth,
     required this.overdue,
     required this.balances,
     required this.report,
+    required this.weekRange,
   });
 
   final List<HomeDueRow> dueThisWeek;
+  final List<HomeDueRow> dueThisMonth;
   final List<HomeDueRow> overdue;
   final List<HomePartyBalance> balances;
   final HomePeriodReport report;
+  final DateRange weekRange;
 }
 
-bool isDueThisWeek(DateTime due, DateTime now) {
-  final today = dateOnly(now);
-  final end = today.add(const Duration(days: 6));
+bool isDueInMonth(DateTime due, DateTime monthStart, DateTime monthEnd) {
   final day = dateOnly(due);
-  return !day.isBefore(today) && !day.isAfter(end);
+  return !day.isBefore(monthStart) && !day.isAfter(monthEnd);
 }
 
 HomePeriodReport buildHomePeriodReport({
@@ -100,13 +109,22 @@ HomePeriodReport buildHomePeriodReport({
   }
 
   var remainingPay = 0;
-  var dueByPeriodEnd = 0;
+  var remainingReceive = 0;
+  var duePayByPeriodEnd = 0;
+  var dueReceiveByPeriodEnd = 0;
   for (final item in items) {
-    if (item.isSettled || item.direction != MoneyDirection.pay) continue;
-    remainingPay += item.remainingAmount;
+    if (item.isSettled) continue;
     final due = dateOnly(item.nextDueDate);
-    if (!due.isBefore(today) && !due.isAfter(month.endInclusive)) {
-      dueByPeriodEnd += item.remainingAmount;
+    final inMonth =
+        !due.isBefore(today) && !due.isAfter(month.endInclusive);
+    final dueNow =
+        item.suggestedQuickPaymentAmount() ?? item.remainingAmount;
+    if (item.direction == MoneyDirection.pay) {
+      remainingPay += item.remainingAmount;
+      if (inMonth) duePayByPeriodEnd += dueNow;
+    } else {
+      remainingReceive += item.remainingAmount;
+      if (inMonth) dueReceiveByPeriodEnd += dueNow;
     }
   }
 
@@ -114,7 +132,9 @@ HomePeriodReport buildHomePeriodReport({
     paidOut: paidOut,
     paidIn: paidIn,
     remainingPay: remainingPay,
-    dueByPeriodEnd: dueByPeriodEnd,
+    remainingReceive: remainingReceive,
+    duePayByPeriodEnd: duePayByPeriodEnd,
+    dueReceiveByPeriodEnd: dueReceiveByPeriodEnd,
     periodStart: month.start,
     periodEnd: month.endInclusive,
   );
@@ -128,6 +148,8 @@ HomeDashboard buildHomeDashboard({
   required CalendarType calendar,
 }) {
   final names = {for (final party in parties) party.id: party.name};
+  final month = monthBounds(now, calendar);
+  final week = weekBounds(now, calendar);
   HomeDueRow rowFor(MoneyItem item) {
     return HomeDueRow(
       id: item.id,
@@ -135,6 +157,8 @@ HomeDashboard buildHomeDashboard({
       partyName: names[item.partyId] ?? item.partyId,
       direction: item.direction,
       remainingAmount: item.remainingAmount,
+      suggestedAmount:
+          item.suggestedQuickPaymentAmount() ?? item.remainingAmount,
       dueDate: item.nextDueDate,
       status: item.statusOn(now),
     );
@@ -151,7 +175,20 @@ HomeDashboard buildHomeDashboard({
         (item) =>
             !item.isSettled &&
             item.statusOn(now) != MoneyStatus.overdue &&
-            isDueThisWeek(item.nextDueDate, now),
+            week.containsDate(item.nextDueDate),
+      )
+      .map(rowFor)
+      .toList()
+    ..sort((a, b) => a.dueDate.compareTo(b.dueDate));
+
+  // Calendar month only; rows in the current Sat–Fri week appear under «این هفته».
+  final dueThisMonth = items
+      .where(
+        (item) =>
+            !item.isSettled &&
+            item.statusOn(now) != MoneyStatus.overdue &&
+            !week.containsDate(item.nextDueDate) &&
+            isDueInMonth(item.nextDueDate, month.start, month.endInclusive),
       )
       .map(rowFor)
       .toList()
@@ -195,8 +232,10 @@ HomeDashboard buildHomeDashboard({
 
   return HomeDashboard(
     dueThisWeek: dueThisWeek,
+    dueThisMonth: dueThisMonth,
     overdue: overdue,
     balances: balances,
+    weekRange: week,
     report: buildHomePeriodReport(
       items: items,
       payments: payments,
@@ -205,3 +244,10 @@ HomeDashboard buildHomeDashboard({
     ),
   );
 }
+
+/// Default expanded when row count is at or below this threshold.
+bool homeSectionExpandedByDefault(int rowCount, {int threshold = 5}) {
+  return rowCount <= threshold;
+}
+
+bool homeBalancesCollapsedByDefault(int count) => count > 4;

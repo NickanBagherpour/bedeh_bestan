@@ -94,4 +94,42 @@ void main() {
       DateTime(2026, 9, 10),
     ]);
   });
+
+  test('unsettled money due dates overlay on the calendar', () {
+    final now = DateTime(2026, 9, 11);
+    final open = MoneyItem(
+      id: 'loan',
+      partyId: 'shop',
+      direction: MoneyDirection.pay,
+      title: 'قسط فروشگاه',
+      totalAmount: 5000,
+      paidAmount: 0,
+      schedule: MoneySchedule.installment,
+      installmentCount: 5,
+      installmentAmount: 1000,
+      startDate: now,
+      nextDueDate: DateTime(2026, 9, 20),
+      createdAt: now,
+      updatedAt: now,
+    );
+    final settled = open.copyWith(id: 'done', paidAmount: 5000);
+    final hits = expandMoneyDueOccurrences(
+      items: [open, settled],
+      rangeStart: DateTime(2026, 9, 1),
+      rangeEnd: DateTime(2026, 9, 30),
+    );
+    expect(hits, hasLength(1));
+    expect(hits.single.id, 'loan');
+    expect(hits.single.kind, CalendarEventKind.moneyPay);
+    expect(hits.single.at, DateTime(2026, 9, 20));
+    expect(
+      includeCalendarOccurrence(
+        hits.single,
+        showEvents: true,
+        showBirthdays: true,
+        showMoney: false,
+      ),
+      isFalse,
+    );
+  });
 }

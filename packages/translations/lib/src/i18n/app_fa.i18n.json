@@ -13,7 +13,8 @@
     "home": "خانه",
     "money": "حساب",
     "calendar": "تقویم",
-    "notes": "یادداشت"
+    "notes": "یادداشت",
+    "profile": "پروفایل"
   },
   "language": {
     "label": "زبان",
@@ -25,6 +26,11 @@
     "light": "روشن",
     "dark": "تاریک",
     "system": "سیستم"
+  },
+  "style": {
+    "label": "ظاهر",
+    "classic": "ساده",
+    "glass": "شیشه‌ای"
   },
   "errors": {
     "unknown": "خطای غیرمنتظره‌ای رخ داد"

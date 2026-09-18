@@ -126,7 +126,7 @@ class CalendarMonthGrid extends StatelessWidget {
     required this.inMonth,
     required this.isToday,
     required this.isSelected,
-    required this.hasEvents,
+    required this.eventColorsOf,
     required this.labelOf,
     required this.onSelect,
   });
@@ -135,7 +135,7 @@ class CalendarMonthGrid extends StatelessWidget {
   final bool Function(DateTime day) inMonth;
   final bool Function(DateTime day) isToday;
   final bool Function(DateTime day) isSelected;
-  final bool Function(DateTime day) hasEvents;
+  final List<Color> Function(DateTime day) eventColorsOf;
   final String Function(DateTime day) labelOf;
   final ValueChanged<DateTime> onSelect;
 
@@ -191,17 +191,40 @@ class CalendarMonthGrid extends StatelessWidget {
                 ),
               ),
             ),
-            Container(
-              width: 5,
-              height: 5,
-              decoration: BoxDecoration(
-                color: hasEvents(day) ? AppColors.reminder : Colors.transparent,
-                shape: BoxShape.circle,
-              ),
-            ),
+            _EventDots(colors: eventColorsOf(day)),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _EventDots extends StatelessWidget {
+  const _EventDots({required this.colors});
+
+  final List<Color> colors;
+
+  @override
+  Widget build(BuildContext context) {
+    final shown = colors.take(3).toList();
+    if (shown.isEmpty) {
+      return const SizedBox(width: 5, height: 5);
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        for (var i = 0; i < shown.length; i++) ...[
+          if (i > 0) const SizedBox(width: 2),
+          Container(
+            width: 5,
+            height: 5,
+            decoration: BoxDecoration(
+              color: shown[i],
+              shape: BoxShape.circle,
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

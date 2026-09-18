@@ -22,6 +22,7 @@ workspace:
   - features/calendar
   - features/notes
   - features/settings
+  - features/profile
 
 melos:
   scripts:
@@ -42,7 +43,7 @@ melos:
       run: melos exec --concurrency=1 --fail-fast --dir-exists=test -- "flutter test --exclude-tags store"
 
     store:screenshots:
-      run: cd apps/bedeh_bestan && flutter test --tags store --update-goldens
+      run: cd apps/bedeh_bestan && STORE_SCREENSHOTS=1 flutter test --tags store
       stdio: inherit
 
     translations:

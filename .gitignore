@@ -30,6 +30,8 @@ app.*.map.json
 **/*.keystore
 **/*.jks
 store/builds/
+**/test/failures/
 
 # Melos
 .melos_tool/
+store/bundlesigner-0.1.13.jar

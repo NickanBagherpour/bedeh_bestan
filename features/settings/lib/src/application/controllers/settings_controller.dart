@@ -5,7 +5,9 @@ import 'package:core/core.dart'
         AppCurrency,
         AppSettings,
         AppSettingsKeys,
+        AppStyle,
         CalendarPreference,
+        MoneyReminderMode,
         appSettingsProvider,
         appStorageProvider;
 import 'package:flutter/material.dart' show ThemeMode;
@@ -32,6 +34,10 @@ final class SettingsController extends Notifier<AppSettings> {
     return ref.read(appSettingsProvider.notifier).setThemeMode(mode);
   }
 
+  Future<void> setAppStyle(AppStyle style) {
+    return ref.read(appSettingsProvider.notifier).setAppStyle(style);
+  }
+
   Future<void> setLocale(Locale locale) async {
     await ref.read(appSettingsProvider.notifier).setLocale(locale);
     await LocaleSettings.setLocale(
@@ -45,6 +51,26 @@ final class SettingsController extends Notifier<AppSettings> {
 
   Future<void> setCurrency(AppCurrency currency) {
     return ref.read(appSettingsProvider.notifier).setCurrency(currency);
+  }
+
+  Future<void> setMoneyReminderMode(MoneyReminderMode mode) {
+    return ref.read(appSettingsProvider.notifier).setMoneyReminderMode(mode);
+  }
+
+  Future<void> setMoneyReminderDaysBefore(List<int> days) {
+    return ref.read(appSettingsProvider.notifier).setMoneyReminderDaysBefore(days);
+  }
+
+  Future<void> setShowCalendarEvents(bool value) {
+    return ref.read(appSettingsProvider.notifier).setShowCalendarEvents(value);
+  }
+
+  Future<void> setShowCalendarBirthdays(bool value) {
+    return ref.read(appSettingsProvider.notifier).setShowCalendarBirthdays(value);
+  }
+
+  Future<void> setShowCalendarMoney(bool value) {
+    return ref.read(appSettingsProvider.notifier).setShowCalendarMoney(value);
   }
 
   Future<BackupActionResult> exportBackup({required String fileName}) async {

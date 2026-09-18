@@ -10,19 +10,21 @@
 #   store/release.sh [options]
 #
 # Version selection (pick one; default: --bump patch):
-#   --version X.Y.Z     Set an explicit version name (e.g. 1.0.1)
+#   --version X.Y.Z     Set version name (build number is always previous +1)
 #   --bump patch|minor|major
-#   --build N           Explicit build number (default: current build + 1)
 #
 # Build targets (if none given, defaults to --apk --aab):
 #   --apk               Build release APK (Cafe Bazaar / Myket)
 #   --aab               Build release App Bundle (Google Play)
 #   --web               Build release web bundle
 #   --all               Build apk + aab + web
-#   --no-build          Skip building (only bump + changelog + commit + tag)
+#   --bazaar            After the AAB, sign it with Bazaar's bundlesigner (.bin)
+#   --no-build          Skip building (only bump + optional changelog + commit + tag)
 #
 # Flow control:
 #   --no-verify         Skip `flutter analyze` + `flutter test`
+#   --no-changelog      Skip regenerating CHANGELOG.md
+#   --screenshots       Opt-in: regenerate store/screenshots (phone, light+dark)
 #   --no-tag            Skip the git commit + tag step
 #   --allow-dirty       Proceed even if the working tree has other changes
 #   --push              Push the release commit and tag to origin
@@ -61,22 +63,27 @@ ok()   { printf '%s✓ %s%s\n'  "$GRN" "$*" "$RST"; }
 # ---------------------------------------------------------------------------
 # Args
 # ---------------------------------------------------------------------------
-BUMP="patch"; VERSION=""; BUILD_NUM=""
-DO_APK=0; DO_AAB=0; DO_WEB=0; DO_BUILD=1
-VERIFY=1; DO_TAG=1; ALLOW_DIRTY=0; PUSH=0; DRY_RUN=0
-usage() { sed -n '2,40p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0; }
+BUMP="patch"; VERSION=""
+DO_APK=0; DO_AAB=0; DO_WEB=0; DO_BUILD=1; DO_BAZAAR=0
+VERIFY=1; DO_CHANGELOG=1; DO_SCREENSHOTS=0; DO_TAG=1; ALLOW_DIRTY=0; PUSH=0; DRY_RUN=0
+usage() { sed -n '2,34p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0; }
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --version)   VERSION="${2:?}"; shift 2;;
     --bump)      BUMP="${2:?}"; shift 2;;
-    --build)     BUILD_NUM="${2:?}"; shift 2;;
+    --build)
+      die "--build is removed; versionCode (+N) is always previous+1. Pass only --version X.Y.Z"
+      ;;
     --apk)       DO_APK=1; shift;;
     --aab)       DO_AAB=1; shift;;
     --web)       DO_WEB=1; shift;;
     --all)       DO_APK=1; DO_AAB=1; DO_WEB=1; shift;;
+    --bazaar)    DO_AAB=1; DO_BAZAAR=1; shift;;
     --no-build)  DO_BUILD=0; shift;;
     --no-verify) VERIFY=0; shift;;
+    --no-changelog) DO_CHANGELOG=0; shift;;
+    --screenshots) DO_SCREENSHOTS=1; shift;;
     --no-tag)    DO_TAG=0; shift;;
     --allow-dirty) ALLOW_DIRTY=1; shift;;
     --push)      PUSH=1; shift;;
@@ -117,6 +124,10 @@ CUR_BUILD="${CUR_FULL##*+}"
 [[ "$CUR_FULL" == *+* ]] || CUR_BUILD=0
 [[ "$CUR_BUILD" =~ ^[0-9]+$ ]] || die "Cannot parse build number from '$CUR_FULL'"
 
+if [[ -n "$VERSION" && "$VERSION" == *+* ]]; then
+  die "Pass only X.Y.Z to --version (got '$VERSION'). The +N build is set automatically."
+fi
+
 if [[ -z "$VERSION" ]]; then
   IFS='.' read -r MAJ MIN PAT <<<"$CUR_NAME"
   [[ "$MAJ" =~ ^[0-9]+$ && "$MIN" =~ ^[0-9]+$ && "$PAT" =~ ^[0-9]+$ ]] \
@@ -131,26 +142,30 @@ if [[ -z "$VERSION" ]]; then
 fi
 [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || die "Version must be X.Y.Z, got '$VERSION'"
 
-NEW_BUILD="${BUILD_NUM:-$((CUR_BUILD+1))}"
-[[ "$NEW_BUILD" =~ ^[0-9]+$ ]] || die "Build number must be an integer"
-(( NEW_BUILD > CUR_BUILD )) || warn "New build ($NEW_BUILD) not greater than current ($CUR_BUILD); stores will reject it."
+# versionCode must rise for every store upload — never set by hand.
+NEW_BUILD=$((CUR_BUILD + 1))
 NEW_FULL="$VERSION+$NEW_BUILD"
 TAG="v$VERSION"
+if git rev-parse "$TAG" >/dev/null 2>&1; then
+  if [[ "$VERSION" == "$CUR_NAME" ]]; then
+    TAG="v$NEW_FULL"
+    warn "Tag v$VERSION already exists; tagging $TAG for this build instead."
+  else
+    die "Tag $TAG already exists."
+  fi
+fi
 
 step "Release plan"
 info "current : $CUR_FULL"
 info "new     : ${BOLD}$NEW_FULL${RST}   tag ${BOLD}$TAG${RST}"
+info "build#  : $CUR_BUILD → $NEW_BUILD (auto)"
 targets=""
 [[ $DO_APK -eq 1 ]] && targets+=" apk"
 [[ $DO_AAB -eq 1 ]] && targets+=" aab"
 [[ $DO_WEB -eq 1 ]] && targets+=" web"
 [[ $DO_BUILD -eq 0 ]] && targets=" (none)"
-info "build   :${targets:-" (none)"}"
-info "verify  : $([[ $VERIFY -eq 1 ]] && echo yes || echo no)   tag/commit: $([[ $DO_TAG -eq 1 ]] && echo yes || echo no)   push: $([[ $PUSH -eq 1 ]] && echo yes || echo no)"
-
-if git rev-parse "$TAG" >/dev/null 2>&1; then
-  die "Tag $TAG already exists."
-fi
+info "targets :${targets:-" (none)"}"
+info "verify  : $([[ $VERIFY -eq 1 ]] && echo yes || echo no)   changelog: $([[ $DO_CHANGELOG -eq 1 ]] && echo yes || echo no)   screenshots: $([[ $DO_SCREENSHOTS -eq 1 ]] && echo yes || echo no)   tag/commit: $([[ $DO_TAG -eq 1 ]] && echo yes || echo no)   push: $([[ $PUSH -eq 1 ]] && echo yes || echo no)"
 
 # ---------------------------------------------------------------------------
 # 2. Working tree check
@@ -172,10 +187,17 @@ if [[ $VERIFY -eq 1 ]]; then
   step "Verify: flutter analyze + test"
   run "(cd '$APP_DIR' && '$FLUTTER' pub get)"
   run "(cd '$APP_DIR' && '$FLUTTER' analyze)"
-  run "(cd '$APP_DIR' && '$FLUTTER' test)"
+  # Store goldens are opt-in (--screenshots / STORE_SCREENSHOTS=1).
+  run "(cd '$APP_DIR' && '$FLUTTER' test --exclude-tags store)"
   ok "verify passed"
 else
   warn "Skipping verify gate (--no-verify)"
+fi
+
+if [[ $DO_SCREENSHOTS -eq 1 ]]; then
+  step "Regenerate store screenshots (phone, light + dark)"
+  run "(cd '$APP_DIR' && STORE_SCREENSHOTS=1 '$FLUTTER' test --tags store)"
+  ok "store/screenshots updated"
 fi
 
 # ---------------------------------------------------------------------------
@@ -208,42 +230,46 @@ fi
 # ---------------------------------------------------------------------------
 # 6. Changelog (Keep a Changelog style, grouped by conventional-commit type)
 # ---------------------------------------------------------------------------
-step "Update CHANGELOG.md"
-LAST_TAG="$(git describe --tags --abbrev=0 2>/dev/null || true)"
-if [[ -n "$LAST_TAG" ]]; then RANGE="$LAST_TAG..HEAD"; info "since $LAST_TAG"; else RANGE=""; info "no prior tag; using full history"; fi
+if [[ $DO_CHANGELOG -eq 1 ]]; then
+  step "Update CHANGELOG.md"
+  LAST_TAG="$(git describe --tags --abbrev=0 2>/dev/null || true)"
+  if [[ -n "$LAST_TAG" ]]; then RANGE="$LAST_TAG..HEAD"; info "since $LAST_TAG"; else RANGE=""; info "no prior tag; using full history"; fi
 
-collect() { # $1 = grep regex for the conventional prefix
-  git log $RANGE --no-merges --pretty=format:'%s' 2>/dev/null \
-    | grep -E "$1" \
-    | grep -viE '^(chore\(release\)|release)' \
-    | sed -E 's/^[a-z]+(\([^)]*\))?(!)?: //' \
-    | sed -E 's/^/- /' || true
-}
-ADDED="$(collect '^feat(\(|!|:)')"
-FIXED="$(collect '^fix(\(|!|:)')"
-CHANGED="$(git log $RANGE --no-merges --pretty=format:'%s' 2>/dev/null \
-  | grep -viE '^(feat|fix)(\(|!|:)' \
-  | grep -viE '^(chore\(release\)|release|chore:|docs:|test:|ci:|build:|style:|refactor:)' \
-  | sed -E 's/^[a-z]+(\([^)]*\))?(!)?: //' | sed -E 's/^/- /' || true)"
+  collect() { # $1 = grep regex for the conventional prefix
+    git log $RANGE --no-merges --pretty=format:'%s' 2>/dev/null \
+      | grep -E "$1" \
+      | grep -viE '^(chore\(release\)|release)' \
+      | sed -E 's/^[a-z]+(\([^)]*\))?(!)?: //' \
+      | sed -E 's/^/- /' || true
+  }
+  ADDED="$(collect '^feat(\(|!|:)')"
+  FIXED="$(collect '^fix(\(|!|:)')"
+  CHANGED="$(git log $RANGE --no-merges --pretty=format:'%s' 2>/dev/null \
+    | grep -viE '^(feat|fix)(\(|!|:)' \
+    | grep -viE '^(chore\(release\)|release|chore:|docs:|test:|ci:|build:|style:|refactor:)' \
+    | sed -E 's/^[a-z]+(\([^)]*\))?(!)?: //' | sed -E 's/^/- /' || true)"
 
-TODAY="$(date +%Y-%m-%d)"
-section="## [$VERSION] - $TODAY"$'\n'
-[[ -n "$ADDED"   ]] && section+=$'\n'"### Added"$'\n'"$ADDED"$'\n'
-[[ -n "$FIXED"   ]] && section+=$'\n'"### Fixed"$'\n'"$FIXED"$'\n'
-[[ -n "$CHANGED" ]] && section+=$'\n'"### Changed"$'\n'"$CHANGED"$'\n'
-[[ -z "$ADDED$FIXED$CHANGED" ]] && section+=$'\n'"- Maintenance release."$'\n'
+  TODAY="$(date +%Y-%m-%d)"
+  section="## [$VERSION] - $TODAY"$'\n'
+  [[ -n "$ADDED"   ]] && section+=$'\n'"### Added"$'\n'"$ADDED"$'\n'
+  [[ -n "$FIXED"   ]] && section+=$'\n'"### Fixed"$'\n'"$FIXED"$'\n'
+  [[ -n "$CHANGED" ]] && section+=$'\n'"### Changed"$'\n'"$CHANGED"$'\n'
+  [[ -z "$ADDED$FIXED$CHANGED" ]] && section+=$'\n'"- Maintenance release."$'\n'
 
-if [[ $DRY_RUN -eq 1 ]]; then
-  info "[dry-run] would prepend section:"; printf '%s\n' "$section" | sed 's/^/      /'
-else
-  if [[ ! -f "$CHANGELOG" ]]; then
-    printf '# Changelog\n\nAll notable changes to this project are documented here.\nFormat loosely follows [Keep a Changelog](https://keepachangelog.com/); this project uses [Semantic Versioning](https://semver.org/).\n\n' >"$CHANGELOG"
+  if [[ $DRY_RUN -eq 1 ]]; then
+    info "[dry-run] would prepend section:"; printf '%s\n' "$section" | sed 's/^/      /'
+  else
+    if [[ ! -f "$CHANGELOG" ]]; then
+      printf '# Changelog\n\nAll notable changes to this project are documented here.\nFormat loosely follows [Keep a Changelog](https://keepachangelog.com/); this project uses [Semantic Versioning](https://semver.org/).\n\n' >"$CHANGELOG"
+    fi
+    header="$(sed -n '1,/^$/p' "$CHANGELOG")"
+    body="$(sed '1,/^$/d' "$CHANGELOG")"
+    { printf '%s\n\n' "$header"; printf '%s\n' "$section"; printf '%s\n' "$body"; } >"$CHANGELOG.tmp"
+    mv "$CHANGELOG.tmp" "$CHANGELOG"
+    ok "prepended [$VERSION] section"
   fi
-  header="$(sed -n '1,/^$/p' "$CHANGELOG")"
-  body="$(sed '1,/^$/d' "$CHANGELOG")"
-  { printf '%s\n\n' "$header"; printf '%s\n' "$section"; printf '%s\n' "$body"; } >"$CHANGELOG.tmp"
-  mv "$CHANGELOG.tmp" "$CHANGELOG"
-  ok "prepended [$VERSION] section"
+else
+  warn "Skipping CHANGELOG.md (--no-changelog)"
 fi
 
 # ---------------------------------------------------------------------------
@@ -264,6 +290,10 @@ if [[ $DO_BUILD -eq 1 ]]; then
     run "(cd '$APP_DIR' && '$FLUTTER' build appbundle --release)"
     run "cp '$AAB_OUT' '$BUILDS_DIR/bedebestan-$VERSION-$NEW_BUILD.aab'"
     ok "store/builds/bedebestan-$VERSION-$NEW_BUILD.aab"
+    if [[ $DO_BAZAAR -eq 1 ]]; then
+      step "Sign AAB for Cafe Bazaar (.bin)"
+      run "'$SCRIPT_DIR/bazaar_sign.sh' '$BUILDS_DIR/bedebestan-$VERSION-$NEW_BUILD.aab'"
+    fi
   fi
   if [[ $DO_WEB -eq 1 ]]; then
     step "Build Web"
@@ -279,8 +309,10 @@ fi
 # ---------------------------------------------------------------------------
 if [[ $DO_TAG -eq 1 ]]; then
   step "Commit + tag $TAG"
-  files=("$PUBSPEC" "$CHANGELOG")
+  files=("$PUBSPEC")
+  [[ $DO_CHANGELOG -eq 1 ]] && files+=("$CHANGELOG")
   [[ -f "$LISTING" ]] && files+=("$LISTING")
+  [[ $DO_SCREENSHOTS -eq 1 ]] && files+=("$ROOT/store/screenshots")
   run "git add ${files[*]}"
   run "git commit -m 'chore(release): $TAG'"
   run "git tag -a '$TAG' -m '$TAG'"
@@ -299,4 +331,5 @@ fi
 
 step "Done — $NEW_FULL"
 [[ $DO_AAB -eq 1 ]] && info "Play (AAB): store/builds/bedebestan-$VERSION-$NEW_BUILD.aab"
+[[ $DO_BAZAAR -eq 1 ]] && info "Bazaar (.bin): store/builds/bedebestan-$VERSION-$NEW_BUILD.bin"
 [[ $DO_APK -eq 1 ]] && info "Bazaar/Myket (APK): store/builds/bedebestan-$VERSION-$NEW_BUILD.apk"

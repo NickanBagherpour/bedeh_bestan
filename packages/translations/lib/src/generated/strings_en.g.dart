@@ -46,6 +46,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$home$en home = Translations$home$en.internal(_root);
 	late final Translations$money$en money = Translations$money$en.internal(_root);
 	late final Translations$notes$en notes = Translations$notes$en.internal(_root);
+	late final Translations$profile$en profile = Translations$profile$en.internal(_root);
 	late final Translations$settings$en settings = Translations$settings$en.internal(_root);
 }
 
@@ -77,6 +78,7 @@ class Translations$app$en {
 	late final Translations$app$nav$en nav = Translations$app$nav$en.internal(_root);
 	late final Translations$app$language$en language = Translations$app$language$en.internal(_root);
 	late final Translations$app$theme$en theme = Translations$app$theme$en.internal(_root);
+	late final Translations$app$style$en style = Translations$app$style$en.internal(_root);
 	late final Translations$app$errors$en errors = Translations$app$errors$en.internal(_root);
 	late final Translations$app$actions$en actions = Translations$app$actions$en.internal(_root);
 }
@@ -190,6 +192,11 @@ class Translations$calendar$en {
 
 	late final Translations$calendar$repeatRule$en repeatRule = Translations$calendar$repeatRule$en.internal(_root);
 	late final Translations$calendar$weekday$en weekday = Translations$calendar$weekday$en.internal(_root);
+
+	/// en: 'Type'
+	String get kindLabel => 'Type';
+
+	late final Translations$calendar$kind$en kind = Translations$calendar$kind$en.internal(_root);
 }
 
 // Path: home
@@ -209,14 +216,20 @@ class Translations$home$en {
 	/// en: 'Quiet week'
 	String get emptyTitle => 'Quiet week';
 
-	/// en: 'Nothing is due in the next seven days.'
-	String get emptyBody => 'Nothing is due in the next seven days.';
+	/// en: 'Nothing is due this week.'
+	String get emptyBody => 'Nothing is due this week.';
+
+	/// en: 'Nothing else is due this month.'
+	String get emptyThisMonth => 'Nothing else is due this month.';
 
 	/// en: 'Could not read local data.'
 	String get loadError => 'Could not read local data.';
 
 	/// en: 'This week'
 	String get dueThisWeek => 'This week';
+
+	/// en: 'Due this month'
+	String get dueThisMonth => 'Due this month';
 
 	/// en: 'Overdue'
 	String get overdue => 'Overdue';
@@ -242,8 +255,11 @@ class Translations$home$en {
 	/// en: 'Settings'
 	String get settings => 'Settings';
 
-	/// en: 'This month'
-	String get reportTitle => 'This month';
+	/// en: 'Profile'
+	String get profile => 'Profile';
+
+	/// en: 'Month snapshot'
+	String get reportTitle => 'Month snapshot';
 
 	/// en: 'Paid $amount'
 	String paidOut({required Object amount}) => 'Paid ${amount}';
@@ -257,11 +273,23 @@ class Translations$home$en {
 	/// en: 'Due by month end $amount'
 	String dueByEnd({required Object amount}) => 'Due by month end ${amount}';
 
-	/// en: 'Paid'
-	String get capPaidOut => 'Paid';
+	/// en: 'Settled out'
+	String get capPaidOut => 'Settled out';
 
-	/// en: 'Received'
-	String get capPaidIn => 'Received';
+	/// en: 'Settled in'
+	String get capPaidIn => 'Settled in';
+
+	/// en: 'To pay this month'
+	String get capDuePayMonth => 'To pay this month';
+
+	/// en: 'To collect this month'
+	String get capDueReceiveMonth => 'To collect this month';
+
+	/// en: 'Open debts'
+	String get capOpenPay => 'Open debts';
+
+	/// en: 'Open receivables'
+	String get capOpenReceive => 'Open receivables';
 
 	/// en: 'To pay'
 	String get capStillOwe => 'To pay';
@@ -269,8 +297,41 @@ class Translations$home$en {
 	/// en: 'Due this month'
 	String get capDueByEnd => 'Due this month';
 
+	/// en: '$count items'
+	String sectionCount({required Object count}) => '${count} items';
+
+	/// en: 'Pay $amount'
+	String summaryPay({required Object amount}) => 'Pay ${amount}';
+
+	/// en: 'Collect $amount'
+	String summaryReceive({required Object amount}) => 'Collect ${amount}';
+
+	/// en: 'Show list'
+	String get sectionShowMore => 'Show list';
+
+	/// en: 'Hide list'
+	String get sectionCollapse => 'Hide list';
+
+	/// en: 'Pay'
+	String get quickPay => 'Pay';
+
+	/// en: 'Receive'
+	String get quickReceive => 'Receive';
+
+	/// en: 'Record payment?'
+	String get quickPayConfirmTitle => 'Record payment?';
+
+	/// en: 'Record receipt?'
+	String get quickReceiveConfirmTitle => 'Record receipt?';
+
+	/// en: '$title — $amount'
+	String quickPayConfirmBody({required Object title, required Object amount}) => '${title} — ${amount}';
+
 	/// en: 'Give and take'
 	String get greeting => 'Give and take';
+
+	/// en: 'From $from to $to'
+	String weekRange({required Object from, required Object to}) => 'From ${from} to ${to}';
 }
 
 // Path: money
@@ -540,11 +601,14 @@ class Translations$money$en {
 	/// en: 'Due today'
 	String get dueTitle => 'Due today';
 
-	/// en: 'Due tomorrow'
-	String get dueSoonTitle => 'Due tomorrow';
+	/// en: 'Coming due'
+	String get dueSoonTitle => 'Coming due';
 
 	/// en: '$title'
 	String dueBody({required Object title}) => '${title}';
+
+	/// en: '$title — installment $index'
+	String dueBodyInstallment({required Object title, required Object index}) => '${title} — installment ${index}';
 
 	/// en: 'Installment schedule'
 	String get scheduleTitle => 'Installment schedule';
@@ -556,6 +620,41 @@ class Translations$money$en {
 	String remainingAmount({required Object amount}) => 'Remaining ${amount}';
 
 	late final Translations$money$installmentState$en installmentState = Translations$money$installmentState$en.internal(_root);
+
+	/// en: 'Show all installments'
+	String get scheduleShowAll => 'Show all installments';
+
+	/// en: 'Collapse'
+	String get scheduleCollapse => 'Collapse';
+
+	/// en: '$count paid installments'
+	String schedulePaidSummary({required Object count}) => '${count} paid installments';
+
+	/// en: 'Settle'
+	String get settleInstallment => 'Settle';
+
+	/// en: 'Record installment $index ($amount) due $date?'
+	String settleInstallmentConfirm({required Object index, required Object amount, required Object date}) => 'Record installment ${index} (${amount}) due ${date}?';
+
+	late final Translations$money$installments$en installments = Translations$money$installments$en.internal(_root);
+
+	/// en: 'View party'
+	String get viewParty => 'View party';
+
+	/// en: 'Open party'
+	String get partyLink => 'Open party';
+
+	/// en: 'Jump to payment'
+	String get jumpToPayment => 'Jump to payment';
+
+	/// en: 'Mark paid'
+	String get notificationActionMarkPaid => 'Mark paid';
+
+	/// en: 'Tomorrow'
+	String get notificationActionRemindTomorrow => 'Tomorrow';
+
+	late final Translations$money$reminder$en reminder = Translations$money$reminder$en.internal(_root);
+	late final Translations$money$reports$en reports = Translations$money$reports$en.internal(_root);
 }
 
 // Path: notes
@@ -663,6 +762,78 @@ class Translations$notes$en {
 	String get searchMoney => 'Search accounts';
 }
 
+// Path: profile
+class Translations$profile$en {
+	Translations$profile$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Profile'
+	String get title => 'Profile';
+
+	/// en: 'Accounts'
+	String get assets => 'Accounts';
+
+	/// en: 'Your account balances'
+	String get assetsHint => 'Your account balances';
+
+	/// en: 'Total balance'
+	String get totalBalance => 'Total balance';
+
+	/// en: 'No accounts yet.'
+	String get emptyAssets => 'No accounts yet.';
+
+	/// en: 'Add account'
+	String get addAsset => 'Add account';
+
+	/// en: 'Edit account'
+	String get editAsset => 'Edit account';
+
+	/// en: 'Delete account'
+	String get deleteAsset => 'Delete account';
+
+	/// en: 'Remove this asset account?'
+	String get deleteAssetConfirm => 'Remove this asset account?';
+
+	/// en: 'Name'
+	String get assetName => 'Name';
+
+	/// en: 'Balance'
+	String get assetBalance => 'Balance';
+
+	/// en: 'Type'
+	String get assetKind => 'Type';
+
+	/// en: 'Cash'
+	String get kindCash => 'Cash';
+
+	/// en: 'Bank'
+	String get kindBank => 'Bank';
+
+	/// en: 'Gold'
+	String get kindGold => 'Gold';
+
+	/// en: 'Other'
+	String get kindOther => 'Other';
+
+	/// en: 'Account'
+	String get accountSoon => 'Account';
+
+	/// en: 'Sign-in will live here later. Everything stays on this device for now.'
+	String get accountSoonHint => 'Sign-in will live here later. Everything stays on this device for now.';
+
+	/// en: 'Privacy lock'
+	String get privacyLock => 'Privacy lock';
+
+	/// en: 'Optional lock for profile only — not implemented yet.'
+	String get privacyLockHint => 'Optional lock for profile only — not implemented yet.';
+
+	/// en: 'Version $version'
+	String version({required Object version}) => 'Version ${version}';
+}
+
 // Path: settings
 class Translations$settings$en {
 	Translations$settings$en.internal(this._root);
@@ -676,6 +847,12 @@ class Translations$settings$en {
 
 	/// en: 'Theme'
 	String get theme => 'Theme';
+
+	/// en: 'Style'
+	String get style => 'Style';
+
+	/// en: 'Glass gives translucent, blurred surfaces. Classic keeps solid surfaces. Independent of light/dark.'
+	String get styleHint => 'Glass gives translucent, blurred surfaces. Classic keeps solid surfaces. Independent of light/dark.';
 
 	/// en: 'Language'
 	String get language => 'Language';
@@ -736,6 +913,57 @@ class Translations$settings$en {
 
 	/// en: 'Everything stays on this phone. No account, no cloud, no tracking.'
 	String get privacyBody => 'Everything stays on this phone. No account, no cloud, no tracking.';
+
+	/// en: 'Due reminders'
+	String get reminders => 'Due reminders';
+
+	/// en: 'Default for money items. You can override per item when editing. Calendar reminders still use their own on-time / day-before switches.'
+	String get remindersHint => 'Default for money items. You can override per item when editing. Calendar reminders still use their own on-time / day-before switches.';
+
+	/// en: 'Due day only'
+	String get reminderExactDay => 'Due day only';
+
+	/// en: 'Before + due day'
+	String get reminderRange => 'Before + due day';
+
+	/// en: 'Days before'
+	String get reminderDaysBefore => 'Days before';
+
+	/// en: '7 days'
+	String get reminderDay7 => '7 days';
+
+	/// en: '3 days'
+	String get reminderDay3 => '3 days';
+
+	/// en: '2 days'
+	String get reminderDay2 => '2 days';
+
+	/// en: '1 day'
+	String get reminderDay1 => '1 day';
+
+	/// en: 'Custom (1–30)'
+	String get reminderCustomDay => 'Custom (1–30)';
+
+	/// en: 'Add'
+	String get reminderAddDay => 'Add';
+
+	/// en: 'Fires at 09:00.'
+	String get reminderTimeHint => 'Fires at 09:00.';
+
+	/// en: 'On the calendar'
+	String get calendarItems => 'On the calendar';
+
+	/// en: 'Choose which items appear on the month grid and agenda. Colors: gold events, rose birthdays, coral debts, teal receivables.'
+	String get calendarItemsHint => 'Choose which items appear on the month grid and agenda. Colors: gold events, rose birthdays, coral debts, teal receivables.';
+
+	/// en: 'Events'
+	String get showEvents => 'Events';
+
+	/// en: 'Birthdays'
+	String get showBirthdays => 'Birthdays';
+
+	/// en: 'Money due dates'
+	String get showMoney => 'Money due dates';
 }
 
 // Path: app.currency
@@ -775,6 +1003,9 @@ class Translations$app$nav$en {
 
 	/// en: 'Notes'
 	String get notes => 'Notes';
+
+	/// en: 'Profile'
+	String get profile => 'Profile';
 }
 
 // Path: app.language
@@ -814,6 +1045,24 @@ class Translations$app$theme$en {
 
 	/// en: 'System'
 	String get system => 'System';
+}
+
+// Path: app.style
+class Translations$app$style$en {
+	Translations$app$style$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Style'
+	String get label => 'Style';
+
+	/// en: 'Classic'
+	String get classic => 'Classic';
+
+	/// en: 'Glass'
+	String get glass => 'Glass';
 }
 
 // Path: app.errors
@@ -921,6 +1170,27 @@ class Translations$calendar$weekday$en {
 	String get fri => 'Fri';
 }
 
+// Path: calendar.kind
+class Translations$calendar$kind$en {
+	Translations$calendar$kind$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Event'
+	String get event => 'Event';
+
+	/// en: 'Birthday'
+	String get birthday => 'Birthday';
+
+	/// en: 'Money'
+	String get money => 'Money';
+
+	/// en: 'Installment'
+	String get installment => 'Installment';
+}
+
 // Path: money.status
 class Translations$money$status$en {
 	Translations$money$status$en.internal(this._root);
@@ -996,6 +1266,156 @@ class Translations$money$installmentState$en {
 	String get upcoming => 'Upcoming';
 }
 
+// Path: money.installments
+class Translations$money$installments$en {
+	Translations$money$installments$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Edit installment'
+	String get editAmount => 'Edit installment';
+
+	/// en: 'Tap or swipe a row to change its amount or due date.'
+	String get editHint => 'Tap or swipe a row to change its amount or due date.';
+
+	/// en: 'Enter a valid installment amount.'
+	String get invalidRowAmount => 'Enter a valid installment amount.';
+
+	/// en: 'Installment amounts must add up to the total.'
+	String get totalMismatch => 'Installment amounts must add up to the total.';
+}
+
+// Path: money.reminder
+class Translations$money$reminder$en {
+	Translations$money$reminder$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Reminders'
+	String get title => 'Reminders';
+
+	/// en: 'Use app default'
+	String get defaultPolicy => 'Use app default';
+
+	/// en: 'Due day only'
+	String get exactDay => 'Due day only';
+
+	/// en: 'Custom range'
+	String get customRange => 'Custom range';
+
+	/// en: 'Days before'
+	String get daysBefore => 'Days before';
+
+	/// en: '7 days'
+	String get day7 => '7 days';
+
+	/// en: '3 days'
+	String get day3 => '3 days';
+
+	/// en: '2 days'
+	String get day2 => '2 days';
+
+	/// en: '1 day'
+	String get day1 => '1 day';
+}
+
+// Path: money.reports
+class Translations$money$reports$en {
+	Translations$money$reports$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Period report'
+	String get title => 'Period report';
+
+	/// en: 'This month'
+	String get resetMonth => 'This month';
+
+	/// en: 'Filters'
+	String get filters => 'Filters';
+
+	/// en: 'From'
+	String get fromDate => 'From';
+
+	/// en: 'To'
+	String get toDate => 'To';
+
+	/// en: 'Party'
+	String get partyFilter => 'Party';
+
+	/// en: 'All parties'
+	String get allParties => 'All parties';
+
+	/// en: 'Summary'
+	String get summary => 'Summary';
+
+	/// en: 'Due in period'
+	String get dueInPeriod => 'Due in period';
+
+	/// en: 'To pay $amount'
+	String duePay({required Object amount}) => 'To pay ${amount}';
+
+	/// en: 'To collect $amount'
+	String dueReceive({required Object amount}) => 'To collect ${amount}';
+
+	/// en: 'Settled in period'
+	String get settledInPeriod => 'Settled in period';
+
+	/// en: 'Paid out $amount'
+	String settledPay({required Object amount}) => 'Paid out ${amount}';
+
+	/// en: 'Received $amount'
+	String settledReceive({required Object amount}) => 'Received ${amount}';
+
+	/// en: 'All open balances'
+	String get openBalances => 'All open balances';
+
+	/// en: 'Not limited to this period'
+	String get openBalancesHint => 'Not limited to this period';
+
+	/// en: 'Open debts $amount'
+	String openPay({required Object amount}) => 'Open debts ${amount}';
+
+	/// en: 'Open receivables $amount'
+	String openReceive({required Object amount}) => 'Open receivables ${amount}';
+
+	/// en: 'Assets'
+	String get assets => 'Assets';
+
+	/// en: 'Assets $amount'
+	String assetsTotal({required Object amount}) => 'Assets ${amount}';
+
+	/// en: 'Approx. net worth $amount'
+	String approxNetWorth({required Object amount}) => 'Approx. net worth ${amount}';
+
+	/// en: 'Top parties'
+	String get topParties => 'Top parties';
+
+	/// en: 'By account'
+	String get byItem => 'By account';
+
+	/// en: 'By party'
+	String get byParty => 'By party';
+
+	/// en: 'Payments in period'
+	String get paymentsLog => 'Payments in period';
+
+	/// en: 'No dues in this range.'
+	String get emptyItems => 'No dues in this range.';
+
+	/// en: 'No open party balances.'
+	String get emptyParties => 'No open party balances.';
+
+	/// en: 'No payments in this range.'
+	String get emptyPayments => 'No payments in this range.';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -1016,6 +1436,7 @@ extension on Translations {
 			'app.nav.money' => 'Accounts',
 			'app.nav.calendar' => 'Calendar',
 			'app.nav.notes' => 'Notes',
+			'app.nav.profile' => 'Profile',
 			'app.language.label' => 'Language',
 			'app.language.en' => 'English',
 			'app.language.fa' => 'Persian',
@@ -1023,6 +1444,9 @@ extension on Translations {
 			'app.theme.light' => 'Light',
 			'app.theme.dark' => 'Dark',
 			'app.theme.system' => 'System',
+			'app.style.label' => 'Style',
+			'app.style.classic' => 'Classic',
+			'app.style.glass' => 'Glass',
 			'app.errors.unknown' => 'An unexpected error occurred',
 			'app.actions.retry' => 'Retry',
 			'app.actions.cancel' => 'Cancel',
@@ -1079,12 +1503,19 @@ extension on Translations {
 			'calendar.weekday.wed' => 'Wed',
 			'calendar.weekday.thu' => 'Thu',
 			'calendar.weekday.fri' => 'Fri',
+			'calendar.kindLabel' => 'Type',
+			'calendar.kind.event' => 'Event',
+			'calendar.kind.birthday' => 'Birthday',
+			'calendar.kind.money' => 'Money',
+			'calendar.kind.installment' => 'Installment',
 			'home.payAndReceive' => 'Give and take',
 			'home.offlineBlurb' => 'Installments, receivables, and reminders — all on this device.',
 			'home.emptyTitle' => 'Quiet week',
-			'home.emptyBody' => 'Nothing is due in the next seven days.',
+			'home.emptyBody' => 'Nothing is due this week.',
+			'home.emptyThisMonth' => 'Nothing else is due this month.',
 			'home.loadError' => 'Could not read local data.',
 			'home.dueThisWeek' => 'This week',
+			'home.dueThisMonth' => 'Due this month',
 			'home.overdue' => 'Overdue',
 			'home.whoOwes' => 'Who owes what',
 			'home.emptyBalances' => 'No open balances.',
@@ -1093,16 +1524,32 @@ extension on Translations {
 			'home.fabPay' => 'I owe',
 			'home.fabReceive' => 'Owed to me',
 			'home.settings' => 'Settings',
-			'home.reportTitle' => 'This month',
+			'home.profile' => 'Profile',
+			'home.reportTitle' => 'Month snapshot',
 			'home.paidOut' => ({required Object amount}) => 'Paid ${amount}',
 			'home.paidIn' => ({required Object amount}) => 'Received ${amount}',
 			'home.stillOwe' => ({required Object amount}) => 'Still to pay ${amount}',
 			'home.dueByEnd' => ({required Object amount}) => 'Due by month end ${amount}',
-			'home.capPaidOut' => 'Paid',
-			'home.capPaidIn' => 'Received',
+			'home.capPaidOut' => 'Settled out',
+			'home.capPaidIn' => 'Settled in',
+			'home.capDuePayMonth' => 'To pay this month',
+			'home.capDueReceiveMonth' => 'To collect this month',
+			'home.capOpenPay' => 'Open debts',
+			'home.capOpenReceive' => 'Open receivables',
 			'home.capStillOwe' => 'To pay',
 			'home.capDueByEnd' => 'Due this month',
+			'home.sectionCount' => ({required Object count}) => '${count} items',
+			'home.summaryPay' => ({required Object amount}) => 'Pay ${amount}',
+			'home.summaryReceive' => ({required Object amount}) => 'Collect ${amount}',
+			'home.sectionShowMore' => 'Show list',
+			'home.sectionCollapse' => 'Hide list',
+			'home.quickPay' => 'Pay',
+			'home.quickReceive' => 'Receive',
+			'home.quickPayConfirmTitle' => 'Record payment?',
+			'home.quickReceiveConfirmTitle' => 'Record receipt?',
+			'home.quickPayConfirmBody' => ({required Object title, required Object amount}) => '${title} — ${amount}',
 			'home.greeting' => 'Give and take',
+			'home.weekRange' => ({required Object from, required Object to}) => 'From ${from} to ${to}',
 			'money.title' => 'Accounts',
 			'money.emptyTitle' => 'No give-and-take yet',
 			'money.emptyBody' => 'Add a debt or receivable in a couple of taps.',
@@ -1198,14 +1645,66 @@ extension on Translations {
 			'money.shareSubject' => ({required Object name}) => 'Statement: ${name}',
 			'money.shareFailed' => 'Could not open the share sheet.',
 			'money.dueTitle' => 'Due today',
-			'money.dueSoonTitle' => 'Due tomorrow',
+			'money.dueSoonTitle' => 'Coming due',
 			'money.dueBody' => ({required Object title}) => '${title}',
+			'money.dueBodyInstallment' => ({required Object title, required Object index}) => '${title} — installment ${index}',
 			'money.scheduleTitle' => 'Installment schedule',
 			'money.installmentRow' => ({required Object index}) => 'Installment ${index}',
 			'money.remainingAmount' => ({required Object amount}) => 'Remaining ${amount}',
 			'money.installmentState.paid' => 'Paid',
 			'money.installmentState.due' => 'Due',
 			'money.installmentState.upcoming' => 'Upcoming',
+			'money.scheduleShowAll' => 'Show all installments',
+			'money.scheduleCollapse' => 'Collapse',
+			'money.schedulePaidSummary' => ({required Object count}) => '${count} paid installments',
+			'money.settleInstallment' => 'Settle',
+			'money.settleInstallmentConfirm' => ({required Object index, required Object amount, required Object date}) => 'Record installment ${index} (${amount}) due ${date}?',
+			'money.installments.editAmount' => 'Edit installment',
+			'money.installments.editHint' => 'Tap or swipe a row to change its amount or due date.',
+			'money.installments.invalidRowAmount' => 'Enter a valid installment amount.',
+			'money.installments.totalMismatch' => 'Installment amounts must add up to the total.',
+			'money.viewParty' => 'View party',
+			'money.partyLink' => 'Open party',
+			'money.jumpToPayment' => 'Jump to payment',
+			'money.notificationActionMarkPaid' => 'Mark paid',
+			'money.notificationActionRemindTomorrow' => 'Tomorrow',
+			'money.reminder.title' => 'Reminders',
+			'money.reminder.defaultPolicy' => 'Use app default',
+			'money.reminder.exactDay' => 'Due day only',
+			'money.reminder.customRange' => 'Custom range',
+			'money.reminder.daysBefore' => 'Days before',
+			'money.reminder.day7' => '7 days',
+			'money.reminder.day3' => '3 days',
+			'money.reminder.day2' => '2 days',
+			'money.reminder.day1' => '1 day',
+			'money.reports.title' => 'Period report',
+			'money.reports.resetMonth' => 'This month',
+			'money.reports.filters' => 'Filters',
+			'money.reports.fromDate' => 'From',
+			'money.reports.toDate' => 'To',
+			'money.reports.partyFilter' => 'Party',
+			'money.reports.allParties' => 'All parties',
+			'money.reports.summary' => 'Summary',
+			'money.reports.dueInPeriod' => 'Due in period',
+			'money.reports.duePay' => ({required Object amount}) => 'To pay ${amount}',
+			'money.reports.dueReceive' => ({required Object amount}) => 'To collect ${amount}',
+			'money.reports.settledInPeriod' => 'Settled in period',
+			'money.reports.settledPay' => ({required Object amount}) => 'Paid out ${amount}',
+			'money.reports.settledReceive' => ({required Object amount}) => 'Received ${amount}',
+			'money.reports.openBalances' => 'All open balances',
+			'money.reports.openBalancesHint' => 'Not limited to this period',
+			'money.reports.openPay' => ({required Object amount}) => 'Open debts ${amount}',
+			'money.reports.openReceive' => ({required Object amount}) => 'Open receivables ${amount}',
+			'money.reports.assets' => 'Assets',
+			'money.reports.assetsTotal' => ({required Object amount}) => 'Assets ${amount}',
+			'money.reports.approxNetWorth' => ({required Object amount}) => 'Approx. net worth ${amount}',
+			'money.reports.topParties' => 'Top parties',
+			'money.reports.byItem' => 'By account',
+			'money.reports.byParty' => 'By party',
+			'money.reports.paymentsLog' => 'Payments in period',
+			'money.reports.emptyItems' => 'No dues in this range.',
+			'money.reports.emptyParties' => 'No open party balances.',
+			'money.reports.emptyPayments' => 'No payments in this range.',
 			'notes.title' => 'Notes',
 			'notes.fab' => 'Note',
 			'notes.emptyTitle' => 'No notes yet',
@@ -1238,8 +1737,31 @@ extension on Translations {
 			'notes.allTags' => 'All tags',
 			'notes.searchParty' => 'Search people',
 			'notes.searchMoney' => 'Search accounts',
+			'profile.title' => 'Profile',
+			'profile.assets' => 'Accounts',
+			'profile.assetsHint' => 'Your account balances',
+			'profile.totalBalance' => 'Total balance',
+			'profile.emptyAssets' => 'No accounts yet.',
+			'profile.addAsset' => 'Add account',
+			'profile.editAsset' => 'Edit account',
+			'profile.deleteAsset' => 'Delete account',
+			'profile.deleteAssetConfirm' => 'Remove this asset account?',
+			'profile.assetName' => 'Name',
+			'profile.assetBalance' => 'Balance',
+			'profile.assetKind' => 'Type',
+			'profile.kindCash' => 'Cash',
+			'profile.kindBank' => 'Bank',
+			'profile.kindGold' => 'Gold',
+			'profile.kindOther' => 'Other',
+			'profile.accountSoon' => 'Account',
+			'profile.accountSoonHint' => 'Sign-in will live here later. Everything stays on this device for now.',
+			'profile.privacyLock' => 'Privacy lock',
+			'profile.privacyLockHint' => 'Optional lock for profile only — not implemented yet.',
+			'profile.version' => ({required Object version}) => 'Version ${version}',
 			'settings.title' => 'Settings',
 			'settings.theme' => 'Theme',
+			'settings.style' => 'Style',
+			'settings.styleHint' => 'Glass gives translucent, blurred surfaces. Classic keeps solid surfaces. Independent of light/dark.',
 			'settings.language' => 'Language',
 			'settings.calendar' => 'Calendar',
 			'settings.calendarHint' => 'First and last day of the month and week follow this calendar — not the language.',
@@ -1260,6 +1782,23 @@ extension on Translations {
 			'settings.version' => ({required Object version}) => 'Version ${version}',
 			'settings.privacy' => 'Privacy',
 			'settings.privacyBody' => 'Everything stays on this phone. No account, no cloud, no tracking.',
+			'settings.reminders' => 'Due reminders',
+			'settings.remindersHint' => 'Default for money items. You can override per item when editing. Calendar reminders still use their own on-time / day-before switches.',
+			'settings.reminderExactDay' => 'Due day only',
+			'settings.reminderRange' => 'Before + due day',
+			'settings.reminderDaysBefore' => 'Days before',
+			'settings.reminderDay7' => '7 days',
+			'settings.reminderDay3' => '3 days',
+			'settings.reminderDay2' => '2 days',
+			'settings.reminderDay1' => '1 day',
+			'settings.reminderCustomDay' => 'Custom (1–30)',
+			'settings.reminderAddDay' => 'Add',
+			'settings.reminderTimeHint' => 'Fires at 09:00.',
+			'settings.calendarItems' => 'On the calendar',
+			'settings.calendarItemsHint' => 'Choose which items appear on the month grid and agenda. Colors: gold events, rose birthdays, coral debts, teal receivables.',
+			'settings.showEvents' => 'Events',
+			'settings.showBirthdays' => 'Birthdays',
+			'settings.showMoney' => 'Money due dates',
 			_ => null,
 		};
 	}

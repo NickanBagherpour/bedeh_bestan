@@ -1,9 +1,17 @@
-import 'package:core/core.dart' show AppCurrency, AppRoutes, CalendarPreference, overlayAppBar;
+import 'package:core/core.dart'
+    show
+        AppCurrency,
+        AppRoutes,
+        AppStyle,
+        CalendarPreference,
+        MoneyReminderMode,
+        overlayAppBar;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:translations/translations.dart' show Translations;
-import 'package:ui_kit/ui_kit.dart' show AppHaptics, AppSpacing;
+import 'package:ui_kit/ui_kit.dart'
+    show AppHaptics, AppSpacing, KitReminderDaysPicker;
 
 import '../../application/controllers/settings_controller.dart';
 import '../widgets/settings_choice_row.dart';
@@ -32,7 +40,6 @@ class SettingsPage extends ConsumerWidget {
           SettingsSection(
             title: t.settings.theme,
             child: SettingsChoiceRow<ThemeMode>(
-              label: t.app.theme.label,
               value: settings.themeMode,
               options: const [
                 ThemeMode.system,
@@ -48,9 +55,21 @@ class SettingsPage extends ConsumerWidget {
             ),
           ),
           SettingsSection(
+            title: t.settings.style,
+            footer: t.settings.styleHint,
+            child: SettingsChoiceRow<AppStyle>(
+              value: settings.appStyle,
+              options: AppStyle.values,
+              labelFor: (style) => switch (style) {
+                AppStyle.classic => t.app.style.classic,
+                AppStyle.glass => t.app.style.glass,
+              },
+              onChanged: controller.setAppStyle,
+            ),
+          ),
+          SettingsSection(
             title: t.settings.language,
             child: SettingsChoiceRow<String>(
-              label: t.app.language.label,
               value: settings.locale.languageCode,
               options: const ['fa', 'en'],
               labelFor: (code) =>
@@ -62,7 +81,6 @@ class SettingsPage extends ConsumerWidget {
             title: t.settings.calendar,
             footer: t.settings.calendarHint,
             child: SettingsChoiceRow<CalendarPreference>(
-              label: t.settings.calendar,
               value: settings.calendar,
               options: CalendarPreference.values,
               labelFor: (value) => switch (value) {
@@ -76,7 +94,6 @@ class SettingsPage extends ConsumerWidget {
             title: t.settings.currency,
             footer: t.settings.currencyHint,
             child: SettingsChoiceRow<AppCurrency>(
-              label: t.settings.currency,
               value: settings.currency,
               options: AppCurrency.values,
               labelFor: (value) => switch (value) {
@@ -85,6 +102,74 @@ class SettingsPage extends ConsumerWidget {
                 AppCurrency.usd => t.app.currency.usd,
               },
               onChanged: controller.setCurrency,
+            ),
+          ),
+          SettingsSection(
+            title: t.settings.calendarItems,
+            footer: t.settings.calendarItemsHint,
+            child: Column(
+              children: [
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(t.settings.showEvents),
+                  value: settings.showCalendarEvents,
+                  onChanged: controller.setShowCalendarEvents,
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(t.settings.showBirthdays),
+                  value: settings.showCalendarBirthdays,
+                  onChanged: controller.setShowCalendarBirthdays,
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(t.settings.showMoney),
+                  value: settings.showCalendarMoney,
+                  onChanged: controller.setShowCalendarMoney,
+                ),
+              ],
+            ),
+          ),
+          SettingsSection(
+            title: t.settings.reminders,
+            footer: t.settings.remindersHint,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SettingsChoiceRow<MoneyReminderMode>(
+                  value: settings.moneyReminderMode,
+                  options: MoneyReminderMode.values,
+                  labelFor: (mode) => switch (mode) {
+                    MoneyReminderMode.exactDay => t.settings.reminderExactDay,
+                    MoneyReminderMode.range => t.settings.reminderRange,
+                  },
+                  onChanged: controller.setMoneyReminderMode,
+                ),
+                if (settings.moneyReminderMode == MoneyReminderMode.range) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  KitReminderDaysPicker(
+                    selected: settings.moneyReminderDaysBefore,
+                    onChanged: controller.setMoneyReminderDaysBefore,
+                    daysBeforeLabel: t.settings.reminderDaysBefore,
+                    customLabel: t.settings.reminderCustomDay,
+                    addLabel: t.settings.reminderAddDay,
+                    labelFor: (day) => switch (day) {
+                      7 => t.settings.reminderDay7,
+                      3 => t.settings.reminderDay3,
+                      2 => t.settings.reminderDay2,
+                      1 => t.settings.reminderDay1,
+                      _ => t.settings.reminderDay1.replaceFirst('1', '$day'),
+                    },
+                  ),
+                ],
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  t.settings.reminderTimeHint,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
             ),
           ),
           SettingsSection(

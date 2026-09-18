@@ -33,6 +33,24 @@ class MoneyItems extends Table {
   DateTimeColumn get startDate => dateTime()();
   DateTimeColumn get nextDueDate => dateTime()();
   TextColumn get note => text().nullable()();
+  TextColumn get reminderPolicy =>
+      text().withDefault(const Constant('default'))();
+  TextColumn get reminderDaysBeforeJson =>
+      text().withDefault(const Constant('[]'))();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+@DataClassName('AssetAccountRow')
+class AssetAccounts extends Table {
+  TextColumn get id => text()();
+  TextColumn get name => text()();
+  TextColumn get kind => text()();
+  IntColumn get balance => integer()();
+  TextColumn get note => text().nullable()();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
 
@@ -52,6 +70,19 @@ class MoneyPayments extends Table {
   Set<Column<Object>> get primaryKey => {id};
 }
 
+/// Per-قسط overrides (variable amounts / due dates) for installment items.
+@DataClassName('MoneyInstallmentRow')
+class MoneyInstallments extends Table {
+  TextColumn get id => text()();
+  TextColumn get moneyItemId => text().references(MoneyItems, #id)();
+  IntColumn get index => integer()();
+  DateTimeColumn get dueDate => dateTime()();
+  IntColumn get amount => integer()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
 @DataClassName('ReminderRow')
 class Reminders extends Table {
   TextColumn get id => text()();
@@ -60,6 +91,7 @@ class Reminders extends Table {
   DateTimeColumn get startAt => dateTime()();
   DateTimeColumn get endAt => dateTime().nullable()();
   BoolColumn get allDay => boolean().withDefault(const Constant(false))();
+  TextColumn get kind => text().withDefault(const Constant('event'))();
   TextColumn get repeatRule => text()();
   IntColumn get repeatEveryN => integer().nullable()();
   BoolColumn get notifyOnTime => boolean().withDefault(const Constant(true))();

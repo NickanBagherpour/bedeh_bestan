@@ -1,0 +1,23 @@
+{
+  "title": "Profile",
+  "assets": "Accounts",
+  "assetsHint": "Your account balances",
+  "totalBalance": "Total balance",
+  "emptyAssets": "No accounts yet.",
+  "addAsset": "Add account",
+  "editAsset": "Edit account",
+  "deleteAsset": "Delete account",
+  "deleteAssetConfirm": "Remove this asset account?",
+  "assetName": "Name",
+  "assetBalance": "Balance",
+  "assetKind": "Type",
+  "kindCash": "Cash",
+  "kindBank": "Bank",
+  "kindGold": "Gold",
+  "kindOther": "Other",
+  "accountSoon": "Account",
+  "accountSoonHint": "Sign-in will live here later. Everything stays on this device for now.",
+  "privacyLock": "Privacy lock",
+  "privacyLockHint": "Optional lock for profile only — not implemented yet.",
+  "version": "Version $version"
+}

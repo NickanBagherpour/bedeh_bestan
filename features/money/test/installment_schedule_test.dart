@@ -13,6 +13,7 @@ void main() {
     int? installmentAmount = 1000,
     int? installmentCount = 12,
     int periodsPaid = 0,
+    List<MoneyInstallment> installments = const [],
   }) {
     return MoneyItem(
       id: 'i',
@@ -29,6 +30,7 @@ void main() {
       installmentCount: installmentCount,
       installmentAmount: installmentAmount,
       periodsPaid: periodsPaid,
+      installments: installments,
     );
   }
 
@@ -86,5 +88,97 @@ void main() {
       installmentSchedule(item(installmentCount: null), CalendarType.gregorian),
       isEmpty,
     );
+  });
+
+  test('keeps the full list when there are 5 or fewer قسط‌ها', () {
+    final rows = installmentSchedule(
+      item(installmentCount: 5, installmentAmount: 1000, total: 5000),
+      CalendarType.gregorian,
+    );
+    expect(rows, hasLength(5));
+    expect(
+      visibleInstallmentRows(rows, expanded: false),
+      rows,
+    );
+  });
+
+  test('collapsed long schedule hides paid rows and caps unpaid at 5', () {
+    final rows = installmentSchedule(
+      item(paid: 3000, periodsPaid: 3),
+      CalendarType.gregorian,
+    );
+    expect(rows, hasLength(12));
+    final visible = visibleInstallmentRows(rows, expanded: false);
+    expect(visible, hasLength(5));
+    expect(visible.first.state, InstallmentState.due);
+    expect(
+      visible.skip(1).every((row) => row.state == InstallmentState.upcoming),
+      isTrue,
+    );
+    expect(visible.first.index, 4);
+    expect(visible.last.index, 8);
+  });
+
+  test('expanded long schedule returns every row', () {
+    final rows = installmentSchedule(item(), CalendarType.gregorian);
+    expect(visibleInstallmentRows(rows, expanded: true), rows);
+  });
+
+  test('settle amount is one قسط, capped at remaining', () {
+    final rows = installmentSchedule(
+      item(total: 2500, paid: 2000, periodsPaid: 2, installmentCount: 3),
+      CalendarType.gregorian,
+    );
+    final due = rows.firstWhere((row) => row.state == InstallmentState.due);
+    expect(due.amount, 1000);
+    expect(installmentRowSettleAmount(due, 500), 500);
+    expect(installmentRowSettleAmount(due, 1000), 1000);
+    expect(installmentRowSettleAmount(due, 0), 0);
+  });
+
+  test('uses stored per-قسط amounts and due dates when present', () {
+    final stored = item(
+      total: 6000,
+      installmentCount: 3,
+      installmentAmount: 2000,
+      installments: [
+        MoneyInstallment(
+          id: 'a',
+          moneyItemId: 'i',
+          index: 1,
+          dueDate: DateTime(2026, 1, 10),
+          amount: 3000,
+        ),
+        MoneyInstallment(
+          id: 'b',
+          moneyItemId: 'i',
+          index: 2,
+          dueDate: DateTime(2026, 2, 15),
+          amount: 2000,
+        ),
+        MoneyInstallment(
+          id: 'c',
+          moneyItemId: 'i',
+          index: 3,
+          dueDate: DateTime(2026, 3, 20),
+          amount: 1000,
+        ),
+      ],
+    );
+    final rows = installmentSchedule(stored, CalendarType.gregorian);
+    expect(rows.map((row) => row.amount), [3000, 2000, 1000]);
+    expect(rows[1].dueDate, DateTime(2026, 2, 15));
+  });
+
+  test('buildEqualInstallmentDraft makes monthly rows', () {
+    final rows = buildEqualInstallmentDraft(
+      count: 3,
+      amount: 1000,
+      startDate: start,
+      calendar: CalendarType.gregorian,
+    );
+    expect(rows, hasLength(3));
+    expect(installmentDraftTotal(rows), 3000);
+    expect(rows[2].dueDate, DateTime(2026, 3, 10));
   });
 }

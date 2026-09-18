@@ -2,6 +2,7 @@ import 'package:core/core.dart' show appSettingsProvider;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_db/local_db.dart' show MoneyItem, MoneyPayment, Party;
 
+import '../../data/repositories/home_repository.dart';
 import '../../data/repositories/home_repository_provider.dart';
 import '../home_dashboard.dart';
 import '../state/home_state.dart';
@@ -20,7 +21,7 @@ final class HomeController extends Notifier<HomeState> {
     var payments = <MoneyPayment>[];
 
     void emit() {
-      state = HomeState(
+      state = state.copyWith(
         status: HomeStatus.loaded,
         dashboard: buildHomeDashboard(
           items: items,
@@ -29,6 +30,7 @@ final class HomeController extends Notifier<HomeState> {
           now: DateTime.now(),
           calendar: calendar,
         ),
+        clearError: true,
       );
     }
 
@@ -69,4 +71,22 @@ final class HomeController extends Notifier<HomeState> {
   }
 
   void retry() => ref.invalidateSelf();
+
+  /// Records one suggested payment for [itemId]. Returns error message key.
+  Future<String?> recordQuickPayment(String itemId) async {
+    final repo = ref.read(homeRepositoryProvider);
+    state = state.copyWith(busyPaymentItemId: itemId);
+    try {
+      final item = await repo.getItem(itemId);
+      if (item == null) return 'money.missingItem';
+      final amount = item.suggestedQuickPaymentAmount();
+      if (amount == null || amount <= 0) return 'money.alreadySettled';
+      await repo.recordPayment(moneyItemId: itemId, amount: amount);
+      state = state.copyWith(clearBusyPayment: true);
+      return null;
+    } catch (e) {
+      state = state.copyWith(clearBusyPayment: true);
+      return HomeRepository.paymentErrorKey(e);
+    }
+  }
 }
