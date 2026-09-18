@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.0.5] - 2026-09-18
+
+### Changed
+- refresh launcher icon, favicon, splash, and adaptive foreground (full-bleed indigo mark)
+
 ## [1.0.4] - 2026-09-16
 
 ### Added
