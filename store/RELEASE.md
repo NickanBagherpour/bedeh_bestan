@@ -101,6 +101,7 @@ copies them to `store/builds/`, then commits and tags.
 | `--bazaar` | After the AAB, produce the Bazaar `.bin` |
 | `--no-build` | Only bump + changelog + commit + tag |
 | `--no-verify` | Skip analyze + test |
+| `--no-changelog` | Skip regenerating `CHANGELOG.md` |
 | `--screenshots` | Opt-in: regenerate `store/screenshots` (phone, light + dark) |
 | `--no-tag` | Skip commit + tag |
 | `--allow-dirty` | Proceed on a dirty tree (stages only release files) |

@@ -19,10 +19,11 @@
 #   --web               Build release web bundle
 #   --all               Build apk + aab + web
 #   --bazaar            After the AAB, sign it with Bazaar's bundlesigner (.bin)
-#   --no-build          Skip building (only bump + changelog + commit + tag)
+#   --no-build          Skip building (only bump + optional changelog + commit + tag)
 #
 # Flow control:
 #   --no-verify         Skip `flutter analyze` + `flutter test`
+#   --no-changelog      Skip regenerating CHANGELOG.md
 #   --screenshots       Opt-in: regenerate store/screenshots (phone, light+dark)
 #   --no-tag            Skip the git commit + tag step
 #   --allow-dirty       Proceed even if the working tree has other changes
@@ -64,8 +65,8 @@ ok()   { printf '%s✓ %s%s\n'  "$GRN" "$*" "$RST"; }
 # ---------------------------------------------------------------------------
 BUMP="patch"; VERSION=""
 DO_APK=0; DO_AAB=0; DO_WEB=0; DO_BUILD=1; DO_BAZAAR=0
-VERIFY=1; DO_SCREENSHOTS=0; DO_TAG=1; ALLOW_DIRTY=0; PUSH=0; DRY_RUN=0
-usage() { sed -n '2,33p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0; }
+VERIFY=1; DO_CHANGELOG=1; DO_SCREENSHOTS=0; DO_TAG=1; ALLOW_DIRTY=0; PUSH=0; DRY_RUN=0
+usage() { sed -n '2,34p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0; }
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -81,6 +82,7 @@ while [[ $# -gt 0 ]]; do
     --bazaar)    DO_AAB=1; DO_BAZAAR=1; shift;;
     --no-build)  DO_BUILD=0; shift;;
     --no-verify) VERIFY=0; shift;;
+    --no-changelog) DO_CHANGELOG=0; shift;;
     --screenshots) DO_SCREENSHOTS=1; shift;;
     --no-tag)    DO_TAG=0; shift;;
     --allow-dirty) ALLOW_DIRTY=1; shift;;
@@ -163,7 +165,7 @@ targets=""
 [[ $DO_WEB -eq 1 ]] && targets+=" web"
 [[ $DO_BUILD -eq 0 ]] && targets=" (none)"
 info "targets :${targets:-" (none)"}"
-info "verify  : $([[ $VERIFY -eq 1 ]] && echo yes || echo no)   screenshots: $([[ $DO_SCREENSHOTS -eq 1 ]] && echo yes || echo no)   tag/commit: $([[ $DO_TAG -eq 1 ]] && echo yes || echo no)   push: $([[ $PUSH -eq 1 ]] && echo yes || echo no)"
+info "verify  : $([[ $VERIFY -eq 1 ]] && echo yes || echo no)   changelog: $([[ $DO_CHANGELOG -eq 1 ]] && echo yes || echo no)   screenshots: $([[ $DO_SCREENSHOTS -eq 1 ]] && echo yes || echo no)   tag/commit: $([[ $DO_TAG -eq 1 ]] && echo yes || echo no)   push: $([[ $PUSH -eq 1 ]] && echo yes || echo no)"
 
 # ---------------------------------------------------------------------------
 # 2. Working tree check
@@ -228,42 +230,46 @@ fi
 # ---------------------------------------------------------------------------
 # 6. Changelog (Keep a Changelog style, grouped by conventional-commit type)
 # ---------------------------------------------------------------------------
-step "Update CHANGELOG.md"
-LAST_TAG="$(git describe --tags --abbrev=0 2>/dev/null || true)"
-if [[ -n "$LAST_TAG" ]]; then RANGE="$LAST_TAG..HEAD"; info "since $LAST_TAG"; else RANGE=""; info "no prior tag; using full history"; fi
+if [[ $DO_CHANGELOG -eq 1 ]]; then
+  step "Update CHANGELOG.md"
+  LAST_TAG="$(git describe --tags --abbrev=0 2>/dev/null || true)"
+  if [[ -n "$LAST_TAG" ]]; then RANGE="$LAST_TAG..HEAD"; info "since $LAST_TAG"; else RANGE=""; info "no prior tag; using full history"; fi
 
-collect() { # $1 = grep regex for the conventional prefix
-  git log $RANGE --no-merges --pretty=format:'%s' 2>/dev/null \
-    | grep -E "$1" \
-    | grep -viE '^(chore\(release\)|release)' \
-    | sed -E 's/^[a-z]+(\([^)]*\))?(!)?: //' \
-    | sed -E 's/^/- /' || true
-}
-ADDED="$(collect '^feat(\(|!|:)')"
-FIXED="$(collect '^fix(\(|!|:)')"
-CHANGED="$(git log $RANGE --no-merges --pretty=format:'%s' 2>/dev/null \
-  | grep -viE '^(feat|fix)(\(|!|:)' \
-  | grep -viE '^(chore\(release\)|release|chore:|docs:|test:|ci:|build:|style:|refactor:)' \
-  | sed -E 's/^[a-z]+(\([^)]*\))?(!)?: //' | sed -E 's/^/- /' || true)"
+  collect() { # $1 = grep regex for the conventional prefix
+    git log $RANGE --no-merges --pretty=format:'%s' 2>/dev/null \
+      | grep -E "$1" \
+      | grep -viE '^(chore\(release\)|release)' \
+      | sed -E 's/^[a-z]+(\([^)]*\))?(!)?: //' \
+      | sed -E 's/^/- /' || true
+  }
+  ADDED="$(collect '^feat(\(|!|:)')"
+  FIXED="$(collect '^fix(\(|!|:)')"
+  CHANGED="$(git log $RANGE --no-merges --pretty=format:'%s' 2>/dev/null \
+    | grep -viE '^(feat|fix)(\(|!|:)' \
+    | grep -viE '^(chore\(release\)|release|chore:|docs:|test:|ci:|build:|style:|refactor:)' \
+    | sed -E 's/^[a-z]+(\([^)]*\))?(!)?: //' | sed -E 's/^/- /' || true)"
 
-TODAY="$(date +%Y-%m-%d)"
-section="## [$VERSION] - $TODAY"$'\n'
-[[ -n "$ADDED"   ]] && section+=$'\n'"### Added"$'\n'"$ADDED"$'\n'
-[[ -n "$FIXED"   ]] && section+=$'\n'"### Fixed"$'\n'"$FIXED"$'\n'
-[[ -n "$CHANGED" ]] && section+=$'\n'"### Changed"$'\n'"$CHANGED"$'\n'
-[[ -z "$ADDED$FIXED$CHANGED" ]] && section+=$'\n'"- Maintenance release."$'\n'
+  TODAY="$(date +%Y-%m-%d)"
+  section="## [$VERSION] - $TODAY"$'\n'
+  [[ -n "$ADDED"   ]] && section+=$'\n'"### Added"$'\n'"$ADDED"$'\n'
+  [[ -n "$FIXED"   ]] && section+=$'\n'"### Fixed"$'\n'"$FIXED"$'\n'
+  [[ -n "$CHANGED" ]] && section+=$'\n'"### Changed"$'\n'"$CHANGED"$'\n'
+  [[ -z "$ADDED$FIXED$CHANGED" ]] && section+=$'\n'"- Maintenance release."$'\n'
 
-if [[ $DRY_RUN -eq 1 ]]; then
-  info "[dry-run] would prepend section:"; printf '%s\n' "$section" | sed 's/^/      /'
-else
-  if [[ ! -f "$CHANGELOG" ]]; then
-    printf '# Changelog\n\nAll notable changes to this project are documented here.\nFormat loosely follows [Keep a Changelog](https://keepachangelog.com/); this project uses [Semantic Versioning](https://semver.org/).\n\n' >"$CHANGELOG"
+  if [[ $DRY_RUN -eq 1 ]]; then
+    info "[dry-run] would prepend section:"; printf '%s\n' "$section" | sed 's/^/      /'
+  else
+    if [[ ! -f "$CHANGELOG" ]]; then
+      printf '# Changelog\n\nAll notable changes to this project are documented here.\nFormat loosely follows [Keep a Changelog](https://keepachangelog.com/); this project uses [Semantic Versioning](https://semver.org/).\n\n' >"$CHANGELOG"
+    fi
+    header="$(sed -n '1,/^$/p' "$CHANGELOG")"
+    body="$(sed '1,/^$/d' "$CHANGELOG")"
+    { printf '%s\n\n' "$header"; printf '%s\n' "$section"; printf '%s\n' "$body"; } >"$CHANGELOG.tmp"
+    mv "$CHANGELOG.tmp" "$CHANGELOG"
+    ok "prepended [$VERSION] section"
   fi
-  header="$(sed -n '1,/^$/p' "$CHANGELOG")"
-  body="$(sed '1,/^$/d' "$CHANGELOG")"
-  { printf '%s\n\n' "$header"; printf '%s\n' "$section"; printf '%s\n' "$body"; } >"$CHANGELOG.tmp"
-  mv "$CHANGELOG.tmp" "$CHANGELOG"
-  ok "prepended [$VERSION] section"
+else
+  warn "Skipping CHANGELOG.md (--no-changelog)"
 fi
 
 # ---------------------------------------------------------------------------
@@ -303,7 +309,8 @@ fi
 # ---------------------------------------------------------------------------
 if [[ $DO_TAG -eq 1 ]]; then
   step "Commit + tag $TAG"
-  files=("$PUBSPEC" "$CHANGELOG")
+  files=("$PUBSPEC")
+  [[ $DO_CHANGELOG -eq 1 ]] && files+=("$CHANGELOG")
   [[ -f "$LISTING" ]] && files+=("$LISTING")
   [[ $DO_SCREENSHOTS -eq 1 ]] && files+=("$ROOT/store/screenshots")
   run "git add ${files[*]}"
