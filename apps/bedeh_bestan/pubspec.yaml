@@ -2,7 +2,7 @@ name: bedeh_bestan
 description: "بده‌بستان — a local-only personal money, calendar, and notes app."
 publish_to: none
 resolution: workspace
-version: 1.0.5+5
+version: 1.0.6+6
 
 environment:
   sdk: ^3.9.0
