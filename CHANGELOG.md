@@ -2,6 +2,12 @@
 
 ## [1.0.5] - 2026-09-18
 
+### Added
+- refactor money report filters into a dedicated widget
+- implement per-installment customization and storage for money items
+- implement money period report feature with UI enhancements
+- enhance home dashboard and reporting features
+
 ### Changed
 - refresh launcher icon, favicon, splash, and adaptive foreground (full-bleed indigo mark)
 
