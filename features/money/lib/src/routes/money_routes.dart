@@ -6,6 +6,7 @@ import 'package:local_db/local_db.dart' show MoneyDirection;
 import '../presentation/pages/money_detail_page.dart';
 import '../presentation/pages/money_form_page.dart';
 import '../presentation/pages/money_page.dart';
+import '../presentation/pages/money_report_page.dart';
 import '../presentation/pages/party_detail_page.dart';
 import '../presentation/pages/party_form_page.dart';
 import '../presentation/pages/party_list_page.dart';
@@ -63,6 +64,12 @@ List<RouteBase> buildMoneyOverlayRoutes(Ref ref) {
           },
         ),
       ],
+    ),
+    GoRoute(
+      path: AppRoutes.moneyReports.path,
+      name: AppRoutes.moneyReports.name,
+      pageBuilder: (context, state) =>
+          buildRoutePage(state: state, child: const MoneyReportPage()),
     ),
     GoRoute(
       path: AppRoutes.parties.path,

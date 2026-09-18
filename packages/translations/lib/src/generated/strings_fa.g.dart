@@ -279,6 +279,7 @@ class _Translations$money$fa extends Translations$money$en {
 	@override String get notificationActionMarkPaid => 'پرداخت شد';
 	@override String get notificationActionRemindTomorrow => 'فردا';
 	@override late final _Translations$money$reminder$fa reminder = _Translations$money$reminder$fa._(_root);
+	@override late final _Translations$money$reports$fa reports = _Translations$money$reports$fa._(_root);
 }
 
 // Path: notes
@@ -604,6 +605,43 @@ class _Translations$money$reminder$fa extends Translations$money$reminder$en {
 	@override String get day1 => '۱ روز';
 }
 
+// Path: money.reports
+class _Translations$money$reports$fa extends Translations$money$reports$en {
+	_Translations$money$reports$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'گزارش دوره';
+	@override String get resetMonth => 'همین ماه';
+	@override String get filters => 'فیلترها';
+	@override String get fromDate => 'از';
+	@override String get toDate => 'تا';
+	@override String get partyFilter => 'طرف‌حساب';
+	@override String get allParties => 'همه طرف‌حساب‌ها';
+	@override String get summary => 'خلاصه';
+	@override String get dueInPeriod => 'سررسید در این بازه';
+	@override String duePay({required Object amount}) => 'پرداخت ${amount}';
+	@override String dueReceive({required Object amount}) => 'دریافت ${amount}';
+	@override String get settledInPeriod => 'تسویه‌شده در این بازه';
+	@override String settledPay({required Object amount}) => 'پرداخت‌شده ${amount}';
+	@override String settledReceive({required Object amount}) => 'دریافت‌شده ${amount}';
+	@override String get openBalances => 'همهٔ بدهی‌های باز';
+	@override String get openBalancesHint => 'محدود به این بازه نیست';
+	@override String openPay({required Object amount}) => 'بدهی باز ${amount}';
+	@override String openReceive({required Object amount}) => 'طلب باز ${amount}';
+	@override String get assets => 'دارایی‌ها';
+	@override String assetsTotal({required Object amount}) => 'دارایی ${amount}';
+	@override String approxNetWorth({required Object amount}) => 'دارایی خالص تقریبی ${amount}';
+	@override String get topParties => 'بیشترین مانده طرف‌حساب';
+	@override String get byItem => 'بر اساس حساب';
+	@override String get byParty => 'بر اساس طرف‌حساب';
+	@override String get paymentsLog => 'پرداخت‌های این بازه';
+	@override String get emptyItems => 'سررسیدی در این بازه نیست.';
+	@override String get emptyParties => 'مانده باز با طرف‌حساب نیست.';
+	@override String get emptyPayments => 'پرداختی در این بازه نیست.';
+}
+
 /// The flat map containing all translations for locale <fa>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -861,6 +899,34 @@ extension on TranslationsFa {
 			'money.reminder.day3' => '۳ روز',
 			'money.reminder.day2' => '۲ روز',
 			'money.reminder.day1' => '۱ روز',
+			'money.reports.title' => 'گزارش دوره',
+			'money.reports.resetMonth' => 'همین ماه',
+			'money.reports.filters' => 'فیلترها',
+			'money.reports.fromDate' => 'از',
+			'money.reports.toDate' => 'تا',
+			'money.reports.partyFilter' => 'طرف‌حساب',
+			'money.reports.allParties' => 'همه طرف‌حساب‌ها',
+			'money.reports.summary' => 'خلاصه',
+			'money.reports.dueInPeriod' => 'سررسید در این بازه',
+			'money.reports.duePay' => ({required Object amount}) => 'پرداخت ${amount}',
+			'money.reports.dueReceive' => ({required Object amount}) => 'دریافت ${amount}',
+			'money.reports.settledInPeriod' => 'تسویه‌شده در این بازه',
+			'money.reports.settledPay' => ({required Object amount}) => 'پرداخت‌شده ${amount}',
+			'money.reports.settledReceive' => ({required Object amount}) => 'دریافت‌شده ${amount}',
+			'money.reports.openBalances' => 'همهٔ بدهی‌های باز',
+			'money.reports.openBalancesHint' => 'محدود به این بازه نیست',
+			'money.reports.openPay' => ({required Object amount}) => 'بدهی باز ${amount}',
+			'money.reports.openReceive' => ({required Object amount}) => 'طلب باز ${amount}',
+			'money.reports.assets' => 'دارایی‌ها',
+			'money.reports.assetsTotal' => ({required Object amount}) => 'دارایی ${amount}',
+			'money.reports.approxNetWorth' => ({required Object amount}) => 'دارایی خالص تقریبی ${amount}',
+			'money.reports.topParties' => 'بیشترین مانده طرف‌حساب',
+			'money.reports.byItem' => 'بر اساس حساب',
+			'money.reports.byParty' => 'بر اساس طرف‌حساب',
+			'money.reports.paymentsLog' => 'پرداخت‌های این بازه',
+			'money.reports.emptyItems' => 'سررسیدی در این بازه نیست.',
+			'money.reports.emptyParties' => 'مانده باز با طرف‌حساب نیست.',
+			'money.reports.emptyPayments' => 'پرداختی در این بازه نیست.',
 			'notes.title' => 'یادداشت',
 			'notes.fab' => 'یادداشت',
 			'notes.emptyTitle' => 'هنوز یادداشتی نیست',

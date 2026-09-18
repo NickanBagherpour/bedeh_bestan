@@ -19,6 +19,8 @@ abstract final class AppRoutes {
     name: 'moneyEdit',
     path: '/money/item/:id/edit',
   );
+  static const moneyReports =
+      AppRoute(name: 'moneyReports', path: '/money/reports');
   static const parties = AppRoute(name: 'parties', path: '/money/parties');
   static const partyNew = AppRoute(name: 'partyNew', path: '/money/parties/new');
   static const partyItem = AppRoute(
@@ -60,6 +62,7 @@ abstract final class AppRoutes {
     moneyNew,
     moneyItem,
     moneyEdit,
+    moneyReports,
     parties,
     partyNew,
     partyItem,

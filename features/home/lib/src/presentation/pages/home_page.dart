@@ -107,7 +107,19 @@ class HomePage extends ConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: AppSpacing.sm),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: TextButton.icon(
+              onPressed: () {
+                AppHaptics.selection();
+                context.push(AppRoutes.moneyReports.path);
+              },
+              icon: const Icon(Icons.insights_outlined),
+              label: Text(t.home.reportTitle),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
           if (state.status == HomeStatus.error)
             KitError(
               message: t.message(

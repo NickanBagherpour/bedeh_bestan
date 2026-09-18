@@ -652,6 +652,7 @@ class Translations$money$en {
 	String get notificationActionRemindTomorrow => 'Tomorrow';
 
 	late final Translations$money$reminder$en reminder = Translations$money$reminder$en.internal(_root);
+	late final Translations$money$reports$en reports = Translations$money$reports$en.internal(_root);
 }
 
 // Path: notes
@@ -1299,6 +1300,99 @@ class Translations$money$reminder$en {
 	String get day1 => '1 day';
 }
 
+// Path: money.reports
+class Translations$money$reports$en {
+	Translations$money$reports$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Period report'
+	String get title => 'Period report';
+
+	/// en: 'This month'
+	String get resetMonth => 'This month';
+
+	/// en: 'Filters'
+	String get filters => 'Filters';
+
+	/// en: 'From'
+	String get fromDate => 'From';
+
+	/// en: 'To'
+	String get toDate => 'To';
+
+	/// en: 'Party'
+	String get partyFilter => 'Party';
+
+	/// en: 'All parties'
+	String get allParties => 'All parties';
+
+	/// en: 'Summary'
+	String get summary => 'Summary';
+
+	/// en: 'Due in period'
+	String get dueInPeriod => 'Due in period';
+
+	/// en: 'To pay $amount'
+	String duePay({required Object amount}) => 'To pay ${amount}';
+
+	/// en: 'To collect $amount'
+	String dueReceive({required Object amount}) => 'To collect ${amount}';
+
+	/// en: 'Settled in period'
+	String get settledInPeriod => 'Settled in period';
+
+	/// en: 'Paid out $amount'
+	String settledPay({required Object amount}) => 'Paid out ${amount}';
+
+	/// en: 'Received $amount'
+	String settledReceive({required Object amount}) => 'Received ${amount}';
+
+	/// en: 'All open balances'
+	String get openBalances => 'All open balances';
+
+	/// en: 'Not limited to this period'
+	String get openBalancesHint => 'Not limited to this period';
+
+	/// en: 'Open debts $amount'
+	String openPay({required Object amount}) => 'Open debts ${amount}';
+
+	/// en: 'Open receivables $amount'
+	String openReceive({required Object amount}) => 'Open receivables ${amount}';
+
+	/// en: 'Assets'
+	String get assets => 'Assets';
+
+	/// en: 'Assets $amount'
+	String assetsTotal({required Object amount}) => 'Assets ${amount}';
+
+	/// en: 'Approx. net worth $amount'
+	String approxNetWorth({required Object amount}) => 'Approx. net worth ${amount}';
+
+	/// en: 'Top parties'
+	String get topParties => 'Top parties';
+
+	/// en: 'By account'
+	String get byItem => 'By account';
+
+	/// en: 'By party'
+	String get byParty => 'By party';
+
+	/// en: 'Payments in period'
+	String get paymentsLog => 'Payments in period';
+
+	/// en: 'No dues in this range.'
+	String get emptyItems => 'No dues in this range.';
+
+	/// en: 'No open party balances.'
+	String get emptyParties => 'No open party balances.';
+
+	/// en: 'No payments in this range.'
+	String get emptyPayments => 'No payments in this range.';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -1556,6 +1650,34 @@ extension on Translations {
 			'money.reminder.day3' => '3 days',
 			'money.reminder.day2' => '2 days',
 			'money.reminder.day1' => '1 day',
+			'money.reports.title' => 'Period report',
+			'money.reports.resetMonth' => 'This month',
+			'money.reports.filters' => 'Filters',
+			'money.reports.fromDate' => 'From',
+			'money.reports.toDate' => 'To',
+			'money.reports.partyFilter' => 'Party',
+			'money.reports.allParties' => 'All parties',
+			'money.reports.summary' => 'Summary',
+			'money.reports.dueInPeriod' => 'Due in period',
+			'money.reports.duePay' => ({required Object amount}) => 'To pay ${amount}',
+			'money.reports.dueReceive' => ({required Object amount}) => 'To collect ${amount}',
+			'money.reports.settledInPeriod' => 'Settled in period',
+			'money.reports.settledPay' => ({required Object amount}) => 'Paid out ${amount}',
+			'money.reports.settledReceive' => ({required Object amount}) => 'Received ${amount}',
+			'money.reports.openBalances' => 'All open balances',
+			'money.reports.openBalancesHint' => 'Not limited to this period',
+			'money.reports.openPay' => ({required Object amount}) => 'Open debts ${amount}',
+			'money.reports.openReceive' => ({required Object amount}) => 'Open receivables ${amount}',
+			'money.reports.assets' => 'Assets',
+			'money.reports.assetsTotal' => ({required Object amount}) => 'Assets ${amount}',
+			'money.reports.approxNetWorth' => ({required Object amount}) => 'Approx. net worth ${amount}',
+			'money.reports.topParties' => 'Top parties',
+			'money.reports.byItem' => 'By account',
+			'money.reports.byParty' => 'By party',
+			'money.reports.paymentsLog' => 'Payments in period',
+			'money.reports.emptyItems' => 'No dues in this range.',
+			'money.reports.emptyParties' => 'No open party balances.',
+			'money.reports.emptyPayments' => 'No payments in this range.',
 			'notes.title' => 'Notes',
 			'notes.fab' => 'Note',
 			'notes.emptyTitle' => 'No notes yet',

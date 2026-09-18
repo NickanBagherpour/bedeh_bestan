@@ -9,8 +9,8 @@ is documented under `docs/prompts/*.md`; use git history for what landed when.
 
 | Priority | Status | Task | Spec |
 |----------|--------|------|------|
-| P1 | todo | Party net balance + running-balance ledger | [party-statement-balance.md](party-statement-balance.md) |
-| P1 | todo | Money period report (date range, party, month overview) | [money-period-report-hub.md](money-period-report-hub.md) |
+| P1 | done | Party net balance + running-balance ledger | [party-statement-balance.md](party-statement-balance.md) |
+| P1 | done | Money period report (date range, party, month overview) | [money-period-report-hub.md](money-period-report-hub.md) |
 | P2 | todo | Per-installment custom amounts (swipe/edit schedule) | [installment-variable-amounts.md](installment-variable-amounts.md) |
 | P3 | todo | Attach receipt photo to a transaction | [transaction-receipt-photo.md](transaction-receipt-photo.md) |
 | — | todo | Auth-gate profile routes when login exists | [future-profile-auth-gate.md](future-profile-auth-gate.md) |

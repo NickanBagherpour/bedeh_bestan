@@ -1,5 +1,12 @@
 import 'package:local_db/local_db.dart'
-    show AppDatabase, MoneyItem, MoneyPayment, Party, PartyUsage, newEntityId;
+    show
+        AppDatabase,
+        AssetAccount,
+        MoneyItem,
+        MoneyPayment,
+        Party,
+        PartyUsage,
+        newEntityId;
 
 final class MoneyRepository {
   MoneyRepository({required AppDatabase database}) : _database = database;
@@ -11,6 +18,9 @@ final class MoneyRepository {
   Stream<List<Party>> watchParties() => _database.watchParties();
 
   Stream<List<MoneyPayment>> watchPayments() => _database.watchPayments();
+
+  Stream<List<AssetAccount>> watchAssetAccounts() =>
+      _database.watchAssetAccounts();
 
   Stream<List<MoneyPayment>> watchPaymentsFor(String moneyItemId) {
     return _database.watchPaymentsFor(moneyItemId);

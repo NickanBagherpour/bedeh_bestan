@@ -49,6 +49,14 @@ class MoneyPage extends ConsumerWidget {
         title: Text(t.money.title),
         actions: [
           IconButton(
+            tooltip: t.money.reports.title,
+            onPressed: () {
+              AppHaptics.selection();
+              context.push(AppRoutes.moneyReports.path);
+            },
+            icon: const Icon(Icons.insights_outlined),
+          ),
+          IconButton(
             tooltip: t.money.parties,
             onPressed: () {
               AppHaptics.selection();

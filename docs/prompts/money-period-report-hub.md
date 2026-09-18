@@ -66,7 +66,7 @@ For the selected period:
 
 ## Acceptance
 
-- [ ] Defaults match current calendar month; user can change range and party.
-- [ ] Summary numbers match unit tests for a fixed fixture DB.
-- [ ] Assets + open debt lines visible when data exists.
-- [ ] `melos run analyze && melos run test` pass.
+- [x] Defaults match current calendar month; user can change range and party.
+- [x] Summary numbers match unit tests for a fixed fixture DB.
+- [x] Assets + open debt lines visible when data exists.
+- [x] `melos run analyze && melos run test` pass.

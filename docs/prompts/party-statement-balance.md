@@ -37,7 +37,7 @@ New strings in `money_en.i18n.json` + `money_fa.i18n.json`; `melos run translati
 
 ## Acceptance
 
-- [ ] Party detail shows correct net balance and per-account amounts.
-- [ ] Ledger shows a running balance that matches manual calculation.
-- [ ] Pure balance helper covered by a unit test in `features/money/test/`.
-- [ ] `melos run analyze && melos run test` pass.
+- [x] Party detail shows correct net balance and per-account amounts.
+- [x] Ledger shows a running balance that matches manual calculation.
+- [x] Pure balance helper covered by a unit test in `features/money/test/`.
+- [x] `melos run analyze && melos run test` pass.
