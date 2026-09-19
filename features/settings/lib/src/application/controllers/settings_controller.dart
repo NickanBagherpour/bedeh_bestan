@@ -8,16 +8,20 @@ import 'package:core/core.dart'
         AppStyle,
         CalendarPreference,
         MoneyReminderMode,
+        UpdateCheckOutcome,
         appSettingsProvider,
-        appStorageProvider;
+        appStorageProvider,
+        isUpdateAvailable;
 import 'package:flutter/material.dart' show ThemeMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:local_db/local_db.dart'
     show BackupException, appDatabaseProvider;
 import 'package:translations/translations.dart'
     show LocaleSettings, appLocaleFromLanguageCode;
 
 import '../../data/backup_repository.dart';
+import '../../data/update_check_repository.dart';
 
 enum BackupActionResult { saved, restored, cancelled, failed }
 
@@ -71,6 +75,32 @@ final class SettingsController extends Notifier<AppSettings> {
 
   Future<void> setShowCalendarMoney(bool value) {
     return ref.read(appSettingsProvider.notifier).setShowCalendarMoney(value);
+  }
+
+  /// Compares installed [PackageInfo.buildNumber] to [store/version.json].
+  Future<({UpdateCheckOutcome outcome, String? latestVersion})>
+      checkForStoreUpdate() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      final installed = int.tryParse(info.buildNumber) ?? 0;
+      final manifest =
+          await ref.read(updateCheckRepositoryProvider).fetchLatestManifest();
+      if (manifest == null) {
+        return (outcome: UpdateCheckOutcome.checkFailed, latestVersion: null);
+      }
+      final newer = isUpdateAvailable(
+        installedBuild: installed,
+        latestBuild: manifest.latestBuild,
+      );
+      return (
+        outcome: newer
+            ? UpdateCheckOutcome.updateAvailable
+            : UpdateCheckOutcome.upToDate,
+        latestVersion: manifest.latestVersion,
+      );
+    } catch (_) {
+      return (outcome: UpdateCheckOutcome.checkFailed, latestVersion: null);
+    }
   }
 
   Future<BackupActionResult> exportBackup({required String fileName}) async {

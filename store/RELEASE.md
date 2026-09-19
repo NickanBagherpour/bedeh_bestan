@@ -44,6 +44,10 @@ Android reads these automatically (`flutter.versionName` / `flutter.versionCode`
 
 The melos sub-packages are `publish_to: none`; only the app version matters for stores.
 
+Also bump **`store/version.json`** (`latestVersion` + `latestBuild` = the `+W`
+from pubspec) and push to `main` so **Settings → Check for updates on Bazaar**
+can see the new build.
+
 ---
 
 ## Prerequisites (one time)

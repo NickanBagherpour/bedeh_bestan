@@ -19,3 +19,4 @@ export 'src/utils/calendar_type.dart';
 export 'src/utils/currency.dart';
 export 'src/utils/date_utils.dart';
 export 'src/utils/money_format.dart';
+export 'src/updates/app_update.dart';
