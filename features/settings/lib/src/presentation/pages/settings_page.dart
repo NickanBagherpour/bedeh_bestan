@@ -264,13 +264,25 @@ class _AboutSectionState extends ConsumerState<_AboutSection> {
         messenger.showSnackBar(SnackBar(content: Text(t.settings.alreadyOnLatest)));
       case UpdateCheckOutcome.checkFailed:
         messenger.showSnackBar(
-          SnackBar(content: Text(t.settings.updateCheckFailed)),
+          SnackBar(
+            content: Text(t.settings.updateCheckFailed),
+            action: SnackBarAction(
+              label: t.settings.openBazaarAnyway,
+              onPressed: () => openBazaarListing(),
+            ),
+          ),
         );
       case UpdateCheckOutcome.updateAvailable:
-        final latest = result.latestVersion ?? '';
-        messenger.showSnackBar(
-          SnackBar(content: Text(t.settings.updateAvailable(version: latest))),
-        );
+        final latest = result.latestVersion;
+        if (latest != null && latest.isNotEmpty) {
+          messenger.showSnackBar(
+            SnackBar(content: Text(t.settings.updateAvailable(version: latest))),
+          );
+        } else {
+          messenger.showSnackBar(
+            SnackBar(content: Text(t.settings.updateAvailableBazaar)),
+          );
+        }
         final opened = await openBazaarListing();
         if (!mounted) return;
         if (!opened) {

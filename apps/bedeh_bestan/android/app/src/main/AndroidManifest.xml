@@ -63,5 +63,6 @@
             <action android:name="android.intent.action.VIEW"/>
             <data android:scheme="bazaar"/>
         </intent>
+        <package android:name="com.farsitel.bazaar"/>
     </queries>
 </manifest>

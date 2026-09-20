@@ -914,6 +914,9 @@ class Translations$settings$en {
 	/// en: 'Version $version is available — opening Bazaar.'
 	String updateAvailable({required Object version}) => 'Version ${version} is available — opening Bazaar.';
 
+	/// en: 'A newer version is on Bazaar — opening the store.'
+	String get updateAvailableBazaar => 'A newer version is on Bazaar — opening the store.';
+
 	/// en: 'You have the latest version.'
 	String get alreadyOnLatest => 'You have the latest version.';
 
@@ -922,6 +925,9 @@ class Translations$settings$en {
 
 	/// en: 'Could not open Bazaar.'
 	String get openBazaarFailed => 'Could not open Bazaar.';
+
+	/// en: 'Open Bazaar'
+	String get openBazaarAnyway => 'Open Bazaar';
 
 	/// en: 'Privacy'
 	String get privacy => 'Privacy';
@@ -1797,9 +1803,11 @@ extension on Translations {
 			'settings.version' => ({required Object version}) => 'Version ${version}',
 			'settings.checkForUpdate' => 'Check for updates on Bazaar',
 			'settings.updateAvailable' => ({required Object version}) => 'Version ${version} is available — opening Bazaar.',
+			'settings.updateAvailableBazaar' => 'A newer version is on Bazaar — opening the store.',
 			'settings.alreadyOnLatest' => 'You have the latest version.',
 			'settings.updateCheckFailed' => 'Could not check. Connect to the internet and try again.',
 			'settings.openBazaarFailed' => 'Could not open Bazaar.',
+			'settings.openBazaarAnyway' => 'Open Bazaar',
 			'settings.privacy' => 'Privacy',
 			'settings.privacyBody' => 'Everything stays on this phone. No account, no cloud, no tracking.',
 			'settings.reminders' => 'Due reminders',

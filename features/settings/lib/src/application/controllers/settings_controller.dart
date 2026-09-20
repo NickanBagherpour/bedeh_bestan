@@ -21,6 +21,7 @@ import 'package:translations/translations.dart'
     show LocaleSettings, appLocaleFromLanguageCode;
 
 import '../../data/backup_repository.dart';
+import '../../data/bazaar_update_check.dart';
 import '../../data/update_check_repository.dart';
 
 enum BackupActionResult { saved, restored, cancelled, failed }
@@ -77,10 +78,21 @@ final class SettingsController extends Notifier<AppSettings> {
     return ref.read(appSettingsProvider.notifier).setShowCalendarMoney(value);
   }
 
-  /// Compares installed [PackageInfo.buildNumber] to [store/version.json].
+  /// Bazaar update service on Android, else [store/version.json] over HTTPS.
   Future<({UpdateCheckOutcome outcome, String? latestVersion})>
       checkForStoreUpdate() async {
     try {
+      final bazaar = await checkBazaarUpdateAvailable();
+      if (bazaar == true) {
+        return (
+          outcome: UpdateCheckOutcome.updateAvailable,
+          latestVersion: null,
+        );
+      }
+      if (bazaar == false) {
+        return (outcome: UpdateCheckOutcome.upToDate, latestVersion: null);
+      }
+
       final info = await PackageInfo.fromPlatform();
       final installed = int.tryParse(info.buildNumber) ?? 0;
       final manifest =

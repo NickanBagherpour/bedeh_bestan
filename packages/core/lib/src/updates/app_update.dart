@@ -3,9 +3,34 @@ import 'dart:convert';
 /// Cafe Bazaar application id (Android).
 const bazaarApplicationId = 'com.nickapp.bedebestan';
 
-/// Public manifest — bump [store/version.json] on each store release.
-const versionManifestUrl =
-    'https://raw.githubusercontent.com/NickanBagherpour/bedeh_bestan/main/store/version.json';
+/// Android [MethodChannel] implemented in `MainActivity` (Bazaar update service).
+const bazaarUpdateMethodChannel = 'com.nickapp.bedebestan/bazaar_update';
+
+/// Optional override at build time:
+/// `--dart-define=VERSION_MANIFEST_URL=https://…/version.json`
+const versionManifestUrlOverride = String.fromEnvironment(
+  'VERSION_MANIFEST_URL',
+  defaultValue: '',
+);
+
+/// Public manifest — bump [store/version.json] on each store release and push
+/// to the default branch (`develop`). Private repos need [versionManifestUrlOverride]
+/// or rely on Bazaar update check on Android.
+const versionManifestUrlDevelop =
+    'https://raw.githubusercontent.com/NickanBagherpour/bedeh_bestan/develop/store/version.json';
+
+const versionManifestUrlMaster =
+    'https://raw.githubusercontent.com/NickanBagherpour/bedeh_bestan/master/store/version.json';
+
+/// Tried in order until one returns a valid manifest.
+List<String> versionManifestUrls() {
+  final urls = <String>[
+    if (versionManifestUrlOverride.isNotEmpty) versionManifestUrlOverride,
+    versionManifestUrlDevelop,
+    versionManifestUrlMaster,
+  ];
+  return urls;
+}
 
 final Uri bazaarWebListingUri = Uri.parse(
   'https://cafebazaar.ir/app/$bazaarApplicationId',

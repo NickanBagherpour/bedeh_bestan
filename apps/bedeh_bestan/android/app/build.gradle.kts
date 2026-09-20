@@ -24,6 +24,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    buildFeatures {
+        aidl = true
+    }
+
     defaultConfig {
         applicationId = "com.nickapp.bedebestan"
         minSdk = flutter.minSdkVersion
