@@ -44,6 +44,14 @@ Android reads these automatically (`flutter.versionName` / `flutter.versionCode`
 
 The melos sub-packages are `publish_to: none`; only the app version matters for stores.
 
+Also bump **`store/version.json`** (`latestVersion` + `latestBuild` = the `+W`
+from pubspec) and push to **`develop`** (or set
+`--dart-define=VERSION_MANIFEST_URL=…` to a **public** JSON URL).
+
+On Android, **Settings → Check for updates** prefers **Cafe Bazaar’s** update
+service (Bazaar app installed). The GitHub manifest is only a fallback when
+Bazaar is not available.
+
 ---
 
 ## Prerequisites (one time)

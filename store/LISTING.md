@@ -1,6 +1,6 @@
 # Store listing — بده‌بستان (BedeBestan)
 
-Copy-paste for Cafe Bazaar, Myket, and Google Play. Package: `com.nickapp.bedebestan`. Version **1.0.6** (build 6).
+Copy-paste for Cafe Bazaar, Myket, and Google Play. Package: `com.nickapp.bedebestan`. Version **1.0.7** (build 7).
 
 ## Titles (ads + store)
 

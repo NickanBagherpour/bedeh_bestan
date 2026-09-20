@@ -383,6 +383,13 @@ class _Translations$settings$fa extends Translations$settings$en {
 	@override String get backupFileName => 'bedeh-bestan-backup.json';
 	@override String get about => 'درباره';
 	@override String version({required Object version}) => 'نسخه ${version}';
+	@override String get checkForUpdate => 'بررسی به‌روزرسانی در بازار';
+	@override String updateAvailable({required Object version}) => 'نسخه ${version} آماده است — بازار باز می‌شود.';
+	@override String get updateAvailableBazaar => 'نسخهٔ جدید در بازار است — بازار باز می‌شود.';
+	@override String get alreadyOnLatest => 'آخرین نسخه را دارید.';
+	@override String get updateCheckFailed => 'بررسی نشد. اینترنت را وصل کنید و دوباره امتحان کنید.';
+	@override String get openBazaarFailed => 'بازار باز نشد.';
+	@override String get openBazaarAnyway => 'باز کردن بازار';
 	@override String get privacy => 'حریم خصوصی';
 	@override String get privacyBody => 'همه‌چیز روی همین گوشی می‌ماند. حساب کاربری، ابر و ردیابی نداریم.';
 	@override String get reminders => 'یادآوری سررسید';
@@ -1020,6 +1027,13 @@ extension on TranslationsFa {
 			'settings.backupFileName' => 'bedeh-bestan-backup.json',
 			'settings.about' => 'درباره',
 			'settings.version' => ({required Object version}) => 'نسخه ${version}',
+			'settings.checkForUpdate' => 'بررسی به‌روزرسانی در بازار',
+			'settings.updateAvailable' => ({required Object version}) => 'نسخه ${version} آماده است — بازار باز می‌شود.',
+			'settings.updateAvailableBazaar' => 'نسخهٔ جدید در بازار است — بازار باز می‌شود.',
+			'settings.alreadyOnLatest' => 'آخرین نسخه را دارید.',
+			'settings.updateCheckFailed' => 'بررسی نشد. اینترنت را وصل کنید و دوباره امتحان کنید.',
+			'settings.openBazaarFailed' => 'بازار باز نشد.',
+			'settings.openBazaarAnyway' => 'باز کردن بازار',
 			'settings.privacy' => 'حریم خصوصی',
 			'settings.privacyBody' => 'همه‌چیز روی همین گوشی می‌ماند. حساب کاربری، ابر و ردیابی نداریم.',
 			'settings.reminders' => 'یادآوری سررسید',

@@ -5,6 +5,7 @@ import 'package:core/core.dart'
         AppStyle,
         CalendarPreference,
         MoneyReminderMode,
+        UpdateCheckOutcome,
         overlayAppBar;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +14,7 @@ import 'package:translations/translations.dart' show Translations;
 import 'package:ui_kit/ui_kit.dart'
     show AppHaptics, AppSpacing, KitReminderDaysPicker;
 
+import '../../application/bazaar_launcher.dart';
 import '../../application/controllers/settings_controller.dart';
 import '../widgets/settings_choice_row.dart';
 import '../widgets/settings_section.dart';
@@ -202,7 +204,7 @@ class SettingsPage extends ConsumerWidget {
           SettingsSection(
             title: t.settings.about,
             footer: t.settings.privacyBody,
-            child: const _AppVersionTile(),
+            child: const _AboutSection(),
           ),
           Text(
             t.app.latinName,
@@ -237,8 +239,59 @@ Future<void> _runBackup(
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
 }
 
-class _AppVersionTile extends StatelessWidget {
-  const _AppVersionTile();
+class _AboutSection extends ConsumerStatefulWidget {
+  const _AboutSection();
+
+  @override
+  ConsumerState<_AboutSection> createState() => _AboutSectionState();
+}
+
+class _AboutSectionState extends ConsumerState<_AboutSection> {
+  bool _checking = false;
+
+  Future<void> _checkForUpdate() async {
+    final t = Translations.of(context);
+    setState(() => _checking = true);
+    AppHaptics.selection();
+    final result =
+        await ref.read(settingsControllerProvider.notifier).checkForStoreUpdate();
+    if (!mounted) return;
+    setState(() => _checking = false);
+
+    final messenger = ScaffoldMessenger.of(context);
+    switch (result.outcome) {
+      case UpdateCheckOutcome.upToDate:
+        messenger.showSnackBar(SnackBar(content: Text(t.settings.alreadyOnLatest)));
+      case UpdateCheckOutcome.checkFailed:
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(t.settings.updateCheckFailed),
+            action: SnackBarAction(
+              label: t.settings.openBazaarAnyway,
+              onPressed: () => openBazaarListing(),
+            ),
+          ),
+        );
+      case UpdateCheckOutcome.updateAvailable:
+        final latest = result.latestVersion;
+        if (latest != null && latest.isNotEmpty) {
+          messenger.showSnackBar(
+            SnackBar(content: Text(t.settings.updateAvailable(version: latest))),
+          );
+        } else {
+          messenger.showSnackBar(
+            SnackBar(content: Text(t.settings.updateAvailableBazaar)),
+          );
+        }
+        final opened = await openBazaarListing();
+        if (!mounted) return;
+        if (!opened) {
+          messenger.showSnackBar(
+            SnackBar(content: Text(t.settings.openBazaarFailed)),
+          );
+        }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -247,18 +300,35 @@ class _AppVersionTile extends StatelessWidget {
       future: _packageInfo(),
       builder: (context, snapshot) {
         final version = snapshot.data?.version;
-        if (version == null || version.isEmpty) {
-          return ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.info_outline_rounded),
-            title: Text(t.settings.privacy),
-          );
-        }
-        return ListTile(
-          contentPadding: EdgeInsets.zero,
-          leading: const Icon(Icons.info_outline_rounded),
-          title: Text(t.settings.version(version: version)),
-          subtitle: Text(t.settings.privacy),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (version != null && version.isNotEmpty)
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.info_outline_rounded),
+                title: Text(t.settings.version(version: version)),
+                subtitle: Text(t.settings.privacy),
+              )
+            else
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.info_outline_rounded),
+                title: Text(t.settings.privacy),
+              ),
+            const SizedBox(height: AppSpacing.sm),
+            FilledButton.tonalIcon(
+              onPressed: _checking ? null : _checkForUpdate,
+              icon: _checking
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.system_update_rounded),
+              label: Text(t.settings.checkForUpdate),
+            ),
+          ],
         );
       },
     );

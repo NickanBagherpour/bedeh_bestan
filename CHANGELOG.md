@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.7] - 2026-09-20
+
+### Added
+- enhance AGENTS.md and add new skills for efficient workflows
+- update app icons and splash screens across platforms
+- implement update check feature for Bazaar
+
 ## [1.0.6] - 2026-09-18
 
 - Maintenance release.
