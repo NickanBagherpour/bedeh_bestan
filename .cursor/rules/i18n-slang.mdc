@@ -1,0 +1,13 @@
+---
+description: Slang i18n — en+fa together, no hardcoded UI strings
+globs: "**/*.i18n.json"
+alwaysApply: false
+---
+
+# i18n (slang)
+
+- Never hardcode user-visible strings in Dart.
+- Add keys to both `*_en.i18n.json` and `*_fa.i18n.json` in the same change.
+- After edits: `melos run translations`.
+- Prefer existing key namespaces in the owning feature; do not invent parallel trees.
+- Theme / RTL details: `docs/architecture/08-i18n-theming.md`.

@@ -1,0 +1,25 @@
+---
+description: Feature package layout and layering under features/
+globs: features/**/*
+alwaysApply: false
+---
+
+# Feature packages
+
+Package name: `feature_<name>`. Layout:
+
+```
+features/<name>/lib/
+  <name>.dart                 # barrel
+  src/
+    data/                     # optional
+    application/              # controllers, state
+    presentation/pages|widgets/
+    routes/                   # build<Name>Routes(Ref)
+    translations/             # <name>_en.i18n.json + <name>_fa.i18n.json
+```
+
+- Page (`ConsumerWidget`) watches Riverpod; widgets are dumb (no `ref`).
+- Routes use `AppRoutes.x.path` / `.name` and `buildRoutePage`.
+- Wire `...build<Name>Routes(ref)` in `apps/bedeh_bestan/.../app_router.dart`.
+- Full checklist: `docs/architecture/03-feature-anatomy.md`.

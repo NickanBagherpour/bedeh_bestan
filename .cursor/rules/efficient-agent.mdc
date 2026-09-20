@@ -1,0 +1,14 @@
+---
+description: Token-efficient agent workflow for large BedeBestan work
+alwaysApply: true
+---
+
+# Efficient agent
+
+- One task per chat. Prefer pointed `@file` / `@folder` over repo-wide exploration.
+- Read the mapped doc once; grep/glob for symbols instead of dumping large files.
+- Implement in the owning package only. Touch `apps/bedeh_bestan` only for router / pubspec wiring.
+- Do not paste or re-read generated slang output; edit `*_en.i18n.json` + `*_fa.i18n.json`, then `melos run translations`.
+- Prefer shell/melos for analyze, test, format — not long agent loops “until green”.
+- Stop and ask when the next step needs a product decision; do not invent scope.
+- When done: short summary (files touched + how to verify). No essay.

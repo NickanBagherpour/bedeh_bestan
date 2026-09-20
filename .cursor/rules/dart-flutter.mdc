@@ -1,0 +1,14 @@
+---
+description: Dart/Flutter conventions for BedeBestan packages
+globs: "**/*.dart"
+alwaysApply: false
+---
+
+# Dart / Flutter
+
+- Match neighboring code: imports, naming, Riverpod/Drift patterns.
+- Prefer `ui_kit` `Kit*` widgets over one-off Material styling.
+- Money amounts: use existing Toman helpers in `packages/core` — no ad-hoc formatting.
+- Dates: Jalali helpers in `core` when UI is Persian calendar.
+- No new HTTP clients or remote APIs. Persistence via `packages/local_db` / Drift.
+- Keep diffs focused; no drive-by refactors or unrelated file churn.

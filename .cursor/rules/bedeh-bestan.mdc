@@ -3,6 +3,12 @@ description: BedeBestan monorepo — read AGENTS.md first; features live under f
 alwaysApply: true
 ---
 
-Before coding, read `AGENTS.md` then only the one doc `docs/AGENTS.md` maps for the task.
+Before coding, read `AGENTS.md` then only the one doc `docs/AGENTS.md` maps for the task. Do not load the whole `docs/` tree.
 
-Rules: feature packages under `features/` (never `apps/bedeh_bestan/lib/src/features/`); slang for all UI strings (`melos run translations`); paths only in `AppRoutes`; no backend.
+Non-negotiables:
+- Feature packages under `features/` (never `apps/bedeh_bestan/lib/src/features/`)
+- Pages → Controller → Repository → local source; widgets have no `ref`
+- No cross-feature imports; shared code in `core` / `ui_kit`
+- Paths only in `AppRoutes`; slang for all UI strings (`melos run translations`)
+- Local-only: no backend, auth, sync, or `api_client`
+- Finish with `melos run analyze && melos run test`
